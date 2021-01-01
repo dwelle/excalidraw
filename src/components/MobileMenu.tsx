@@ -16,6 +16,8 @@ import { SCROLLBAR_WIDTH, SCROLLBAR_MARGIN } from "../scene/scrollbars";
 import { LockIcon } from "./LockIcon";
 import { UserList } from "./UserList";
 import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
+import { ToolButton } from "./ToolButton";
+import { home } from "./icons";
 
 type MobileMenuProps = {
   appState: AppState;
@@ -29,6 +31,7 @@ type MobileMenuProps = {
   canvas: HTMLCanvasElement | null;
   isCollaborating: boolean;
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
+  onHomeButtonClick?: () => void;
 };
 
 export const MobileMenu = ({
@@ -43,6 +46,7 @@ export const MobileMenu = ({
   canvas,
   isCollaborating,
   renderCustomFooter,
+  onHomeButtonClick,
 }: MobileMenuProps) => (
   <>
     <FixedSideContainer side="top">
@@ -60,6 +64,15 @@ export const MobileMenu = ({
                   />
                 </Stack.Row>
               </Island>
+              <ToolButton
+                key="home"
+                type="button"
+                className="HomeButton ToolIcon_type_floating"
+                title={"Home"}
+                aria-label={"Home"}
+                icon={home}
+                onClick={onHomeButtonClick}
+              />
               <LockIcon
                 checked={appState.elementLocked}
                 onChange={onLockToggle}
