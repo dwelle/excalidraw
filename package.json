@@ -1,4 +1,8 @@
 {
+  "main": "src/packages/excalidraw/dist/excalidraw.min.js",
+  "files": [
+    "src/packages/excalidraw/dist/*"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",
