@@ -71,6 +71,7 @@ interface LayerUIProps {
     canvas: HTMLCanvasElement | null,
   ) => void;
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
+  onHomeButtonClick?: () => void;
 }
 
 const useOnClickOutside = (
@@ -317,6 +318,7 @@ const LayerUI = ({
   isCollaborating,
   onExportToBackend,
   renderCustomFooter,
+  onHomeButtonClick,
 }: LayerUIProps) => {
   const isMobile = useIsMobile();
 
@@ -623,6 +625,7 @@ const LayerUI = ({
         canvas={canvas}
         isCollaborating={isCollaborating}
         renderCustomFooter={renderCustomFooter}
+        onHomeButtonClick={onHomeButtonClick}
       />
     </>
   ) : (

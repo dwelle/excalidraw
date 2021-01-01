@@ -373,6 +373,7 @@ class App extends React.Component<ExcalidrawProps, AppState> {
           isCollaborating={this.props.isCollaborating || false}
           onExportToBackend={onExportToBackend}
           renderCustomFooter={renderFooter}
+          onHomeButtonClick={this.props.onHomeButtonClick}
         />
         {this.state.showStats && (
           <Stats
@@ -591,6 +592,13 @@ class App extends React.Component<ExcalidrawProps, AppState> {
       ),
       isLoading: false,
     };
+
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = normalizeScroll(initialData.scrollX);
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = normalizeScroll(initialData.scrollY);
+    }
 
     this.resetHistory();
     this.syncActionResult({
@@ -1180,10 +1188,13 @@ class App extends React.Component<ExcalidrawProps, AppState> {
       history.resumeRecording();
     }
 
-    // currently we only support syncing background color
-    if (sceneData.appState?.viewBackgroundColor) {
+    if (sceneData.appState) {
       this.setState({
-        viewBackgroundColor: sceneData.appState.viewBackgroundColor,
+        viewBackgroundColor:
+          sceneData.appState.viewBackgroundColor ??
+          this.state.viewBackgroundColor,
+        scrollX: sceneData.appState.scrollX ?? this.state.scrollX,
+        scrollY: sceneData.appState.scrollY ?? this.state.scrollY,
       });
     }
 
