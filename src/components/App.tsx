@@ -1182,13 +1182,7 @@ class App extends React.Component<ExcalidrawProps, AppState> {
     }
 
     if (sceneData.appState) {
-      this.setState({
-        viewBackgroundColor:
-          sceneData.appState.viewBackgroundColor ??
-          this.state.viewBackgroundColor,
-        scrollX: sceneData.appState.scrollX ?? this.state.scrollX,
-        scrollY: sceneData.appState.scrollY ?? this.state.scrollY,
-      });
+      this.setState(sceneData.appState as AppState);
     }
 
     if (sceneData.elements) {
