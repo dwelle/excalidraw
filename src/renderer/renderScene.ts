@@ -310,7 +310,8 @@ export const renderScene = (
       if (sceneState.remoteSelectedElementIds[element.id]) {
         selectionColors.push(
           ...sceneState.remoteSelectedElementIds[element.id].map((socketId) => {
-            const { background } = getClientColors(socketId);
+            const picture = appState.collaborators.get(socketId)?.picture;
+            const { background } = getClientColors(picture || socketId);
             return background;
           }),
         );
@@ -417,8 +418,11 @@ export const renderScene = (
 
   // Paint remote pointers
   for (const clientId in sceneState.remotePointerViewportCoords) {
-    let { x, y } = sceneState.remotePointerViewportCoords[clientId];
     const username = sceneState.remotePointerUsernames[clientId];
+
+    let { x, y } = sceneState.remotePointerViewportCoords[clientId];
+    x -= appState.offsetLeft;
+    y -= appState.offsetTop;
 
     const width = 9;
     const height = 14;
@@ -434,7 +438,8 @@ export const renderScene = (
     y = Math.max(y, 0);
     y = Math.min(y, normalizedCanvasHeight - height);
 
-    const { background, stroke } = getClientColors(clientId);
+    const picture = appState.collaborators.get(clientId)?.picture;
+    const { background, stroke } = getClientColors(picture || clientId);
 
     const strokeStyle = context.strokeStyle;
     const fillStyle = context.fillStyle;

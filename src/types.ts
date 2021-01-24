@@ -32,6 +32,7 @@ export type Collaborator = {
   button?: "up" | "down";
   selectedElementIds?: AppState["selectedElementIds"];
   username?: string | null;
+  picture?: string;
 };
 
 export type AppState = {
@@ -155,6 +156,8 @@ export type ExcalidrawAPIRefValue =
       ready?: false;
     };
 
+type InitialData = ImportedDataState & { scrollX?: number; scrollY?: number };
+
 export interface ExcalidrawProps {
   width?: number;
   height?: number;
@@ -166,7 +169,8 @@ export interface ExcalidrawProps {
     elements: readonly ExcalidrawElement[],
     appState: AppState,
   ) => void;
-  initialData?: ImportedDataState | null | Promise<ImportedDataState | null>;
+  onHomeButtonClick?: () => void;
+  initialData?: InitialData | null | Promise<InitialData | null>;
   user?: {
     name?: string | null;
   };

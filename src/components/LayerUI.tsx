@@ -25,9 +25,8 @@ import CollabButton from "./CollabButton";
 import { ErrorDialog } from "./ErrorDialog";
 import { ExportCB, ExportDialog } from "./ExportDialog";
 import { FixedSideContainer } from "./FixedSideContainer";
-import { GitHubCorner } from "./GitHubCorner";
 import { HintViewer } from "./HintViewer";
-import { exportFile, load, shield } from "./icons";
+import { exportFile, load } from "./icons";
 import { Island } from "./Island";
 import "./LayerUI.scss";
 import { LibraryUnit } from "./LibraryUnit";
@@ -61,6 +60,7 @@ interface LayerUIProps {
     canvas: HTMLCanvasElement | null,
   ) => void;
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
+  onHomeButtonClick?: () => void;
 }
 
 const useOnClickOutside = (
@@ -299,23 +299,9 @@ const LayerUI = ({
   isCollaborating,
   onExportToBackend,
   renderCustomFooter,
+  onHomeButtonClick,
 }: LayerUIProps) => {
   const isMobile = useIsMobile();
-
-  const renderEncryptedIcon = () => (
-    <a
-      className={clsx("encrypted-icon tooltip zen-mode-visibility", {
-        "zen-mode-visibility--hidden": zenModeEnabled,
-      })}
-      href="https://blog.excalidraw.com/end-to-end-encryption/"
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <Tooltip label={t("encrypted.tooltip")} position="above" long={true}>
-        {shield}
-      </Tooltip>
-    </a>
-  );
 
   const renderExportDialog = () => {
     const createExporter = (type: ExportType): ExportCB => async (
@@ -517,7 +503,6 @@ const LayerUI = ({
                 zoom={appState.zoom}
               />
             </Island>
-            {renderEncryptedIcon()}
           </Section>
         </Stack.Col>
       </div>
@@ -599,25 +584,18 @@ const LayerUI = ({
         canvas={canvas}
         isCollaborating={isCollaborating}
         renderCustomFooter={renderCustomFooter}
+        onHomeButtonClick={onHomeButtonClick}
       />
     </>
   ) : (
-    <div className="layer-ui__wrapper">
+    <div
+      className={clsx("layer-ui__wrapper", {
+        "disable-pointerEvents": appState.cursorButton === "down",
+      })}
+    >
       {dialogs}
       {renderFixedSideContainer()}
       {renderBottomAppMenu()}
-      {
-        <aside
-          className={clsx(
-            "layer-ui__wrapper__github-corner zen-mode-transition",
-            {
-              "transition-right": zenModeEnabled,
-            },
-          )}
-        >
-          <GitHubCorner appearance={appState.appearance} />
-        </aside>
-      }
       {renderFooter()}
     </div>
   );

@@ -254,6 +254,7 @@ function ExcalidrawWrapper(props: { collab: CollabAPI }) {
           initializeSocketClient: collab.initializeSocketClient,
         }).then((scene) => {
           if (scene) {
+            // @ts-ignore
             api.updateScene(scene);
           }
         });

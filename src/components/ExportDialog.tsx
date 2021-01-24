@@ -164,9 +164,6 @@ const ExportModal = ({
               />
             )}
           </Stack.Row>
-          <div className="ExportDialog__name">
-            {actionManager.renderAction("changeProjectName")}
-          </div>
           <Stack.Row gap={2}>
             {scales.map((s) => {
               const [width, height] = getExportSize(
