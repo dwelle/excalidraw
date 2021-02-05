@@ -87,3 +87,15 @@ export const exportToSvg = ({
     metadata,
   });
 };
+
+export const exportToClipboard = async (
+  opts: ExportOpts & { mimeType?: string; quality?: number },
+) => {
+  const blob = await exportToBlob(opts);
+  if (!blob) {
+    throw new Error("couldn't export to blob");
+  }
+  await navigator.clipboard.write([
+    new window.ClipboardItem({ "image/png": blob }),
+  ]);
+};
