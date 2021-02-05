@@ -27,6 +27,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     renderFooter,
     langCode = defaultLang.code,
     viewModeEnabled,
+    onHomeButtonClick,
   } = props;
 
   useEffect(() => {
@@ -63,9 +64,9 @@ const Excalidraw = (props: ExcalidrawProps) => {
           isCollaborating={isCollaborating}
           onPointerUpdate={onPointerUpdate}
           onExportToBackend={onExportToBackend}
-          renderFooter={renderFooter}
           langCode={langCode}
           viewModeEnabled={viewModeEnabled}
+          onHomeButtonClick={onHomeButtonClick}
         />
       </IsMobileProvider>
     </InitializeApp>
@@ -98,10 +99,24 @@ const forwardedRefComp = forwardRef<
   ExcalidrawAPIRefValue,
   PublicExcalidrawProps
 >((props, ref) => <Excalidraw {...props} excalidrawRef={ref} />);
+
 export default React.memo(forwardedRefComp, areEqual);
+
 export {
   getSceneVersion,
   getSyncableElements,
   getElementMap,
 } from "../../element";
 export { defaultLang, languages } from "../../i18n";
+export {
+  exportToBlob,
+  exportToCanvas,
+  exportToSvg,
+  exportToClipboard,
+} from "../utils";
+export { restore, restoreElements, restoreAppState } from "../../data/restore";
+export { getDefaultAppState } from "../../appState";
+export {
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";

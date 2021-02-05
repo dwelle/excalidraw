@@ -453,6 +453,7 @@ class App extends React.Component<ExcalidrawProps, AppState> {
           onExportToBackend={onExportToBackend}
           renderCustomFooter={renderFooter}
           viewModeEnabled={viewModeEnabled}
+          onHomeButtonClick={this.props.onHomeButtonClick}
         />
         <div className="excalidraw-textEditorContainer" />
         {this.state.showStats && (
@@ -665,6 +666,13 @@ class App extends React.Component<ExcalidrawProps, AppState> {
       ),
       isLoading: false,
     };
+
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = initialData.scrollY;
+    }
 
     this.resetHistory();
     this.syncActionResult({
@@ -1223,26 +1231,30 @@ class App extends React.Component<ExcalidrawProps, AppState> {
     this.setState({ toastMessage: null });
   };
 
-  public updateScene = withBatchedUpdates((sceneData: SceneData) => {
-    if (sceneData.commitToHistory) {
-      history.resumeRecording();
-    }
+  public updateScene = withBatchedUpdates(
+    <K extends keyof AppState>(sceneData: {
+      elements?: SceneData["elements"];
+      appState?: Pick<AppState, K>;
+      collaborators?: SceneData["collaborators"];
+      commitToHistory?: SceneData["commitToHistory"];
+    }) => {
+      if (sceneData.commitToHistory) {
+        history.resumeRecording();
+      }
 
-    // currently we only support syncing background color
-    if (sceneData.appState?.viewBackgroundColor) {
-      this.setState({
-        viewBackgroundColor: sceneData.appState.viewBackgroundColor,
-      });
-    }
+      if (sceneData.appState) {
+        this.setState(sceneData.appState);
+      }
 
-    if (sceneData.elements) {
-      this.scene.replaceAllElements(sceneData.elements);
-    }
+      if (sceneData.elements) {
+        this.scene.replaceAllElements(sceneData.elements);
+      }
 
-    if (sceneData.collaborators) {
-      this.setState({ collaborators: sceneData.collaborators });
-    }
-  });
+      if (sceneData.collaborators) {
+        this.setState({ collaborators: sceneData.collaborators });
+      }
+    },
+  );
 
   private onSceneUpdated = () => {
     this.setState({});
