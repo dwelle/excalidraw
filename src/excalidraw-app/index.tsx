@@ -184,6 +184,7 @@ function ExcalidrawWrapper() {
     const onHashChange = (_: HashChangeEvent) => {
       initializeScene({ collabAPI }).then((scene) => {
         if (scene) {
+          // @ts-ignore
           excalidrawAPI.updateScene(scene);
         }
       });

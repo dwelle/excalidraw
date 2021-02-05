@@ -28,11 +28,7 @@ const CollabButton = ({
         title={t("buttons.roomDialog")}
         aria-label={t("buttons.roomDialog")}
         showAriaLabel={useIsMobile()}
-      >
-        {collaboratorCount > 0 && (
-          <div className="CollabButton-collaborators">{collaboratorCount}</div>
-        )}
-      </ToolButton>
+      />
     </>
   );
 };

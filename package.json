@@ -1,4 +1,8 @@
 {
+  "main": "src/packages/excalidraw/dist/excalidraw.min.js",
+  "files": [
+    "src/packages/excalidraw/dist/*"
+  ],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -80,6 +84,8 @@
   "private": true,
   "scripts": {
     "build-node": "node ./scripts/build-node.js",
+    "build:package": "cd src/packages/excalidraw && npm run build",
+    "build:package:deploy": "npm run build:package && git add . && git commit -m release --no-edit --no-verify && git push -f && git rev-parse --short HEAD",
     "build:app:docker": "REACT_APP_DISABLE_SENTRY=true react-scripts build",
     "build:app": "REACT_APP_GIT_SHA=$VERCEL_GIT_COMMIT_SHA react-scripts build",
     "build:version": "node ./scripts/build-version.js",
