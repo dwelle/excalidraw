@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { ToolButton } from "./ToolButton";
 import { t } from "../i18n";
 import useIsMobile from "../is-mobile";
-import { users } from "./icons";
+import { shareIcon } from "./icons";
 
 import "./CollabButton.scss";
 
@@ -23,7 +23,7 @@ const CollabButton = ({
           "is-collaborating": isCollaborating,
         })}
         onClick={onClick}
-        icon={users}
+        icon={shareIcon}
         type="button"
         title={t("labels.liveCollaboration")}
         aria-label={t("labels.liveCollaboration")}
