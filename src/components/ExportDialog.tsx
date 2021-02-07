@@ -168,6 +168,8 @@ const ExportModal = ({
                 onClick={() => onExportToBackend(exportedElements)}
               />
             )}
+            {appState.fileHandle && actionManager.renderAction("saveScene")}
+            {actionManager.renderAction("saveAsScene")}
           </Stack.Row>
           <Stack.Row gap={2}>
             {scales.map((s) => {

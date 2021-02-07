@@ -24,7 +24,6 @@ const Excalidraw = (props: ExcalidrawProps) => {
     isCollaborating,
     onPointerUpdate,
     onExportToBackend,
-    renderFooter,
     langCode = defaultLang.code,
     viewModeEnabled,
     zenModeEnabled,
