@@ -1,3 +1,5 @@
+/// <reference types="resize-observer-browser" />
+
 import { KEYS } from "../keys";
 import { isWritableElement, getFontString } from "../utils";
 import Scene from "../scene/Scene";
@@ -38,6 +40,7 @@ export const textWysiwyg = ({
   onSubmit,
   getViewportCoords,
   element,
+  canvas,
 }: {
   id: ExcalidrawElement["id"];
   appState: AppState;
@@ -45,6 +48,7 @@ export const textWysiwyg = ({
   onSubmit: (text: string) => void;
   getViewportCoords: (x: number, y: number) => [number, number];
   element: ExcalidrawElement;
+  canvas: HTMLCanvasElement | null;
 }) => {
   const updateWysiwygStyle = () => {
     const updatedElement = Scene.getScene(element)?.getElement(id);
@@ -110,6 +114,14 @@ export const textWysiwyg = ({
 
   updateWysiwygStyle();
 
+  let observer: ResizeObserver | null = null;
+  if (canvas) {
+    observer = new window.ResizeObserver(() => {
+      updateWysiwygStyle();
+    });
+    observer.observe(canvas);
+  }
+
   if (onChange) {
     editable.oninput = () => {
       onChange(normalizeText(editable.value));
@@ -151,7 +163,11 @@ export const textWysiwyg = ({
     editable.oninput = null;
     editable.onkeydown = null;
 
-    window.removeEventListener("resize", updateWysiwygStyle);
+    if (observer) {
+      observer.disconnect();
+    }
+
+    // window.removeEventListener("resize", updateWysiwygStyle);
     window.removeEventListener("wheel", stopEvent, true);
     window.removeEventListener("pointerdown", onPointerDown);
     window.removeEventListener("pointerup", rebindBlur);
@@ -199,7 +215,7 @@ export const textWysiwyg = ({
   editable.onblur = handleSubmit;
   // reposition wysiwyg in case of window resize. Happens on mobile when
   // device keyboard is opened.
-  window.addEventListener("resize", updateWysiwygStyle);
+  // window.addEventListener("resize", updateWysiwygStyle);
   window.addEventListener("pointerdown", onPointerDown);
   window.addEventListener("wheel", stopEvent, {
     passive: false,
