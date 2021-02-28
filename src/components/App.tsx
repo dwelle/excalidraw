@@ -411,10 +411,10 @@ class App extends React.Component<ExcalidrawProps, AppState> {
 
   public render() {
     const {
-      zenModeEnabled,
       width: canvasDOMWidth,
       height: canvasDOMHeight,
       viewModeEnabled,
+      zenModeEnabled,
     } = this.state;
 
     const { onCollabButtonClick, onExportToBackend, renderFooter } = this.props;
@@ -425,6 +425,7 @@ class App extends React.Component<ExcalidrawProps, AppState> {
     return (
       <div
         className={clsx("excalidraw", {
+          "excalidraw--zen-mode": zenModeEnabled,
           "excalidraw--view-mode": viewModeEnabled,
         })}
         ref={this.excalidrawContainerRef}
