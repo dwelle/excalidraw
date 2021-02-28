@@ -175,12 +175,6 @@ const LibraryMenuItems = ({
           />
         </>
       )}
-      <a
-        href={`https://libraries.excalidraw.com?referrer=${referrer}`}
-        target="_excalidraw_libraries"
-      >
-        {t("labels.libraries")}
-      </a>
     </div>,
   );
 
