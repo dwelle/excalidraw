@@ -485,6 +485,7 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <div
         className={clsx("excalidraw excalidraw-container", {
+          "excalidraw--zen-mode": zenModeEnabled,
           "excalidraw--view-mode": viewModeEnabled,
           "excalidraw--mobile": this.deviceType.isMobile,
         })}
