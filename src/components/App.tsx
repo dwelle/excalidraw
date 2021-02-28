@@ -434,10 +434,10 @@ class App extends React.Component<AppProps, AppState> {
 
   public render() {
     const {
-      zenModeEnabled,
       width: canvasDOMWidth,
       height: canvasDOMHeight,
       viewModeEnabled,
+      zenModeEnabled,
     } = this.state;
 
     const {
@@ -453,6 +453,7 @@ class App extends React.Component<AppProps, AppState> {
     return (
       <div
         className={clsx("excalidraw excalidraw-container", {
+          "excalidraw--zen-mode": zenModeEnabled,
           "excalidraw--view-mode": viewModeEnabled,
           "excalidraw--mobile": this.isMobile,
         })}
