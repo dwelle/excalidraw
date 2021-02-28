@@ -42,4 +42,14 @@
       }
     }
   }
+
+  &.excalidraw--view-mode {
+    .App-menu_top {
+      .Stack_vertical {
+        .Island {
+          min-width: auto;
+        }
+      }
+    }
+  }
 }
