@@ -187,6 +187,7 @@ export interface ExcalidrawProps {
     appState: AppState,
     canvas: HTMLCanvasElement | null,
   ) => void;
+  renderTopRight?: (isMobile: boolean) => JSX.Element;
   renderFooter?: (isMobile: boolean) => JSX.Element;
   langCode?: Language["code"];
   viewModeEnabled?: boolean;
