@@ -450,6 +450,7 @@ class App extends React.Component<AppProps, AppState> {
     const { zenModeEnabled, viewModeEnabled } = this.state;
 
     const {
+      renderTopRight,
       onCollabButtonClick,
       onExportToBackend,
       renderFooter,
@@ -476,6 +477,7 @@ class App extends React.Component<AppProps, AppState> {
           <IsMobileContext.Provider value={this.isMobile}>
             <LayerUI
               onHomeButtonClick={this.props.onHomeButtonClick}
+              renderTopRight={renderTopRight}
               canvas={this.canvas}
               appState={this.state}
               setAppState={this.setAppState}

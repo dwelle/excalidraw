@@ -168,6 +168,7 @@ export interface ExcalidrawProps {
     appState: AppState,
   ) => void;
   onHomeButtonClick?: () => void;
+  renderTopRight?: (isMobile: boolean) => JSX.Element;
   initialData?: InitialData | null | Promise<InitialData | null>;
   user?: {
     name?: string | null;
