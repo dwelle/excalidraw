@@ -424,6 +424,7 @@ class App extends React.Component<AppProps, AppState> {
     } = this.state;
 
     const {
+      renderTopRight,
       onCollabButtonClick,
       onExportToBackend,
       renderFooter,
@@ -464,6 +465,7 @@ class App extends React.Component<AppProps, AppState> {
           isCollaborating={this.props.isCollaborating || false}
           onExportToBackend={onExportToBackend}
           renderCustomFooter={renderFooter}
+          renderTopRight={renderTopRight}
           viewModeEnabled={viewModeEnabled}
           showExitZenModeBtn={
             typeof this.props?.zenModeEnabled === "undefined" && zenModeEnabled
