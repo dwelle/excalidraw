@@ -14,6 +14,7 @@ import { DEFAULT_UI_OPTIONS } from "../../constants";
 const Excalidraw = (props: ExcalidrawProps) => {
   const {
     onHomeButtonClick,
+    renderTopRight,
     onChange,
     initialData,
     excalidrawRef,
@@ -66,6 +67,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <App
         onHomeButtonClick={onHomeButtonClick}
+        renderTopRight={renderTopRight}
         onChange={onChange}
         initialData={initialData}
         excalidrawRef={excalidrawRef}
