@@ -428,7 +428,12 @@ class App extends React.Component<ExcalidrawProps, AppState> {
       zenModeEnabled,
     } = this.state;
 
-    const { onCollabButtonClick, onExportToBackend, renderFooter } = this.props;
+    const {
+      onCollabButtonClick,
+      onExportToBackend,
+      renderFooter,
+      renderTopRight,
+    } = this.props;
 
     const DEFAULT_PASTE_X = canvasDOMWidth / 2;
     const DEFAULT_PASTE_Y = canvasDOMHeight / 2;
@@ -466,6 +471,7 @@ class App extends React.Component<ExcalidrawProps, AppState> {
           isCollaborating={this.props.isCollaborating || false}
           onExportToBackend={onExportToBackend}
           renderCustomFooter={renderFooter}
+          renderTopRight={renderTopRight}
           viewModeEnabled={viewModeEnabled}
           showExitZenModeBtn={
             typeof this.props?.zenModeEnabled === "undefined" && zenModeEnabled

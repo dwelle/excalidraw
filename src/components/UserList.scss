@@ -1,16 +1,46 @@
 .excalidraw {
+  $marginTop: 60px;
+  // eye-balled
+  $bottomOffset: 60px;
+
   .UserList {
     pointer-events: none;
     /*github corner*/
     padding: var(--space-factor);
     display: flex;
-    flex-wrap: wrap;
     justify-content: flex-end;
+
+    overflow: hidden;
+    border-radius: 60px;
+
+    &.layout-vertical {
+      grid-column: 3;
+      flex-direction: column-reverse;
+      position: absolute;
+      top: $marginTop;
+      right: var(--space-factor);
+      max-height: calc(
+        100vh - var(--space-factor) - #{$marginTop} - #{$bottomOffset} +
+          var(--itemOffset)
+      );
+
+      .Avatar {
+        width: 2.4rem;
+        height: 2.4rem;
+      }
+
+      padding-bottom: max(calc(var(--itemOffset) * -1), 0px);
+    }
   }
 
   .UserList > * {
     pointer-events: all;
-    margin: 0 0 var(--space-factor) var(--space-factor);
+  }
+  .UserList.layout-vertical > * {
+    margin-bottom: var(--itemOffset);
+  }
+  .UserList.layout-horizontal > * {
+    margin-right: var(--itemOffset);
   }
 
   .UserList_mobile {

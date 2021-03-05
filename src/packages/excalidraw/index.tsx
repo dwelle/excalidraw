@@ -31,6 +31,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     theme,
     name,
     onHomeButtonClick,
+    renderTopRight,
   } = props;
 
   useEffect(() => {
@@ -73,6 +74,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
           theme={theme}
           name={name}
           onHomeButtonClick={onHomeButtonClick}
+          renderTopRight={renderTopRight}
         />
       </IsMobileProvider>
     </InitializeApp>
