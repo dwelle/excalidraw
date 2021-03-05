@@ -68,6 +68,7 @@ interface LayerUIProps {
     appState: AppState,
     canvas: HTMLCanvasElement | null,
   ) => void;
+  renderTopRight?: (isMobile: boolean) => JSX.Element;
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
   viewModeEnabled: boolean;
   libraryReturnUrl: ExcalidrawProps["libraryReturnUrl"];
@@ -345,6 +346,7 @@ const LayerUI = ({
   isCollaborating,
   onExportToBackend,
   renderCustomFooter,
+  renderTopRight,
   viewModeEnabled,
   libraryReturnUrl,
   UIOptions,
@@ -553,10 +555,22 @@ const LayerUI = ({
               )}
             </Section>
           )}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              paddingRight: "var(--space-factor)",
+            }}
+          >
+            {renderTopRight?.(isMobile)}
+          </div>
           <UserList
             className={clsx("zen-mode-transition", {
               "transition-right": zenModeEnabled,
             })}
+            layout="vertical"
+            collaborators={appState.collaborators}
           >
             {appState.collaborators.size > 0 &&
               Array.from(appState.collaborators)
@@ -709,6 +723,7 @@ const areEqual = (prev: LayerUIProps, next: LayerUIProps) => {
   const keys = Object.keys(prevAppState) as (keyof Partial<AppState>)[];
   return (
     prev.renderCustomFooter === next.renderCustomFooter &&
+    prev.renderTopRight === next.renderTopRight &&
     prev.langCode === next.langCode &&
     prev.elements === next.elements &&
     keys.every((key) => prevAppState[key] === nextAppState[key])
