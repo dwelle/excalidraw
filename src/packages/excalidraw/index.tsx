@@ -29,6 +29,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     zenModeEnabled,
     gridModeEnabled,
     onHomeButtonClick,
+    renderTopRight,
   } = props;
 
   useEffect(() => {
@@ -69,6 +70,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
           zenModeEnabled={zenModeEnabled}
           gridModeEnabled={gridModeEnabled}
           onHomeButtonClick={onHomeButtonClick}
+          renderTopRight={renderTopRight}
         />
       </IsMobileProvider>
     </InitializeApp>
