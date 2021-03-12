@@ -122,7 +122,6 @@ export const MobileMenu = ({
       <>
         {actionManager.renderAction("loadScene")}
         {exportButton}
-        {actionManager.renderAction("clearCanvas")}
         {onCollabButtonClick && (
           <CollabButton
             isCollaborating={isCollaborating}
