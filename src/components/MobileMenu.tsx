@@ -168,21 +168,8 @@ export const MobileMenu = ({
                         mobile
                         layout="horizontal"
                         collaborators={appState.collaborators}
-                      >
-                        {Array.from(appState.collaborators)
-                          // Collaborator is either not initialized or is actually the current user.
-                          .filter(
-                            ([_, client]) => Object.keys(client).length !== 0,
-                          )
-                          .map(([clientId, client]) => (
-                            <React.Fragment key={clientId}>
-                              {actionManager.renderAction(
-                                "goToCollaborator",
-                                clientId,
-                              )}
-                            </React.Fragment>
-                          ))}
-                      </UserList>
+                        actionManager={actionManager}
+                      />
                     </fieldset>
                   )}
                 </Stack.Col>
