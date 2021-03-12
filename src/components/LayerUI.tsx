@@ -417,7 +417,6 @@ const LayerUI = ({
                 onClick={onCollabButtonClick}
               />
             )}
-            {actionManager.renderAction("clearCanvas")}
           </Stack.Row>
           <BackgroundPickerAndDarkModeToggle
             actionManager={actionManager}
