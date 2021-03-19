@@ -33,6 +33,7 @@ type MobileMenuProps = {
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
   onHomeButtonClick?: () => void;
   viewModeEnabled: boolean;
+  showThemeBtn: boolean;
 };
 
 export const MobileMenu = ({
@@ -49,6 +50,7 @@ export const MobileMenu = ({
   renderCustomFooter,
   onHomeButtonClick,
   viewModeEnabled,
+  showThemeBtn,
 }: MobileMenuProps) => {
   const renderToolbar = () => {
     return (
@@ -134,6 +136,7 @@ export const MobileMenu = ({
             actionManager={actionManager}
             appState={appState}
             setAppState={setAppState}
+            showThemeBtn={showThemeBtn}
           />
         }
       </>

@@ -17,7 +17,7 @@ import { Language, t } from "../i18n";
 import useIsMobile from "../is-mobile";
 import { calculateScrollCenter, getSelectedElements } from "../scene";
 import { ExportType } from "../scene/types";
-import { AppState, LibraryItem, LibraryItems } from "../types";
+import { AppState, ExcalidrawProps, LibraryItem, LibraryItems } from "../types";
 import { muteFSAbortError } from "../utils";
 import { SelectedShapeActions, ShapesSwitcher, ZoomActions } from "./Actions";
 import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
@@ -51,6 +51,7 @@ interface LayerUIProps {
   onInsertElements: (elements: readonly NonDeletedExcalidrawElement[]) => void;
   zenModeEnabled: boolean;
   showExitZenModeBtn: boolean;
+  showThemeBtn: boolean;
   toggleZenMode: () => void;
   langCode: Language["code"];
   isCollaborating: boolean;
@@ -63,6 +64,7 @@ interface LayerUIProps {
   renderCustomFooter?: (isMobile: boolean) => JSX.Element;
   viewModeEnabled: boolean;
   onHomeButtonClick?: () => void;
+  libraryReturnUrl: ExcalidrawProps["libraryReturnUrl"];
 }
 
 const useOnClickOutside = (
@@ -101,6 +103,7 @@ const LibraryMenuItems = ({
   pendingElements,
   setAppState,
   setLibraryItems,
+  libraryReturnUrl,
 }: {
   library: LibraryItems;
   pendingElements: LibraryItem;
@@ -109,6 +112,7 @@ const LibraryMenuItems = ({
   onAddToLibrary: (elements: LibraryItem) => void;
   setAppState: React.Component<any, AppState>["setState"];
   setLibraryItems: (library: LibraryItems) => void;
+  libraryReturnUrl: ExcalidrawProps["libraryReturnUrl"];
 }) => {
   const isMobile = useIsMobile();
   const numCells = library.length + (pendingElements.length > 0 ? 1 : 0);
@@ -219,12 +223,14 @@ const LibraryMenu = ({
   pendingElements,
   onAddToLibrary,
   setAppState,
+  libraryReturnUrl,
 }: {
   pendingElements: LibraryItem;
   onClickOutside: (event: MouseEvent) => void;
   onInsertShape: (elements: LibraryItem) => void;
   onAddToLibrary: () => void;
   setAppState: React.Component<any, AppState>["setState"];
+  libraryReturnUrl: ExcalidrawProps["libraryReturnUrl"];
 }) => {
   const ref = useRef<HTMLDivElement | null>(null);
   useOnClickOutside(ref, (event) => {
@@ -297,6 +303,7 @@ const LibraryMenu = ({
           pendingElements={pendingElements}
           setAppState={setAppState}
           setLibraryItems={setLibraryItems}
+          libraryReturnUrl={libraryReturnUrl}
         />
       )}
     </Island>
@@ -314,6 +321,7 @@ const LayerUI = ({
   onInsertElements,
   zenModeEnabled,
   showExitZenModeBtn,
+  showThemeBtn,
   toggleZenMode,
   isCollaborating,
   onExportToBackend,
@@ -321,6 +329,7 @@ const LayerUI = ({
   renderTopRight,
   viewModeEnabled,
   onHomeButtonClick,
+  libraryReturnUrl,
 }: LayerUIProps) => {
   const isMobile = useIsMobile();
 
@@ -411,6 +420,7 @@ const LayerUI = ({
             actionManager={actionManager}
             appState={appState}
             setAppState={setAppState}
+            showThemeBtn={showThemeBtn}
           />
         </Stack.Col>
       </Island>
@@ -464,6 +474,7 @@ const LayerUI = ({
       onInsertShape={onInsertElements}
       onAddToLibrary={deselectItems}
       setAppState={setAppState}
+      libraryReturnUrl={libraryReturnUrl}
     />
   ) : null;
 
@@ -626,6 +637,7 @@ const LayerUI = ({
         renderCustomFooter={renderCustomFooter}
         viewModeEnabled={viewModeEnabled}
         onHomeButtonClick={onHomeButtonClick}
+        showThemeBtn={showThemeBtn}
       />
     </>
   ) : (

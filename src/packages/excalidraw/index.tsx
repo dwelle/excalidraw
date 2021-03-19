@@ -15,8 +15,6 @@ const Excalidraw = (props: ExcalidrawProps) => {
   const {
     width,
     height,
-    offsetLeft,
-    offsetTop,
     onChange,
     initialData,
     excalidrawRef,
@@ -30,6 +28,8 @@ const Excalidraw = (props: ExcalidrawProps) => {
     gridModeEnabled,
     onHomeButtonClick,
     renderTopRight,
+    libraryReturnUrl,
+    theme,
   } = props;
 
   useEffect(() => {
@@ -56,8 +56,6 @@ const Excalidraw = (props: ExcalidrawProps) => {
         <App
           width={width}
           height={height}
-          offsetLeft={offsetLeft}
-          offsetTop={offsetTop}
           onChange={onChange}
           initialData={initialData}
           excalidrawRef={excalidrawRef}
@@ -71,6 +69,8 @@ const Excalidraw = (props: ExcalidrawProps) => {
           gridModeEnabled={gridModeEnabled}
           onHomeButtonClick={onHomeButtonClick}
           renderTopRight={renderTopRight}
+          libraryReturnUrl={libraryReturnUrl}
+          theme={theme}
         />
       </IsMobileProvider>
     </InitializeApp>
