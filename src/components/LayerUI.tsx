@@ -31,9 +31,8 @@ import CollabButton from "./CollabButton";
 import { ErrorDialog } from "./ErrorDialog";
 import { ExportCB, ExportDialog } from "./ExportDialog";
 import { FixedSideContainer } from "./FixedSideContainer";
-import { GitHubCorner } from "./GitHubCorner";
 import { HintViewer } from "./HintViewer";
-import { exportFile, load, shield, trash } from "./icons";
+import { exportFile, load, trash } from "./icons";
 import { Island } from "./Island";
 import "./LayerUI.scss";
 import { LibraryUnit } from "./LibraryUnit";
@@ -49,6 +48,7 @@ import { Tooltip } from "./Tooltip";
 import { UserList } from "./UserList";
 
 interface LayerUIProps {
+  onHomeButtonClick?: () => void;
   actionManager: ActionManager;
   appState: AppState;
   canvas: HTMLCanvasElement | null;
@@ -329,6 +329,7 @@ const LibraryMenu = ({
 };
 
 const LayerUI = ({
+  onHomeButtonClick,
   actionManager,
   appState,
   setAppState,
@@ -349,22 +350,6 @@ const LayerUI = ({
   UIOptions,
 }: LayerUIProps) => {
   const isMobile = useIsMobile();
-
-  const renderEncryptedIcon = () => (
-    <a
-      className={clsx("encrypted-icon tooltip zen-mode-visibility", {
-        "zen-mode-visibility--hidden": zenModeEnabled,
-      })}
-      href="https://blog.excalidraw.com/end-to-end-encryption/"
-      target="_blank"
-      rel="noopener noreferrer"
-      aria-label={t("encrypted.link")}
-    >
-      <Tooltip label={t("encrypted.tooltip")} position="above" long={true}>
-        {shield}
-      </Tooltip>
-    </a>
-  );
 
   const renderExportDialog = () => {
     if (!UIOptions.canvasActions.export) {
@@ -608,27 +593,12 @@ const LayerUI = ({
                 zoom={appState.zoom}
               />
             </Island>
-            {renderEncryptedIcon()}
           </Section>
         </Stack.Col>
       </div>
     );
   };
 
-  const renderGitHubCorner = () => {
-    return (
-      <aside
-        className={clsx(
-          "layer-ui__wrapper__github-corner zen-mode-transition",
-          {
-            "transition-right": zenModeEnabled,
-          },
-        )}
-      >
-        <GitHubCorner theme={appState.theme} />
-      </aside>
-    );
-  };
   const renderFooter = () => (
     <footer role="contentinfo" className="layer-ui__wrapper__footer">
       <div
@@ -681,6 +651,7 @@ const LayerUI = ({
     <>
       {dialogs}
       <MobileMenu
+        onHomeButtonClick={onHomeButtonClick}
         appState={appState}
         elements={elements}
         actionManager={actionManager}
@@ -708,7 +679,6 @@ const LayerUI = ({
       {dialogs}
       {renderFixedSideContainer()}
       {renderBottomAppMenu()}
-      {renderGitHubCorner()}
       {renderFooter()}
       {appState.scrolledOutside && (
         <button
