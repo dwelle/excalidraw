@@ -129,6 +129,7 @@
     "undo": "Undo",
     "redo": "Redo",
     "resetLibrary": "Reset library",
+    "roomDialog": "Sharing",
     "createNewRoom": "Create new room",
     "fullScreen": "Full screen",
     "darkMode": "Dark mode",
