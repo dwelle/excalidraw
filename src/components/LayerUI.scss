@@ -40,21 +40,6 @@
   .layer-ui__wrapper {
     z-index: var(--zIndex-layerUI);
 
-    .encrypted-icon {
-      position: relative;
-      margin-inline-start: 15px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      border-radius: var(--space-factor);
-      color: $oc-green-9;
-
-      svg {
-        width: 1.2rem;
-        height: 1.2rem;
-      }
-    }
-
     &__top-right {
       display: flex;
     }

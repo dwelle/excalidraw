@@ -239,6 +239,7 @@ const ExcalidrawWrapper = () => {
       } else {
         initializeScene({ collabAPI }).then((scene) => {
           if (scene) {
+            // @ts-ignore
             excalidrawAPI.updateScene(scene);
           }
         });
