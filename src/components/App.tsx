@@ -440,8 +440,9 @@ class App extends React.Component<AppProps, AppState> {
         })}
         ref={this.excalidrawContainerRef}
         onDrop={this.handleAppOnDrop}
-      >
+        >
         <LayerUI
+          onHomeButtonClick={this.props.onHomeButtonClick}
           canvas={this.canvas}
           appState={this.state}
           setAppState={this.setAppState}
@@ -722,6 +723,13 @@ class App extends React.Component<AppProps, AppState> {
           null,
         ),
       };
+    }
+
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = initialData.scrollY;
     }
 
     this.resetHistory();
@@ -1342,26 +1350,30 @@ class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  public updateScene = withBatchedUpdates((sceneData: SceneData) => {
-    if (sceneData.commitToHistory) {
-      history.resumeRecording();
-    }
+  public updateScene = withBatchedUpdates(
+    <K extends keyof AppState>(sceneData: {
+      elements?: SceneData["elements"];
+      appState?: Pick<AppState, K>;
+      collaborators?: SceneData["collaborators"];
+      commitToHistory?: SceneData["commitToHistory"];
+    }) => {
+      if (sceneData.commitToHistory) {
+        history.resumeRecording();
+      }
 
-    // currently we only support syncing background color
-    if (sceneData.appState?.viewBackgroundColor) {
-      this.setState({
-        viewBackgroundColor: sceneData.appState.viewBackgroundColor,
-      });
-    }
+      if (sceneData.appState) {
+        this.setState(sceneData.appState);
+      }
 
-    if (sceneData.elements) {
-      this.scene.replaceAllElements(sceneData.elements);
-    }
+      if (sceneData.elements) {
+        this.scene.replaceAllElements(sceneData.elements);
+      }
 
-    if (sceneData.collaborators) {
-      this.setState({ collaborators: sceneData.collaborators });
-    }
-  });
+      if (sceneData.collaborators) {
+        this.setState({ collaborators: sceneData.collaborators });
+      }
+    },
+  );
 
   private onSceneUpdated = () => {
     this.setState({});
