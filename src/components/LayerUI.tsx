@@ -50,6 +50,7 @@ import { JSONExportDialog } from "./JSONExportDialog";
 import { LibraryButton } from "./LibraryButton";
 
 interface LayerUIProps {
+  onHomeButtonClick?: () => void;
   actionManager: ActionManager;
   appState: AppState;
   canvas: HTMLCanvasElement | null;
@@ -359,6 +360,7 @@ const LibraryMenu = ({
 };
 
 const LayerUI = ({
+  onHomeButtonClick,
   actionManager,
   appState,
   setAppState,
@@ -726,6 +728,7 @@ const LayerUI = ({
     <>
       {dialogs}
       <MobileMenu
+        onHomeButtonClick={onHomeButtonClick}
         appState={appState}
         elements={elements}
         actionManager={actionManager}
@@ -784,6 +787,7 @@ const areEqual = (prev: LayerUIProps, next: LayerUIProps) => {
 
   const keys = Object.keys(prevAppState) as (keyof Partial<AppState>)[];
   return (
+    prev.renderTopRightUI === next.renderTopRightUI &&
     prev.renderCustomFooter === next.renderCustomFooter &&
     prev.langCode === next.langCode &&
     prev.elements === next.elements &&

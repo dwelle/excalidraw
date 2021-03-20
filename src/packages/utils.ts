@@ -91,6 +91,18 @@ export const exportToSvg = async ({
   });
 };
 
+export const exportToClipboard = async (
+  opts: ExportOpts & { mimeType?: string; quality?: number },
+) => {
+  const blob = await exportToBlob(opts);
+  if (!blob) {
+    throw new Error("couldn't export to blob");
+  }
+  await navigator.clipboard.write([
+    new window.ClipboardItem({ "image/png": blob }),
+  ]);
+};
+
 export { serializeAsJSON } from "../data/json";
 export { loadFromBlob, loadLibraryFromBlob } from "../data/blob";
 export { getFreeDrawSvgPath } from "../renderer/renderElement";

@@ -17,8 +17,11 @@ import { LockButton } from "./LockButton";
 import { UserList } from "./UserList";
 import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
 import { LibraryButton } from "./LibraryButton";
+import { ToolButton } from "./ToolButton";
+import { home } from "./icons";
 
 type MobileMenuProps = {
+  onHomeButtonClick?: () => void;
   appState: AppState;
   actionManager: ActionManager;
   renderJSONExportDialog: () => React.ReactNode;
@@ -36,6 +39,7 @@ type MobileMenuProps = {
 };
 
 export const MobileMenu = ({
+  onHomeButtonClick,
   appState,
   elements,
   libraryMenu,
@@ -68,6 +72,15 @@ export const MobileMenu = ({
                     />
                   </Stack.Row>
                 </Island>
+                <ToolButton
+                  key="home"
+                  type="button"
+                  className="HomeButton ToolIcon_type_floating"
+                  title={"Home"}
+                  aria-label={"Home"}
+                  icon={home}
+                  onClick={onHomeButtonClick}
+                />
                 <LockButton
                   checked={appState.elementLocked}
                   onChange={onLockToggle}
