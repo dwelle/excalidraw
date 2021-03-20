@@ -30,6 +30,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     libraryReturnUrl,
     theme,
     name,
+    onHomeButtonClick,
   } = props;
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
           libraryReturnUrl={libraryReturnUrl}
           theme={theme}
           name={name}
+          onHomeButtonClick={onHomeButtonClick}
         />
       </IsMobileProvider>
     </InitializeApp>
@@ -102,16 +104,24 @@ const forwardedRefComp = forwardRef<
   ExcalidrawAPIRefValue,
   PublicExcalidrawProps
 >((props, ref) => <Excalidraw {...props} excalidrawRef={ref} />);
+
 export default React.memo(forwardedRefComp, areEqual);
+
 export {
   getSceneVersion,
   getSyncableElements,
   getElementMap,
 } from "../../element";
 export { defaultLang, languages } from "../../i18n";
-export { restore, restoreAppState, restoreElements } from "../../data/restore";
+export { restore, restoreElements, restoreAppState } from "../../data/restore";
 export {
-  exportToCanvas,
   exportToBlob,
+  exportToCanvas,
   exportToSvg,
-} from "../../packages/utils";
+  exportToClipboard,
+} from "../utils";
+export { getDefaultAppState } from "../../appState";
+export {
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";

@@ -3,7 +3,7 @@ import "./Avatar.scss";
 import React from "react";
 
 type AvatarProps = {
-  children: string;
+  children: JSX.Element | string;
   onClick: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
   color: string;
   border: string;
@@ -12,7 +12,7 @@ type AvatarProps = {
 export const Avatar = ({ children, color, border, onClick }: AvatarProps) => (
   <div
     className="Avatar"
-    style={{ background: color, border: `1px solid ${border}` }}
+    style={{ background: color, border: `2px solid ${border}` }}
     onClick={onClick}
   >
     {children}
