@@ -414,12 +414,9 @@ const LayerUI = ({
          see https://github.com/excalidraw/excalidraw/pull/1445 */}
       <Island padding={2} style={{ zIndex: 1 }}>
         <Stack.Col gap={4}>
-          <Stack.Row gap={1} justifyContent="space-between">
+          <Stack.Row gap={3} justifyContent="space-between">
             {actionManager.renderAction("loadScene")}
-            {actionManager.renderAction("saveScene")}
-            {actionManager.renderAction("saveAsScene")}
             {renderExportDialog()}
-            {actionManager.renderAction("clearCanvas")}
             {onCollabButtonClick && (
               <CollabButton
                 isCollaborating={isCollaborating}
@@ -427,6 +424,7 @@ const LayerUI = ({
                 onClick={onCollabButtonClick}
               />
             )}
+            {actionManager.renderAction("clearCanvas")}
           </Stack.Row>
           <BackgroundPickerAndDarkModeToggle
             actionManager={actionManager}
