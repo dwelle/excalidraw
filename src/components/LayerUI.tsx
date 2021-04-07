@@ -459,10 +459,7 @@ const LayerUI = ({
         <Stack.Col gap={4}>
           <Stack.Row gap={3} justifyContent="space-between">
             {actionManager.renderAction("loadScene")}
-            {actionManager.renderAction("saveScene")}
-            {actionManager.renderAction("saveAsScene")}
             {renderExportDialog()}
-            {actionManager.renderAction("clearCanvas")}
             {onCollabButtonClick && (
               <CollabButton
                 isCollaborating={isCollaborating}
