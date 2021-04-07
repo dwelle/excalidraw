@@ -118,21 +118,12 @@ export const MobileMenu = ({
 
   const renderCanvasActions = () => {
     if (viewModeEnabled) {
-      return (
-        <>
-          {actionManager.renderAction("saveScene")}
-          {actionManager.renderAction("saveAsScene")}
-          {exportButton}
-        </>
-      );
+      return <>{exportButton}</>;
     }
     return (
       <>
         {actionManager.renderAction("loadScene")}
-        {actionManager.renderAction("saveScene")}
-        {actionManager.renderAction("saveAsScene")}
         {exportButton}
-        {actionManager.renderAction("clearCanvas")}
         {onCollabButtonClick && (
           <CollabButton
             isCollaborating={isCollaborating}
