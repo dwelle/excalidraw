@@ -7,7 +7,7 @@ const autoprefixer = require("autoprefixer");
 module.exports = {
   mode: "production",
   entry: {
-    "excalidraw.production.min": "./entry.js",
+    "excalidraw.min": "./entry.js",
   },
   output: {
     path: path.resolve(__dirname, "dist"),
