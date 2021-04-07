@@ -6,10 +6,39 @@
     border-radius: 4px;
     padding: calc(var(--padding) * var(--space-factor));
     position: relative;
-    transition: box-shadow 0.5s ease-in-out;
 
     &.zen-mode {
       box-shadow: none;
+    }
+
+    &::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-scrollbar-thumb);
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background-color: var(--color-scrollbar-thumb-hover);
+    }
+
+    &::-webkit-scrollbar-thumb:active {
+      background-color: var(--color-scrollbar-thumb-active);
+    }
+  }
+
+  .App-menu_top {
+    .Stack_vertical {
+      .Island {
+        min-width: 216px;
+      }
+      .Stack_horizontal {
+        justify-content: center !important;
+      }
     }
   }
 }
