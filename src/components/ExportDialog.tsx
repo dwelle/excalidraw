@@ -168,6 +168,8 @@ const ExportModal = ({
                 onClick={() => onExportToBackend(exportedElements)}
               />
             )}
+            {appState.fileHandle && actionManager.renderAction("saveScene")}
+            {actionManager.renderAction("saveAsScene")}
           </Stack.Row>
           <div className="ExportDialog__name">
             {actionManager.renderAction("changeProjectName")}
