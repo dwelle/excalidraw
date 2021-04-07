@@ -1,7 +1,7 @@
 {
   "name": "@excalidraw/excalidraw",
   "version": "0.6.0",
-  "main": "main.js",
+  "main": "dist/excalidraw.min.js",
   "types": "types/packages/excalidraw/index.d.ts",
   "files": [
     "dist/*",
