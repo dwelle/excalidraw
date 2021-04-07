@@ -1,5 +1,6 @@
 {
   "main": "src/packages/excalidraw/dist/excalidraw.min.js",
+  "types": "src/packages/excalidraw/types/packages/excalidraw/index.d.ts",
   "files": [
     "src/packages/excalidraw/dist/*"
   ],
@@ -44,13 +45,15 @@
     "png-chunks-extract": "1.0.0",
     "points-on-curve": "0.2.0",
     "pwacompat": "2.0.17",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
     "react-scripts": "4.0.3",
     "roughjs": "4.3.1",
     "sass": "1.32.10",
     "socket.io-client": "2.3.1",
     "typescript": "4.2.4"
+  },
+  "peerDependencies": {
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@excalidraw/eslint-config": "1.0.0",
