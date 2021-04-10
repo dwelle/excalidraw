@@ -1,0 +1,12 @@
+export declare const actionChangeStrokeColor: import("./types").Action;
+export declare const actionChangeBackgroundColor: import("./types").Action;
+export declare const actionChangeFillStyle: import("./types").Action;
+export declare const actionChangeStrokeWidth: import("./types").Action;
+export declare const actionChangeSloppiness: import("./types").Action;
+export declare const actionChangeStrokeStyle: import("./types").Action;
+export declare const actionChangeOpacity: import("./types").Action;
+export declare const actionChangeFontSize: import("./types").Action;
+export declare const actionChangeFontFamily: import("./types").Action;
+export declare const actionChangeTextAlign: import("./types").Action;
+export declare const actionChangeSharpness: import("./types").Action;
+export declare const actionChangeArrowhead: import("./types").Action;
