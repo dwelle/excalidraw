@@ -163,9 +163,11 @@ export type ExcalidrawAPIRefValue =
 type InitialData = ImportedDataState & { scrollX?: number; scrollY?: number };
 
 export interface ExcalidrawProps {
+  id?: string;
   onChange?: (
     elements: readonly ExcalidrawElement[],
     appState: AppState,
+    id?: string,
   ) => void;
   onHomeButtonClick?: () => void;
   renderTopRight?: (isMobile: boolean) => JSX.Element;

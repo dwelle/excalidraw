@@ -79,6 +79,7 @@ import {
   getCursorForResizingElement,
   getDragOffsetXY,
   getElementWithTransformHandleType,
+  getNonDeletedElements,
   getNormalizedDimensions,
   getPerfectElementSize,
   getResizeArrowDirection,
@@ -745,6 +746,9 @@ class App extends React.Component<AppProps, AppState> {
     let initialData = null;
     try {
       initialData = (await this.props.initialData) || null;
+      if ( initialData?.elements) {
+        console.log(":::", getNonDeletedElements(initialData.elements).map(e => e.type), this.props.id)
+      }
       if (initialData?.libraryItems) {
         this.libraryItemsFromStorage = initialData.libraryItems;
       }
@@ -1147,6 +1151,7 @@ class App extends React.Component<AppProps, AppState> {
       this.props.onChange?.(
         this.scene.getElementsIncludingDeleted(),
         this.state,
+        this.props.id,
       );
     }
   }
