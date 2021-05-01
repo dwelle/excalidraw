@@ -144,7 +144,8 @@ declare type InitialData = ImportedDataState & {
     scrollY?: number;
 };
 export interface ExcalidrawProps {
-    onChange?: (elements: readonly ExcalidrawElement[], appState: AppState) => void;
+    id?: string;
+    onChange?: (elements: readonly ExcalidrawElement[], appState: AppState, id?: string) => void;
     onHomeButtonClick?: () => void;
     renderTopRight?: (isMobile: boolean) => JSX.Element;
     initialData?: InitialData | null | Promise<InitialData | null>;
