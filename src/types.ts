@@ -169,9 +169,11 @@ export type ExcalidrawAPIRefValue =
 type InitialData = ImportedDataState & { scrollX?: number; scrollY?: number };
 
 export interface ExcalidrawProps {
+  id: string | null;
   onChange?: (
     elements: readonly ExcalidrawElement[],
     appState: AppState,
+    id: string | null,
   ) => void;
   onHomeButtonClick?: () => void;
   initialData?: InitialData | null | Promise<InitialData | null>;

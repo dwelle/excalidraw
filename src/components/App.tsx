@@ -1148,6 +1148,7 @@ class App extends React.Component<AppProps, AppState> {
       this.props.onChange?.(
         this.scene.getElementsIncludingDeleted(),
         this.state,
+        this.props.id,
       );
     }
   }
