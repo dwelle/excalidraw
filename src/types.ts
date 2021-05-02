@@ -222,10 +222,12 @@ export type ExcalidrawInitialDataState = Merge<
 >;
 
 export interface ExcalidrawProps {
+  id: string | null;
   onChange?: (
     elements: readonly ExcalidrawElement[],
     appState: AppState,
     files: BinaryFiles,
+    id?: string | null,
   ) => void;
   initialData?:
     | ExcalidrawInitialDataState

@@ -39,6 +39,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     autoFocus = false,
     generateIdForFile,
     onLinkOpen,
+    id,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -78,6 +79,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          id={id}
           onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
@@ -185,16 +187,12 @@ export {
   getNonDeletedElements,
 } from "../../element";
 export { defaultLang, languages } from "../../i18n";
-<<<<<<< HEAD
 export {
   restore,
   restoreAppState,
   restoreElements,
   restoreLibraryItems,
 } from "../../data/restore";
-=======
-export { restore, restoreElements, restoreAppState } from "../../data/restore";
->>>>>>> 172cd879 (custom)
 export {
   exportToBlob,
   exportToCanvas,
