@@ -38,6 +38,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     autoFocus = false,
     generateIdForFile,
     onLinkOpen,
+    id,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -77,6 +78,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          id={id}
           onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
