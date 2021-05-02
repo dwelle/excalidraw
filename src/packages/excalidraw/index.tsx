@@ -35,6 +35,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     detectScroll = true,
     handleKeyboardGlobally = false,
     onLibraryChange,
+    id,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -67,6 +68,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
   return (
     <InitializeApp langCode={langCode}>
       <App
+        id={id}
         onHomeButtonClick={onHomeButtonClick}
         onChange={onChange}
         initialData={initialData}
