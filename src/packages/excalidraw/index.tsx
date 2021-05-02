@@ -44,6 +44,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     onLinkOpen,
     renderCustomElementWidget,
     onElementClick,
+    id,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -88,6 +89,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          id={id}
           onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
