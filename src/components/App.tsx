@@ -1261,6 +1261,7 @@ class App extends React.Component<AppProps, AppState> {
         this.scene.getElementsIncludingDeleted(),
         this.state,
         this.files,
+        this.props.id,
       );
     }
   }
