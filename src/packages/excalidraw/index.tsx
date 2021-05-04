@@ -139,3 +139,4 @@ export {
   cleanAppStateForExport,
   clearAppStateForLocalStorage,
 } from "../../appState";
+export { serializeAsJSON } from "../../data/json";
