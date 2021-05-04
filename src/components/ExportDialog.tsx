@@ -15,6 +15,7 @@ import "./ExportDialog.scss";
 import { clipboard, exportFile, link } from "./icons";
 import Stack from "./Stack";
 import { ToolButton } from "./ToolButton";
+import { supported } from "browser-fs-access";
 
 const scales = [1, 2, 3];
 const defaultScale = scales.includes(devicePixelRatio) ? devicePixelRatio : 1;
@@ -168,7 +169,8 @@ const ExportModal = ({
                 onClick={() => onExportToBackend(exportedElements)}
               />
             )}
-            {appState.fileHandle && actionManager.renderAction("saveScene")}
+            {(appState.fileHandle || !supported) &&
+              actionManager.renderAction("saveScene")}
             {actionManager.renderAction("saveAsScene")}
           </Stack.Row>
           <div className="ExportDialog__name">
