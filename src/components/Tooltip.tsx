@@ -28,7 +28,8 @@ const updateTooltip = (
   long: boolean,
 ) => {
   tooltip.classList.add("is-shown");
-  tooltip.style.width = long ? "50ch" : "10ch";
+  tooltip.style.minWidth = long ? "50ch" : "10ch";
+  tooltip.style.maxWidth = long ? "50ch" : "15ch";
 
   tooltip.textContent = label;
 
