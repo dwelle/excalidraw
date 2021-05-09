@@ -212,7 +212,11 @@ export const MobileMenu = ({
                   {appState.collaborators.size > 0 && (
                     <fieldset>
                       <legend>{t("labels.collaborators")}</legend>
-                      <UserList mobile>
+                      <UserList
+                        mobile
+                        layout="horizontal"
+                        collaborators={appState.collaborators}
+                      >
                         {Array.from(appState.collaborators)
                           // Collaborator is either not initialized or is actually the current user.
                           .filter(
