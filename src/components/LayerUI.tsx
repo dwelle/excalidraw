@@ -597,22 +597,28 @@ const LayerUI = ({
               },
             )}
           >
-            <UserList>
-              {appState.collaborators.size > 0 &&
-                Array.from(appState.collaborators)
-                  // Collaborator is either not initialized or is actually the current user.
-                  .filter(([_, client]) => Object.keys(client).length !== 0)
-                  .map(([clientId, client]) => (
-                    <Tooltip
-                      label={client.username || "Unknown user"}
-                      key={clientId}
-                    >
-                      {actionManager.renderAction("goToCollaborator", clientId)}
-                    </Tooltip>
-                  ))}
-            </UserList>
             {renderTopRight?.(isMobile, appState)}
           </div>
+          <UserList
+            className={clsx("zen-mode-transition", {
+              "transition-right": zenModeEnabled,
+            })}
+            layout="vertical"
+            collaborators={appState.collaborators}
+          >
+            {appState.collaborators.size > 0 &&
+              Array.from(appState.collaborators)
+                // Collaborator is either not initialized or is actually the current user.
+                .filter(([_, client]) => Object.keys(client).length !== 0)
+                .map(([clientId, client]) => (
+                  <Tooltip
+                    label={client.username || "Unknown user"}
+                    key={clientId}
+                  >
+                    {actionManager.renderAction("goToCollaborator", clientId)}
+                  </Tooltip>
+                ))}
+          </UserList>
         </div>
       </FixedSideContainer>
     );
