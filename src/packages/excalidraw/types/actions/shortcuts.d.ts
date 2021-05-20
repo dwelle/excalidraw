@@ -1,0 +1,2 @@
+export declare type ShortcutName = "cut" | "copy" | "paste" | "copyStyles" | "pasteStyles" | "selectAll" | "deleteSelectedElements" | "duplicateSelection" | "sendBackward" | "bringForward" | "sendToBack" | "bringToFront" | "copyAsPng" | "copyAsSvg" | "group" | "ungroup" | "gridMode" | "zenMode" | "stats" | "addToLibrary" | "viewMode" | "flipHorizontal" | "flipVertical";
+export declare const getShortcutFromShortcutName: (name: ShortcutName) => string;
