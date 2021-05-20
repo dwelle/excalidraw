@@ -330,73 +330,43 @@ const ExcalidrawWrapper = () => {
     [],
   );
 
-  const renderFooter = useCallback(
-    (isMobile: boolean) => {
-      const renderEncryptedIcon = () => (
-        <a
-          className="encrypted-icon tooltip"
-          href="https://blog.excalidraw.com/end-to-end-encryption/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t("encrypted.link")}
-        >
-          <Tooltip label={t("encrypted.tooltip")} position="above" long={true}>
-            {shield}
-          </Tooltip>
-        </a>
-      );
+  const randomNumberFromSeed = (seed: number) => {
+    const x = Math.sin(seed++) * 10000;
+    return x - Math.floor(x);
+  };
 
-      const renderLanguageList = () => (
-        <LanguageList
-          onChange={(langCode) => {
-            setLangCode(langCode);
-          }}
-          languages={languages}
-          floating={!isMobile}
-          currentLangCode={langCode}
-        />
-      );
-      if (isMobile) {
-        const isTinyDevice = window.innerWidth < 362;
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: isTinyDevice ? "column" : "row",
-            }}
-          >
-            <fieldset>
-              <legend>{t("labels.language")}</legend>
-              {renderLanguageList()}
-            </fieldset>
-            {/* FIXME remove after 2021-05-20 */}
-            <div
-              style={{
-                width: "24ch",
-                fontSize: "0.7em",
-                textAlign: "center",
-                marginTop: isTinyDevice ? 16 : undefined,
-                marginLeft: "auto",
-                marginRight: isTinyDevice ? "auto" : undefined,
-                padding: "4px 2px",
-                border: "1px dashed #aaa",
-                borderRadius: 12,
-              }}
-            >
-              {PlusLinkJSX}
-            </div>
-          </div>
-        );
+  const [count, setCount] = useState(4);
+  useEffect(() => {
+    if (!excalidrawAPI) {
+      return;
+    }
+    excalidrawAPI.updateScene({
+      collaborators: new Map(
+        new Array(count).fill(null).map((v, idx) => [
+          idx.toString(),
+          {
+            username: "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"[
+              Math.floor(randomNumberFromSeed(idx) * 63)
+            ],
+          },
+        ]),
+      ),
+    });
+  }, [excalidrawAPI, count]);
+
+  useEffect(() => {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "+") {
+        setCount((c) => c + 1);
+      } else if (event.key === "-") {
+        setCount((c) => c - 1);
       }
-      return (
-        <>
-          {renderEncryptedIcon()}
-          {renderLanguageList()}
-        </>
-      );
-    },
-    [langCode],
-  );
+    });
+  }, []);
+
+  const renderFooter = useCallback((isMobile: boolean) => {
+    return <></>;
+  }, []);
 
   const renderCustomStats = () => {
     return (
