@@ -47,7 +47,7 @@
     "pwacompat": "2.0.17",
     "react-scripts": "4.0.3",
     "roughjs": "4.4.1",
-    "sass": "1.32.10",
+    "sass": "1.34.0",
     "typescript": "4.2.4"
   },
   "peerDependencies": {
