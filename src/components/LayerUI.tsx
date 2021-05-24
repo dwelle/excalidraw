@@ -374,22 +374,6 @@ const LayerUI = ({
               },
             )}
           >
-            <UserList>
-              {appState.collaborators.size > 0 &&
-                Array.from(appState.collaborators)
-                  // Collaborator is either not initialized or is actually the current user.
-                  .filter(([_, client]) => Object.keys(client).length !== 0)
-                  .map(([clientId, client]) => (
-                    <Tooltip
-                      label={client.username || "Unknown user"}
-                      key={clientId}
-                    >
-                      {actionManager.renderAction("goToCollaborator", {
-                        id: clientId,
-                      })}
-                    </Tooltip>
-                  ))}
-            </UserList>
             {renderTopRightUI?.(isMobile, appState)}
           </div>
           <UserList
@@ -408,7 +392,9 @@ const LayerUI = ({
                     label={client.username || "Unknown user"}
                     key={clientId}
                   >
-                    {actionManager.renderAction("goToCollaborator", clientId)}
+                    {actionManager.renderAction("goToCollaborator", {
+                      id: clientId,
+                    })}
                   </Tooltip>
                 ))}
           </UserList>
