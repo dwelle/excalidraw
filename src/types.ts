@@ -82,7 +82,13 @@ export type AppState = {
   isResizing: boolean;
   isRotating: boolean;
   zoom: Zoom;
-  openMenu: "canvas" | "shape" | null;
+  openMenu:
+    | "canvas"
+    | "shape"
+    | "canvasColorPicker"
+    | "backgroundColorPicker"
+    | "strokeColorPicker"
+    | null;
   lastPointerDownWith: PointerType;
   selectedElementIds: { [id: string]: boolean };
   previousSelectedElementIds: { [id: string]: boolean };
