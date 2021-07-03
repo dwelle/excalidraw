@@ -568,13 +568,11 @@
     }
   }
 
-  .HomeButton {
+  .HomeButton.ToolIcon.ToolIcon_type_floating {
     display: inline-block;
     position: absolute;
     top: 60px;
-    left: 0;
-
-    margin-left: calc(-2 * var(--margin));
+    left: calc(-2 * var(--space-factor));
     border-radius: 0 20px 20px 0;
 
     background-color: var(--button-gray-1);
