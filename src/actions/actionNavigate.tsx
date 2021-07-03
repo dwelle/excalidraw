@@ -56,7 +56,11 @@ export const actionGoToCollaborator = register({
         border={picture ? "transparent" : stroke}
         onClick={() => updateData(collaborator.pointer)}
       >
-        {picture ? <img src={picture} alt={shortName} /> : shortName}
+        {picture ? (
+          <img referrerPolicy="no-referrer" src={picture} alt={shortName} />
+        ) : (
+          shortName
+        )}
       </Avatar>
     );
   },
