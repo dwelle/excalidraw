@@ -41,16 +41,21 @@ export const actionGoToCollaborator = register({
       return null;
     }
 
-    const { background, stroke } = getClientColors(clientId, appState);
+    const { background, stroke } = getClientColors(
+      collaborator.picture || clientId,
+      appState,
+    );
+    const picture = collaborator.picture;
+
     const shortName = getClientInitials(collaborator.username);
 
     return (
       <Avatar
         color={background}
-        border={stroke}
+        border={picture ? "transparent" : stroke}
         onClick={() => updateData(collaborator.pointer)}
       >
-        {shortName}
+        {picture ? <img src={picture} alt={shortName} /> : shortName}
       </Avatar>
     );
   },
