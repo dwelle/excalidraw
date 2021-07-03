@@ -131,7 +131,7 @@
     "copyToClipboard": "Copy to clipboard",
     "copyPngToClipboard": "Copy PNG to clipboard",
     "scale": "Scale",
-    "save": "Save to current file",
+    "save": "Save (to active file)",
     "saveAs": "Save as",
     "load": "Load",
     "getShareableLink": "Get shareable link",
