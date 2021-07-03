@@ -91,3 +91,5 @@ interface Blob {
 }
 
 declare module "*.scss";
+
+type Merge<M, N> = Omit<M, keyof N> & N;

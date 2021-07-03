@@ -41,14 +41,16 @@ const Excalidraw = (props: ExcalidrawProps) => {
   const canvasActions = props.UIOptions?.canvasActions;
 
   const UIOptions: AppProps["UIOptions"] = {
-    canvasActions: {
-      ...DEFAULT_UI_OPTIONS.canvasActions,
-      ...canvasActions,
-    },
+    canvasActions: canvasActions
+      ? {
+          ...DEFAULT_UI_OPTIONS.canvasActions,
+          ...canvasActions,
+        }
+      : false,
   };
 
-  if (canvasActions?.export) {
-    UIOptions.canvasActions.export.saveFileToDisk =
+  if (canvasActions && typeof canvasActions.export === "object") {
+    canvasActions.export.saveFileToDisk =
       canvasActions.export?.saveFileToDisk ||
       DEFAULT_UI_OPTIONS.canvasActions.export.saveFileToDisk;
   }
@@ -138,11 +140,23 @@ const areEqual = (
         prevUIOptions.canvasActions!,
       ) as (keyof Partial<typeof DEFAULT_UI_OPTIONS.canvasActions>)[];
       canvasOptionKeys.every((key) => {
+        if (!prevUIOptions?.canvasActions || !nextUIOptions?.canvasActions) {
+          return prevUIOptions?.canvasActions === nextUIOptions?.canvasActions;
+        }
         if (
           key === "export" &&
           prevUIOptions?.canvasActions?.export &&
           nextUIOptions?.canvasActions?.export
         ) {
+          if (
+            typeof prevUIOptions.canvasActions.export === "function" ||
+            typeof nextUIOptions.canvasActions.export === "function"
+          ) {
+            return (
+              prevUIOptions.canvasActions.export ===
+              nextUIOptions.canvasActions.export
+            );
+          }
           return (
             prevUIOptions.canvasActions.export.saveFileToDisk ===
             nextUIOptions.canvasActions.export.saveFileToDisk

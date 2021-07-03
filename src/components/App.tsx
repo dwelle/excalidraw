@@ -200,7 +200,7 @@ const IsMobileContext = React.createContext(false);
 export const useIsMobile = () => useContext(IsMobileContext);
 const ExcalidrawContainerContext = React.createContext<{
   container: HTMLDivElement | null;
-  id: string | null;
+  id?: string | null;
 }>({ container: null, id: null });
 export const useExcalidrawContainer = () =>
   useContext(ExcalidrawContainerContext);
@@ -438,6 +438,7 @@ class App extends React.Component<AppProps, AppState> {
               }
               showThemeBtn={
                 typeof this.props?.theme === "undefined" &&
+                this.props.UIOptions.canvasActions &&
                 this.props.UIOptions.canvasActions.theme
               }
               libraryReturnUrl={this.props.libraryReturnUrl}
@@ -955,6 +956,15 @@ class App extends React.Component<AppProps, AppState> {
     if (prevProps.gridModeEnabled !== this.props.gridModeEnabled) {
       this.setState({
         gridSize: this.props.gridModeEnabled ? GRID_SIZE : null,
+      });
+    }
+
+    if (
+      !this.props.UIOptions.canvasActions &&
+      this.state.openMenu === "canvas"
+    ) {
+      this.setState({
+        openMenu: null,
       });
     }
 
