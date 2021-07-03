@@ -1,5 +1,10 @@
 import cssVariables from "./css/variables.module.scss";
-import { AppProps, CustomElementConfig } from "./types";
+import {
+  AppProps,
+  CanvasActions,
+  ExportOpts,
+  CustomElementConfig,
+} from "./types";
 import { FontFamilyValues } from "./element/types";
 
 export const APP_NAME = "Excalidraw";
@@ -140,7 +145,12 @@ export const URL_HASH_KEYS = {
   addLibrary: "addLibrary",
 } as const;
 
-export const DEFAULT_UI_OPTIONS: AppProps["UIOptions"] = {
+export const DEFAULT_UI_OPTIONS: Merge<
+  AppProps["UIOptions"],
+  {
+    canvasActions: Merge<Required<CanvasActions>, { export: ExportOpts }>;
+  }
+> = {
   canvasActions: {
     changeViewBackgroundColor: true,
     clearCanvas: true,
