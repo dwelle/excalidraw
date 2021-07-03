@@ -222,7 +222,7 @@ export type ExcalidrawInitialDataState = Merge<
 >;
 
 export interface ExcalidrawProps {
-  id: string | null;
+  id?: string | null;
   onChange?: (
     elements: readonly ExcalidrawElement[],
     appState: AppState,
@@ -309,10 +309,10 @@ export type ExportOpts = {
   ) => JSX.Element;
 };
 
-type CanvasActions = {
+export type CanvasActions = {
   changeViewBackgroundColor?: boolean;
   clearCanvas?: boolean;
-  export?: false | ExportOpts;
+  export?: false | ExportOpts | (() => void);
   loadScene?: boolean;
   saveToActiveFile?: boolean;
   theme?: boolean;
@@ -320,12 +320,12 @@ type CanvasActions = {
 };
 
 export type UIOptions = {
-  canvasActions?: CanvasActions;
+  canvasActions?: CanvasActions | false;
 };
 
 export type AppProps = ExcalidrawProps & {
   UIOptions: {
-    canvasActions: Required<CanvasActions> & { export: ExportOpts };
+    canvasActions: Required<CanvasActions> | false;
   };
   detectScroll: boolean;
   handleKeyboardGlobally: boolean;
