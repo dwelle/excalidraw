@@ -1,0 +1,24 @@
+import React from "react";
+import { AppProps, AppState } from "../types";
+import { ActionManager } from "../actions/manager";
+import { NonDeletedExcalidrawElement } from "../element/types";
+declare type MobileMenuProps = {
+    onHomeButtonClick?: () => void;
+    appState: AppState;
+    actionManager: ActionManager;
+    renderJSONExportDialog: () => React.ReactNode;
+    renderImageExportDialog: () => React.ReactNode;
+    setAppState: React.Component<any, AppState>["setState"];
+    elements: readonly NonDeletedExcalidrawElement[];
+    libraryMenu: JSX.Element | null;
+    onCollabButtonClick?: () => void;
+    onLockToggle: () => void;
+    canvas: HTMLCanvasElement | null;
+    isCollaborating: boolean;
+    renderCustomFooter?: (isMobile: boolean, appState: AppState) => JSX.Element;
+    viewModeEnabled: boolean;
+    showThemeBtn: boolean;
+    UIOptions: AppProps["UIOptions"];
+};
+export declare const MobileMenu: ({ onHomeButtonClick, appState, elements, libraryMenu, actionManager, renderJSONExportDialog, renderImageExportDialog, setAppState, onCollabButtonClick, onLockToggle, canvas, isCollaborating, renderCustomFooter, viewModeEnabled, showThemeBtn, UIOptions, }: MobileMenuProps) => JSX.Element;
+export {};
