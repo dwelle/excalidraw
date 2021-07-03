@@ -54,7 +54,7 @@ export class ActionManager implements ActionsManagerInterface {
       .sort((a, b) => (b.keyPriority || 0) - (a.keyPriority || 0))
       .filter(
         (action) =>
-          (action.name in canvasActions
+          (canvasActions && action.name in canvasActions
             ? canvasActions[action.name as keyof typeof canvasActions]
             : true) &&
           action.keyTest &&
@@ -107,7 +107,7 @@ export class ActionManager implements ActionsManagerInterface {
     if (
       this.actions[name] &&
       "PanelComponent" in this.actions[name] &&
-      (name in canvasActions
+      (canvasActions && name in canvasActions
         ? canvasActions[name as keyof typeof canvasActions]
         : true)
     ) {

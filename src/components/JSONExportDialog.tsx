@@ -3,9 +3,9 @@ import { ActionsManagerInterface } from "../actions/types";
 import { NonDeletedExcalidrawElement } from "../element/types";
 import { t } from "../i18n";
 import { useIsMobile } from "./App";
-import { AppState, ExportOpts, BinaryFiles } from "../types";
+import { AppState, CanvasActions, ExportOpts, BinaryFiles } from "../types";
 import { Dialog } from "./Dialog";
-import { exportFile, exportToFileIcon, link } from "./icons";
+import { exportToFileIcon, link } from "./icons";
 import { ToolButton } from "./ToolButton";
 import { actionSaveFileToDisk } from "../actions/actionExport";
 import { Card } from "./Card";
@@ -95,7 +95,7 @@ export const JSONExportDialog = ({
   appState: AppState;
   files: BinaryFiles;
   actionManager: ActionsManagerInterface;
-  exportOpts: ExportOpts;
+  exportOpts: CanvasActions["export"];
   canvas: HTMLCanvasElement | null;
 }) => {
   const [modalIsShown, setModalIsShown] = useState(false);
@@ -108,16 +108,20 @@ export const JSONExportDialog = ({
     <>
       <ToolButton
         onClick={() => {
-          setModalIsShown(true);
+          if (typeof exportOpts === "function") {
+            actionManager.executeAction(actionSaveFileToDisk);
+          } else {
+            setModalIsShown(true);
+          }
         }}
         data-testid="json-export-button"
-        icon={exportFile}
+        icon={exportToFileIcon}
         type="button"
         aria-label={t("buttons.export")}
         showAriaLabel={useIsMobile()}
         title={t("buttons.export")}
       />
-      {modalIsShown && (
+      {modalIsShown && exportOpts && typeof exportOpts !== "function" && (
         <Dialog onCloseRequest={handleClose} title={t("buttons.export")}>
           <JSONExportModal
             elements={elements}

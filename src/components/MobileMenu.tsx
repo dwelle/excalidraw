@@ -1,5 +1,5 @@
 import React from "react";
-import { AppState } from "../types";
+import { AppProps, AppState } from "../types";
 import { ActionManager } from "../actions/manager";
 import { t } from "../i18n";
 import Stack from "./Stack";
@@ -43,6 +43,7 @@ type MobileMenuProps = {
     isMobile: boolean,
     appState: AppState,
   ) => JSX.Element | null;
+  UIOptions: AppProps["UIOptions"];
 };
 
 export const MobileMenu = ({
@@ -64,6 +65,7 @@ export const MobileMenu = ({
   showThemeBtn,
   onImageAction,
   renderTopRightUI,
+  UIOptions,
 }: MobileMenuProps) => {
   const renderToolbar = () => {
     return (
@@ -127,15 +129,18 @@ export const MobileMenu = ({
 
   const renderAppToolbar = () => {
     if (viewModeEnabled) {
-      return (
+      return UIOptions.canvasActions ? (
         <div className="App-toolbar-content">
           {actionManager.renderAction("toggleCanvasMenu")}
         </div>
+      ) : (
+        <div>Excalidraw</div>
       );
     }
     return (
       <div className="App-toolbar-content">
-        {actionManager.renderAction("toggleCanvasMenu")}
+        {UIOptions.canvasActions &&
+          actionManager.renderAction("toggleCanvasMenu")}
         {actionManager.renderAction("toggleEditMenu")}
         {actionManager.renderAction("undo")}
         {actionManager.renderAction("redo")}
@@ -192,7 +197,7 @@ export const MobileMenu = ({
         }}
       >
         <Island padding={0}>
-          {appState.openMenu === "canvas" ? (
+          {UIOptions.canvasActions && appState.openMenu === "canvas" ? (
             <Section className="App-mobile-menu" heading="canvasActions">
               <div className="panelColumn">
                 <Stack.Col gap={4}>
@@ -205,20 +210,8 @@ export const MobileMenu = ({
                         mobile
                         layout="horizontal"
                         collaborators={appState.collaborators}
-                      >
-                        {Array.from(appState.collaborators)
-                          // Collaborator is either not initialized or is actually the current user.
-                          .filter(
-                            ([_, client]) => Object.keys(client).length !== 0,
-                          )
-                          .map(([clientId, client]) => (
-                            <React.Fragment key={clientId}>
-                              {actionManager.renderAction("goToCollaborator", {
-                                id: clientId,
-                              })}
-                            </React.Fragment>
-                          ))}
-                      </UserList>
+                        actionManager={actionManager}
+                      />
                     </fieldset>
                   )}
                 </Stack.Col>
