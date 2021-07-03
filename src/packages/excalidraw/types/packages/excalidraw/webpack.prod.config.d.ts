@@ -1,3 +1,4 @@
+import autoprefixer = require("autoprefixer");
 export const mode: string;
 export const entry: {
     "excalidraw.min": string;
@@ -24,7 +25,7 @@ export namespace module {
             loader: string;
             options: {
                 postcssOptions: {
-                    plugins: any[];
+                    plugins: (import("postcss").Plugin & autoprefixer.ExportedAPI)[];
                 };
             };
         })[];

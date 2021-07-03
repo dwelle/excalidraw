@@ -1,3 +1,4 @@
+import autoprefixer = require("autoprefixer");
 import webpack = require("webpack");
 export const mode: string;
 export const devtool: boolean;
@@ -26,7 +27,7 @@ export namespace module {
             loader: string;
             options: {
                 postcssOptions: {
-                    plugins: any[];
+                    plugins: (import("postcss").Plugin & autoprefixer.ExportedAPI)[];
                 };
             };
         })[];
