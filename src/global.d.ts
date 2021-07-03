@@ -30,6 +30,8 @@ interface Clipboard extends EventTarget {
   write(data: any[]): Promise<void>;
 }
 
+type Merge<M, N> = Omit<M, keyof N> & N;
+
 type Mutable<T> = {
   -readonly [P in keyof T]: T[P];
 };
