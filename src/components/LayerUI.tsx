@@ -43,7 +43,6 @@ import { Section } from "./Section";
 import { HelpDialog } from "./HelpDialog";
 import Stack from "./Stack";
 import { ToolButton } from "./ToolButton";
-import { Tooltip } from "./Tooltip";
 import { UserList } from "./UserList";
 import Library from "../data/library";
 import { JSONExportDialog } from "./JSONExportDialog";
@@ -386,7 +385,7 @@ const LayerUI = ({
   const isMobile = useIsMobile();
 
   const renderJSONExportDialog = () => {
-    if (!UIOptions.canvasActions.export) {
+    if (!UIOptions.canvasActions || !UIOptions.canvasActions.export) {
       return null;
     }
 
@@ -402,7 +401,7 @@ const LayerUI = ({
   };
 
   const renderImageExportDialog = () => {
-    if (!UIOptions.canvasActions.saveAsImage) {
+    if (!UIOptions.canvasActions || !UIOptions.canvasActions.saveAsImage) {
       return null;
     }
 
@@ -431,10 +430,6 @@ const LayerUI = ({
         onExportToClipboard={createExporter("clipboard")}
       />
     );
-  };
-
-  const Separator = () => {
-    return <div style={{ width: ".625em" }} />;
   };
 
   const renderViewModeCanvasActions = () => {
@@ -469,13 +464,11 @@ const LayerUI = ({
          see https://github.com/excalidraw/excalidraw/pull/1445 */}
       <Island padding={2} style={{ zIndex: 1 }}>
         <Stack.Col gap={4}>
-          <Stack.Row gap={1} justifyContent="space-between">
+          <Stack.Row gap={3} justifyContent="space-between">
             {actionManager.renderAction("clearCanvas")}
-            <Separator />
             {actionManager.renderAction("loadScene")}
             {renderJSONExportDialog()}
             {renderImageExportDialog()}
-            <Separator />
             {onCollabButtonClick && (
               <CollabButton
                 isCollaborating={isCollaborating}
@@ -567,9 +560,10 @@ const LayerUI = ({
             gap={4}
             className={clsx({ "disable-pointerEvents": zenModeEnabled })}
           >
-            {viewModeEnabled
-              ? renderViewModeCanvasActions()
-              : renderCanvasActions()}
+            {UIOptions.canvasActions &&
+              (viewModeEnabled
+                ? renderViewModeCanvasActions()
+                : renderCanvasActions())}
             {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
           {!viewModeEnabled && (
@@ -631,20 +625,8 @@ const LayerUI = ({
             })}
             layout="vertical"
             collaborators={appState.collaborators}
-          >
-            {appState.collaborators.size > 0 &&
-              Array.from(appState.collaborators)
-                // Collaborator is either not initialized or is actually the current user.
-                .filter(([_, client]) => Object.keys(client).length !== 0)
-                .map(([clientId, client]) => (
-                  <Tooltip
-                    label={client.username || "Unknown user"}
-                    key={clientId}
-                  >
-                    {actionManager.renderAction("goToCollaborator", clientId)}
-                  </Tooltip>
-                ))}
-          </UserList>
+            actionManager={actionManager}
+          />
         </div>
       </FixedSideContainer>
     );
@@ -757,6 +739,7 @@ const LayerUI = ({
         renderCustomFooter={renderCustomFooter}
         viewModeEnabled={viewModeEnabled}
         showThemeBtn={showThemeBtn}
+        UIOptions={UIOptions}
       />
     </>
   ) : (
