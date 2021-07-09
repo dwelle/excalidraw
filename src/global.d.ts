@@ -6,6 +6,10 @@ interface Document {
       type: "loading" | "loadingdone" | "loadingerror",
       listener: (this: Document, ev: Event) => any,
     ): void;
+    removeEventListener?(
+      type: "loading" | "loadingdone" | "loadingerror",
+      listener: (this: Document, ev: Event) => any,
+    ): void;
   };
 }
 
