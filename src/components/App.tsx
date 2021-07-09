@@ -167,7 +167,10 @@ import {
 } from "../keys";
 import { distance2d, getGridPoint, isPathALoop } from "../math";
 import { renderScene } from "../renderer";
-import { invalidateShapeForElement } from "../renderer/renderElement";
+import {
+  clearRenderCache,
+  invalidateShapeForElement,
+} from "../renderer/renderElement";
 import {
   calculateScrollCenter,
   getElementContainingPosition,
@@ -932,6 +935,25 @@ class App extends React.Component<AppProps, AppState> {
     this.unmounted = true;
     this.removeEventListeners();
     this.scene.destroy();
+    clearRenderCache();
+
+    this.scene = new Scene();
+    this.history = new History();
+    this.actionManager = new ActionManager(
+      this.syncActionResult,
+      () => this.state,
+      () => this.scene.getElementsIncludingDeleted(),
+      this,
+    );
+    this.library = new Library(this);
+    this.canvas = null;
+    this.rc = null;
+
+    // @ts-ignore
+    this.excalidrawContainerRef.current = undefined;
+    this.nearestScrollableContainer = undefined;
+    this.excalidrawContainerValue = { container: null, id: "unmounted" };
+
     clearTimeout(touchTimeout);
     touchTimeout = 0;
   }
@@ -972,6 +994,7 @@ class App extends React.Component<AppProps, AppState> {
       this.disableEvent,
       false,
     );
+    document.fonts?.removeEventListener?.("loadingdone", this.onFontLoaded);
 
     document.removeEventListener(
       EVENT.GESTURE_START,
