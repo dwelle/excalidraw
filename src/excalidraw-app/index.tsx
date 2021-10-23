@@ -11,11 +11,7 @@ import {
   VERSION_TIMEOUT,
 } from "../constants";
 import { loadFromBlob } from "../data/blob";
-import {
-  ExcalidrawElement,
-  FileId,
-  NonDeletedExcalidrawElement,
-} from "../element/types";
+import { ExcalidrawElement, FileId } from "../element/types";
 import { useCallbackRefState } from "../hooks/useCallbackRefState";
 import { Language, t } from "../i18n";
 import Excalidraw, { defaultLang } from "../packages/excalidraw/index";
