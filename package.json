@@ -113,6 +113,6 @@
     "test:update": "yarn test:app --updateSnapshot --watchAll=false",
     "test": "yarn test:app",
     "autorelease": "node scripts/autorelease.js",
-    "publish": "cd src/packages/excalidraw && npm run build:umd && npm publish"
+    "publish": "cd src/packages/excalidraw && npm run build:umd && yarn publish"
   }
 }
