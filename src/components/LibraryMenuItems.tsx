@@ -290,7 +290,7 @@ const LibraryMenuItems = ({
       <div className="layer-ui__library-header" key="library-header">
         {renderLibraryActions()}
         <a
-          href={`${process.env.REACT_APP_LIBRARY_URL}?target=${
+          href={`https://libraries.excalidraw.com?target=${
             window.name || "_blank"
           }&referrer=${referrer}&useHash=true&token=${id}&theme=${theme}&version=${
             VERSIONS.excalidrawLibrary
