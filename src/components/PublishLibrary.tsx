@@ -225,10 +225,13 @@ const PublishLibrary = ({
     formData.append("twitterHandle", libraryData.twitterHandle);
     formData.append("website", libraryData.website);
 
-    fetch(`${process.env.REACT_APP_LIBRARY_BACKEND}/submit`, {
-      method: "post",
-      body: formData,
-    })
+    fetch(
+      `https://us-central1-excalidraw-room-persistence.cloudfunctions.net/libraries/submit`,
+      {
+        method: "post",
+        body: formData,
+      },
+    )
       .then(
         (response) => {
           if (response.ok) {
