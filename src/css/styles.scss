@@ -249,9 +249,8 @@
 
   .App-top-bar {
     z-index: var(--zIndex-layerUI);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 1fr max-content 1fr;
   }
 
   .App-bottom-bar {

@@ -528,7 +528,7 @@ const ExcalidrawWrapper = () => {
 
   const renderTopRightUI = useCallback(
     (isMobile: boolean, appState: AppState) => {
-      return <></>;
+      return <div style={{ marginLeft: "auto" }}>placeholder</div>;
     },
     [],
   );
