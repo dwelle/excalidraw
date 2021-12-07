@@ -59,6 +59,7 @@ interface LayerUIProps {
   renderTopRightUI?: (
     isMobile: boolean,
     appState: AppState,
+    canvas: HTMLCanvasElement | null,
   ) => JSX.Element | null;
   renderCustomFooter?: (isMobile: boolean, appState: AppState) => JSX.Element;
   viewModeEnabled: boolean;
@@ -373,7 +374,7 @@ const LayerUI = ({
               },
             )}
           >
-            {renderTopRightUI?.(deviceType.isMobile, appState)}
+            {renderTopRightUI?.(deviceType.isMobile, appState, canvas)}
           </div>
           <UserList
             className={clsx("zen-mode-transition", {

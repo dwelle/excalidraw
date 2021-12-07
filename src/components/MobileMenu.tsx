@@ -42,6 +42,7 @@ type MobileMenuProps = {
   renderTopRightUI?: (
     isMobile: boolean,
     appState: AppState,
+    canvas: HTMLCanvasElement | null,
   ) => JSX.Element | null;
   UIOptions: AppProps["UIOptions"];
 };
@@ -70,6 +71,8 @@ export const MobileMenu = ({
   const renderToolbar = () => {
     return (
       <FixedSideContainer side="top" className="App-top-bar">
+        {/* placeholder for grid 3-column template */}
+        <div></div>
         <Section heading="shapes">
           {(heading) => (
             <Stack.Col gap={4} align="center">
@@ -90,7 +93,6 @@ export const MobileMenu = ({
                     />
                   </Stack.Row>
                 </Island>
-                {renderTopRightUI && renderTopRightUI(true, appState)}
                 <ToolButton
                   key="home"
                   type="button"
@@ -123,6 +125,9 @@ export const MobileMenu = ({
             </Stack.Col>
           )}
         </Section>
+        <div style={{ display: "flex" }}>
+          {renderTopRightUI?.(true, appState, canvas)}
+        </div>
         <HintViewer appState={appState} elements={elements} isMobile={true} />
       </FixedSideContainer>
     );
