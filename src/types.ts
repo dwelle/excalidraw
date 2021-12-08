@@ -472,6 +472,7 @@ export type ExcalidrawImperativeAPI = {
   ready: true;
   id: string;
   setCustomType: InstanceType<typeof App>["setCustomType"];
+  app: InstanceType<typeof App>;
 };
 
 export type DeviceType = {
