@@ -388,6 +388,7 @@ class App extends React.Component<AppProps, AppState> {
         setToastMessage: this.setToastMessage,
         id: this.id,
         setActiveTool: this.setActiveTool,
+        app: this,
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);

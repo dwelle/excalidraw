@@ -464,6 +464,7 @@ export type ExcalidrawImperativeAPI = {
   ready: true;
   id: string;
   setActiveTool: InstanceType<typeof App>["setActiveTool"];
+  app: InstanceType<typeof App>;
 };
 
 export type DeviceType = {
