@@ -388,6 +388,7 @@ class App extends React.Component<AppProps, AppState> {
         setActiveTool: this.setActiveTool,
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
+        app: this,
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);
