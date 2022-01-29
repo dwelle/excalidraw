@@ -408,7 +408,6 @@ const ExcalidrawWrapper = () => {
           if (Array.isArray(langCode)) {
             langCode = langCode[0];
           }
-          setLangCode(langCode);
           excalidrawAPI.updateScene({
             ...localDataState,
             libraryItems: getLibraryItemsFromStorage(),
