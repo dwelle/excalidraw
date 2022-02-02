@@ -7,7 +7,6 @@ import { showSelectedShapeActions } from "../element";
 import { NonDeletedExcalidrawElement } from "../element/types";
 import { FixedSideContainer } from "./FixedSideContainer";
 import { Island } from "./Island";
-import { HintViewer } from "./HintViewer";
 import { calculateScrollCenter } from "../scene";
 import { SelectedShapeActions, ShapesSwitcher } from "./Actions";
 import { Section } from "./Section";
@@ -127,7 +126,6 @@ export const MobileMenu = ({
         <div style={{ display: "flex" }}>
           {renderTopRightUI?.(true, appState, canvas)}
         </div>
-        <HintViewer appState={appState} elements={elements} isMobile={true} />
       </FixedSideContainer>
     );
   };
