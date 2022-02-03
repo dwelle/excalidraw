@@ -36,6 +36,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     onLibraryChange,
     autoFocus = false,
     generateIdForFile,
+    onLinkOpen,
     id,
   } = props;
 
@@ -102,6 +103,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
         onLibraryChange={onLibraryChange}
         autoFocus={autoFocus}
         generateIdForFile={generateIdForFile}
+        onLinkOpen={onLinkOpen}
       />
     </InitializeApp>
   );
