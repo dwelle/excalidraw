@@ -2429,7 +2429,7 @@ class App extends React.Component<AppProps, AppState> {
     });
   };
 
-  private redirectToLink = (event: MouseEvent) => {
+  private redirectToLink = (event: PointerEvent) => {
     if (
       this.lastPointerDown!.clientX !== this.lastPointerUp!.clientX ||
       this.lastPointerDown!.clientY !== this.lastPointerUp!.clientY
@@ -2945,7 +2945,7 @@ class App extends React.Component<AppProps, AppState> {
       this.hitLinkElement &&
       !this.state.selectedElementIds[this.hitLinkElement.id]
     ) {
-      this.redirectToLink();
+      this.redirectToLink(event.nativeEvent);
     }
 
     this.removePointer(event);
