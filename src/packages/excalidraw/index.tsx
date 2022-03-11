@@ -14,6 +14,7 @@ import { jotaiScope, jotaiStore } from "../../jotai";
 
 const ExcalidrawBase = (props: ExcalidrawProps) => {
   const {
+    onHomeButtonClick,
     onChange,
     initialData,
     excalidrawRef,
@@ -76,6 +77,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
           excalidrawRef={excalidrawRef}
@@ -189,8 +191,8 @@ export {
   restoreLibraryItems,
 } from "../../data/restore";
 export {
-  exportToCanvas,
   exportToBlob,
+  exportToCanvas,
   exportToSvg,
   serializeAsJSON,
   serializeLibraryAsJSON,
@@ -199,11 +201,15 @@ export {
   getFreeDrawSvgPath,
 } from "../../packages/utils";
 export { isLinearElement } from "../../element/typeChecks";
-
-export { FONT_FAMILY, THEME } from "../../constants";
-
 export {
   mutateElement,
   newElementWith,
   bumpVersion,
 } from "../../element/mutateElement";
+export { FONT_FAMILY, THEME } from "../../constants";
+export { exportToClipboard } from "../utils";
+export { getDefaultAppState } from "../../appState";
+export {
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";
