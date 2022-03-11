@@ -318,7 +318,11 @@ export const renderScene = (
         selectionColors.push(
           ...renderConfig.remoteSelectedElementIds[element.id].map(
             (socketId) => {
-              const { background } = getClientColors(socketId, appState);
+              const picture = appState.collaborators.get(socketId)?.picture;
+              const { background } = getClientColors(
+                picture || socketId,
+                appState,
+              );
               return background;
             },
           ),
@@ -426,7 +430,6 @@ export const renderScene = (
   // Paint remote pointers
   for (const clientId in renderConfig.remotePointerViewportCoords) {
     let { x, y } = renderConfig.remotePointerViewportCoords[clientId];
-
     x -= appState.offsetLeft;
     y -= appState.offsetTop;
 
@@ -444,7 +447,11 @@ export const renderScene = (
     y = Math.max(y, 0);
     y = Math.min(y, normalizedCanvasHeight - height);
 
-    const { background, stroke } = getClientColors(clientId, appState);
+    const picture = appState.collaborators.get(clientId)?.picture;
+    const { background, stroke } = getClientColors(
+      picture || clientId,
+      appState,
+    );
 
     context.save();
     context.strokeStyle = stroke;
