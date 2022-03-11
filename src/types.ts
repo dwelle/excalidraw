@@ -45,6 +45,7 @@ export type Collaborator = {
     background: string;
     stroke: string;
   };
+  picture?: string;
 };
 
 export type DataURL = string & { _brand: "DataURL" };
@@ -238,6 +239,8 @@ export type CustomElementConfig = {
 export type ExcalidrawInitialDataState = Merge<
   ImportedDataState,
   {
+    scrollX?: number;
+    scrollY?: number;
     libraryItems?:
       | Required<ImportedDataState>["libraryItems"]
       | Promise<Required<ImportedDataState>["libraryItems"]>;
@@ -254,6 +257,10 @@ export interface ExcalidrawProps {
     | ExcalidrawInitialDataState
     | null
     | Promise<ExcalidrawInitialDataState | null>;
+  onHomeButtonClick?: () => void;
+  user?: {
+    name?: string | null;
+  };
   excalidrawRef?: ForwardRef<ExcalidrawAPIRefValue>;
   onCollabButtonClick?: () => void;
   isCollaborating?: boolean;

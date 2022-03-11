@@ -40,6 +40,7 @@ import { trackEvent } from "../analytics";
 import { useDeviceType } from "../components/App";
 
 interface LayerUIProps {
+  onHomeButtonClick?: () => void;
   actionManager: ActionManager;
   appState: AppState;
   files: BinaryFiles;
@@ -72,6 +73,7 @@ interface LayerUIProps {
 }
 
 const LayerUI = ({
+  onHomeButtonClick,
   actionManager,
   appState,
   files,
@@ -529,6 +531,7 @@ const LayerUI = ({
     <>
       {dialogs}
       <MobileMenu
+        onHomeButtonClick={onHomeButtonClick}
         appState={appState}
         elements={elements}
         actionManager={actionManager}
@@ -590,6 +593,7 @@ const areEqual = (prev: LayerUIProps, next: LayerUIProps) => {
 
   const keys = Object.keys(prevAppState) as (keyof Partial<AppState>)[];
   return (
+    prev.renderTopRightUI === next.renderTopRightUI &&
     prev.renderCustomFooter === next.renderCustomFooter &&
     prev.langCode === next.langCode &&
     prev.elements === next.elements &&
