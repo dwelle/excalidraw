@@ -15,6 +15,7 @@ import { jotaiScope, jotaiStore } from "../../jotai";
 
 const Excalidraw = (props: ExcalidrawProps) => {
   const {
+    onHomeButtonClick,
     onChange,
     initialData,
     excalidrawRef,
@@ -77,6 +78,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
           excalidrawRef={excalidrawRef}
@@ -174,22 +176,28 @@ const forwardedRefComp = forwardRef<
   ExcalidrawAPIRefValue,
   PublicExcalidrawProps
 >((props, ref) => <Excalidraw {...props} excalidrawRef={ref} />);
+
 export default React.memo(forwardedRefComp, areEqual);
+
 export {
   getSceneVersion,
   isInvisiblySmallElement,
   getNonDeletedElements,
 } from "../../element";
 export { defaultLang, languages } from "../../i18n";
+<<<<<<< HEAD
 export {
   restore,
   restoreAppState,
   restoreElements,
   restoreLibraryItems,
 } from "../../data/restore";
+=======
+export { restore, restoreElements, restoreAppState } from "../../data/restore";
+>>>>>>> 172cd879 (custom)
 export {
-  exportToCanvas,
   exportToBlob,
+  exportToCanvas,
   exportToSvg,
   serializeAsJSON,
   serializeLibraryAsJSON,
@@ -198,11 +206,15 @@ export {
   getFreeDrawSvgPath,
 } from "../../packages/utils";
 export { isLinearElement } from "../../element/typeChecks";
-
-export { FONT_FAMILY, THEME } from "../../constants";
-
 export {
   mutateElement,
   newElementWith,
   bumpVersion,
 } from "../../element/mutateElement";
+export { FONT_FAMILY, THEME } from "../../constants";
+export { exportToClipboard } from "../utils";
+export { getDefaultAppState } from "../../appState";
+export {
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";

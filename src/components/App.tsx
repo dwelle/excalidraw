@@ -494,6 +494,7 @@ class App extends React.Component<AppProps, AppState> {
         >
           <DeviceTypeContext.Provider value={this.deviceType}>
             <LayerUI
+              onHomeButtonClick={this.props.onHomeButtonClick}
               canvas={this.canvas}
               appState={this.state}
               files={this.files}
@@ -822,6 +823,13 @@ class App extends React.Component<AppProps, AppState> {
           null,
         ),
       };
+    }
+
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = initialData.scrollY;
     }
 
     this.resetHistory();
