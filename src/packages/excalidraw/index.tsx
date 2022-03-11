@@ -13,6 +13,7 @@ import { DEFAULT_UI_OPTIONS } from "../../constants";
 
 const Excalidraw = (props: ExcalidrawProps) => {
   const {
+    onHomeButtonClick,
     onChange,
     initialData,
     excalidrawRef,
@@ -74,6 +75,7 @@ const Excalidraw = (props: ExcalidrawProps) => {
   return (
     <InitializeApp langCode={langCode}>
       <App
+        onHomeButtonClick={onHomeButtonClick}
         onChange={onChange}
         initialData={initialData}
         excalidrawRef={excalidrawRef}
@@ -170,17 +172,19 @@ const forwardedRefComp = forwardRef<
   ExcalidrawAPIRefValue,
   PublicExcalidrawProps
 >((props, ref) => <Excalidraw {...props} excalidrawRef={ref} />);
+
 export default React.memo(forwardedRefComp, areEqual);
+
 export {
   getSceneVersion,
   isInvisiblySmallElement,
   getNonDeletedElements,
 } from "../../element";
 export { defaultLang, languages } from "../../i18n";
-export { restore, restoreAppState, restoreElements } from "../../data/restore";
+export { restore, restoreElements, restoreAppState } from "../../data/restore";
 export {
-  exportToCanvas,
   exportToBlob,
+  exportToCanvas,
   exportToSvg,
   serializeAsJSON,
   loadLibraryFromBlob,
@@ -188,11 +192,15 @@ export {
   getFreeDrawSvgPath,
 } from "../../packages/utils";
 export { isLinearElement } from "../../element/typeChecks";
-
-export { FONT_FAMILY, THEME } from "../../constants";
-
 export {
   mutateElement,
   newElementWith,
   bumpVersion,
 } from "../../element/mutateElement";
+export { FONT_FAMILY, THEME } from "../../constants";
+export { exportToClipboard } from "../utils";
+export { getDefaultAppState } from "../../appState";
+export {
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";
