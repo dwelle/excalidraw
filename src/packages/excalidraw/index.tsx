@@ -229,3 +229,5 @@ export {
   cleanAppStateForExport,
   clearAppStateForLocalStorage,
 } from "../../appState";
+
+export { jotaiScope, jotaiStore } from "../../jotai";
