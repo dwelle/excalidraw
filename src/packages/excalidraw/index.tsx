@@ -239,3 +239,4 @@ export {
 } from "../../appState";
 
 export { jotaiScope, jotaiStore } from "../../jotai";
+export { libraryItemsAtom } from "../../data/library";
