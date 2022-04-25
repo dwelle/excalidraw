@@ -1015,7 +1015,7 @@ class App extends React.Component<AppProps, AppState> {
     this.scene.destroy();
     clearRenderCache();
 
-    this.scene = new Scene();
+    this.scene = new Scene(this);
     this.history = new History();
     this.actionManager = new ActionManager(
       this.syncActionResult,
