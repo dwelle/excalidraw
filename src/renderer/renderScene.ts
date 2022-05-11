@@ -318,7 +318,7 @@ export const renderScene = (
         selectionColors.push(
           ...renderConfig.remoteSelectedElementIds[element.id].map(
             (socketId) => {
-              const picture = appState.collaborators.get(socketId)?.picture;
+              const picture = appState.collaborators.get(socketId)?.src;
               const { background } = getClientColors(
                 picture || socketId,
                 appState,
@@ -447,7 +447,7 @@ export const renderScene = (
     y = Math.max(y, 0);
     y = Math.min(y, normalizedCanvasHeight - height);
 
-    const picture = appState.collaborators.get(clientId)?.picture;
+    const picture = appState.collaborators.get(clientId)?.src;
     const { background, stroke } = getClientColors(
       picture || clientId,
       appState,
