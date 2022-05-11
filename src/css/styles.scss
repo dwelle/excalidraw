@@ -572,6 +572,7 @@
     position: absolute;
     top: 60px;
     left: calc(-2 * var(--space-factor));
+    right: auto;
     border-radius: 0 20px 20px 0;
 
     background-color: var(--button-gray-1);
