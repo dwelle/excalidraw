@@ -14,6 +14,7 @@ import { jotaiScope, jotaiStore } from "../../jotai";
 
 const ExcalidrawBase = (props: ExcalidrawProps) => {
   const {
+    onHomeButtonClick,
     onChange,
     initialData,
     excalidrawRef,
@@ -39,20 +40,23 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onLinkOpen,
     onPointerDown,
     onScrollChange,
+    id,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
 
   const UIOptions: AppProps["UIOptions"] = {
-    canvasActions: {
-      ...DEFAULT_UI_OPTIONS.canvasActions,
-      ...canvasActions,
-    },
+    canvasActions: canvasActions
+      ? {
+          ...DEFAULT_UI_OPTIONS.canvasActions,
+          ...canvasActions,
+        }
+      : false,
   };
 
-  if (canvasActions?.export) {
-    UIOptions.canvasActions.export.saveFileToDisk =
-      canvasActions.export?.saveFileToDisk ??
+  if (canvasActions && typeof canvasActions.export === "object") {
+    canvasActions.export.saveFileToDisk =
+      canvasActions.export?.saveFileToDisk ||
       DEFAULT_UI_OPTIONS.canvasActions.export.saveFileToDisk;
   }
 
@@ -78,6 +82,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <InitializeApp langCode={langCode}>
       <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
         <App
+          id={id}
+          onHomeButtonClick={onHomeButtonClick}
           onChange={onChange}
           initialData={initialData}
           excalidrawRef={excalidrawRef}
@@ -145,11 +151,23 @@ const areEqual = (
         prevUIOptions.canvasActions!,
       ) as (keyof Partial<typeof DEFAULT_UI_OPTIONS.canvasActions>)[];
       canvasOptionKeys.every((key) => {
+        if (!prevUIOptions?.canvasActions || !nextUIOptions?.canvasActions) {
+          return prevUIOptions?.canvasActions === nextUIOptions?.canvasActions;
+        }
         if (
           key === "export" &&
           prevUIOptions?.canvasActions?.export &&
           nextUIOptions?.canvasActions?.export
         ) {
+          if (
+            typeof prevUIOptions.canvasActions.export === "function" ||
+            typeof nextUIOptions.canvasActions.export === "function"
+          ) {
+            return (
+              prevUIOptions.canvasActions.export ===
+              nextUIOptions.canvasActions.export
+            );
+          }
           return (
             prevUIOptions.canvasActions.export.saveFileToDisk ===
             nextUIOptions.canvasActions.export.saveFileToDisk
@@ -193,8 +211,8 @@ export {
   restoreLibraryItems,
 } from "../../data/restore";
 export {
-  exportToCanvas,
   exportToBlob,
+  exportToCanvas,
   exportToSvg,
   serializeAsJSON,
   serializeLibraryAsJSON,
@@ -224,3 +242,11 @@ export {
   sceneCoordsToViewportCoords,
   viewportCoordsToSceneCoords,
 } from "../../utils";
+export {
+  getDefaultAppState,
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "../../appState";
+
+export { jotaiScope, jotaiStore } from "../../jotai";
+export { libraryItemsAtom } from "../../data/library";

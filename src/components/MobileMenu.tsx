@@ -1,5 +1,5 @@
 import React from "react";
-import { AppState } from "../types";
+import { AppProps, AppState } from "../types";
 import { ActionManager } from "../actions/manager";
 import { t } from "../i18n";
 import Stack from "./Stack";
@@ -7,7 +7,6 @@ import { showSelectedShapeActions } from "../element";
 import { NonDeletedExcalidrawElement } from "../element/types";
 import { FixedSideContainer } from "./FixedSideContainer";
 import { Island } from "./Island";
-import { HintViewer } from "./HintViewer";
 import { calculateScrollCenter, getSelectedElements } from "../scene";
 import { SelectedShapeActions, ShapesSwitcher } from "./Actions";
 import { Section } from "./Section";
@@ -18,8 +17,11 @@ import { UserList } from "./UserList";
 import { BackgroundPickerAndDarkModeToggle } from "./BackgroundPickerAndDarkModeToggle";
 import { LibraryButton } from "./LibraryButton";
 import { PenModeButton } from "./PenModeButton";
+import { ToolButton } from "./ToolButton";
+import { home } from "./icons";
 
 type MobileMenuProps = {
+  onHomeButtonClick?: () => void;
   appState: AppState;
   actionManager: ActionManager;
   renderJSONExportDialog: () => React.ReactNode;
@@ -42,10 +44,13 @@ type MobileMenuProps = {
   renderTopRightUI?: (
     isMobile: boolean,
     appState: AppState,
+    canvas: HTMLCanvasElement | null,
   ) => JSX.Element | null;
+  UIOptions: AppProps["UIOptions"];
 };
 
 export const MobileMenu = ({
+  onHomeButtonClick,
   appState,
   elements,
   libraryMenu,
@@ -63,10 +68,13 @@ export const MobileMenu = ({
   showThemeBtn,
   onImageAction,
   renderTopRightUI,
+  UIOptions,
 }: MobileMenuProps) => {
   const renderToolbar = () => {
     return (
       <FixedSideContainer side="top" className="App-top-bar">
+        {/* placeholder for grid 3-column template */}
+        <div></div>
         <Section heading="shapes">
           {(heading) => (
             <Stack.Col gap={4} align="center">
@@ -87,7 +95,15 @@ export const MobileMenu = ({
                     />
                   </Stack.Row>
                 </Island>
-                {renderTopRightUI && renderTopRightUI(true, appState)}
+                <ToolButton
+                  key="home"
+                  type="button"
+                  className="HomeButton ToolIcon_type_floating"
+                  title={"Home"}
+                  aria-label={"Home"}
+                  icon={home}
+                  onClick={onHomeButtonClick}
+                />
                 <LockButton
                   checked={appState.activeTool.locked}
                   onChange={onLockToggle}
@@ -111,7 +127,9 @@ export const MobileMenu = ({
             </Stack.Col>
           )}
         </Section>
-        <HintViewer appState={appState} elements={elements} isMobile={true} />
+        <div style={{ display: "flex" }}>
+          {renderTopRightUI?.(true, appState, canvas)}
+        </div>
       </FixedSideContainer>
     );
   };
@@ -124,16 +142,19 @@ export const MobileMenu = ({
       getSelectedElements(elements, appState).length === 0;
 
     if (viewModeEnabled) {
-      return (
+      return UIOptions.canvasActions ? (
         <div className="App-toolbar-content">
           {actionManager.renderAction("toggleCanvasMenu")}
         </div>
+      ) : (
+        <div>Excalidraw</div>
       );
     }
 
     return (
       <div className="App-toolbar-content">
-        {actionManager.renderAction("toggleCanvasMenu")}
+        {UIOptions.canvasActions &&
+          actionManager.renderAction("toggleCanvasMenu")}
         {actionManager.renderAction("toggleEditMenu")}
 
         {actionManager.renderAction("undo")}
@@ -193,7 +214,7 @@ export const MobileMenu = ({
         }}
       >
         <Island padding={0}>
-          {appState.openMenu === "canvas" ? (
+          {UIOptions.canvasActions && appState.openMenu === "canvas" ? (
             <Section className="App-mobile-menu" heading="canvasActions">
               <div className="panelColumn">
                 <Stack.Col gap={4}>
@@ -204,6 +225,7 @@ export const MobileMenu = ({
                       <legend>{t("labels.collaborators")}</legend>
                       <UserList
                         mobile
+                        layout="horizontal"
                         collaborators={appState.collaborators}
                         actionManager={actionManager}
                       />

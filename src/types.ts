@@ -247,6 +247,8 @@ export type ExcalidrawAPIRefValue =
 export type ExcalidrawInitialDataState = Merge<
   ImportedDataState,
   {
+    scrollX?: number;
+    scrollY?: number;
     libraryItems?:
       | Required<ImportedDataState>["libraryItems"]
       | Promise<Required<ImportedDataState>["libraryItems"]>;
@@ -254,15 +256,21 @@ export type ExcalidrawInitialDataState = Merge<
 >;
 
 export interface ExcalidrawProps {
+  id?: string | null;
   onChange?: (
     elements: readonly ExcalidrawElement[],
     appState: AppState,
     files: BinaryFiles,
+    id?: string | null,
   ) => void;
   initialData?:
     | ExcalidrawInitialDataState
     | null
     | Promise<ExcalidrawInitialDataState | null>;
+  onHomeButtonClick?: () => void;
+  user?: {
+    name?: string | null;
+  };
   excalidrawRef?: ForwardRef<ExcalidrawAPIRefValue>;
   onCollabButtonClick?: () => void;
   isCollaborating?: boolean;
@@ -278,6 +286,7 @@ export interface ExcalidrawProps {
   renderTopRightUI?: (
     isMobile: boolean,
     appState: AppState,
+    canvas: HTMLCanvasElement | null,
   ) => JSX.Element | null;
   renderFooter?: (isMobile: boolean, appState: AppState) => JSX.Element | null;
   langCode?: Language["code"];
@@ -339,10 +348,10 @@ export type ExportOpts = {
   ) => JSX.Element;
 };
 
-type CanvasActions = {
+export type CanvasActions = {
   changeViewBackgroundColor?: boolean;
   clearCanvas?: boolean;
-  export?: false | ExportOpts;
+  export?: false | ExportOpts | (() => void);
   loadScene?: boolean;
   saveToActiveFile?: boolean;
   theme?: boolean;
@@ -350,12 +359,12 @@ type CanvasActions = {
 };
 
 export type UIOptions = {
-  canvasActions?: CanvasActions;
+  canvasActions?: CanvasActions | false;
 };
 
 export type AppProps = ExcalidrawProps & {
   UIOptions: {
-    canvasActions: Required<CanvasActions> & { export: ExportOpts };
+    canvasActions: Required<CanvasActions> | false;
   };
   detectScroll: boolean;
   handleKeyboardGlobally: boolean;
@@ -470,6 +479,7 @@ export type ExcalidrawImperativeAPI = {
   setActiveTool: InstanceType<typeof App>["setActiveTool"];
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
+  app: InstanceType<typeof App>;
 };
 
 export type DeviceType = {
