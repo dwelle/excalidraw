@@ -1,6 +1,6 @@
 {
-  "name": "@excalidraw/excalidraw",
-  "version": "0.12.0",
+  "name": "@dwelle/excalidraw",
+  "version": "0.3.71",
   "main": "main.js",
   "types": "types/packages/excalidraw/index.d.ts",
   "files": [
@@ -11,15 +11,8 @@
     "access": "public"
   },
   "description": "Excalidraw as a React component",
-  "repository": "https://github.com/excalidraw/excalidraw",
   "license": "MIT",
-  "keywords": [
-    "excalidraw",
-    "excalidraw-embed",
-    "react",
-    "npm",
-    "npm excalidraw"
-  ],
+  "keywords": [],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -69,7 +62,7 @@
     "webpack-dev-server": "4.9.3",
     "webpack-merge": "5.8.0"
   },
-  "bugs": "https://github.com/excalidraw/excalidraw/issues",
+  "repository": "https://github.com/dwelle/excalidraw",
   "homepage": "https://github.com/excalidraw/excalidraw/tree/master/src/packages/excalidraw",
   "scripts": {
     "gen:types": "tsc --project ../../../tsconfig-types.json",

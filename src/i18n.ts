@@ -87,7 +87,7 @@ export const setLanguage = async (lang: Language) => {
     currentLangData = {};
   } else {
     currentLangData = await import(
-      /* webpackChunkName: "locales/[request]" */ `./locales/${currentLang.code}.json`
+      /* webpackChunkName: "locales/[request]" */ `./locales/en.json`
     );
   }
 };

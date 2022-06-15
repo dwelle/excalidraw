@@ -11,7 +11,14 @@ export const UserList: React.FC<{
   mobile?: boolean;
   collaborators: AppState["collaborators"];
   actionManager: ActionManager;
-}> = ({ className, mobile, collaborators, actionManager }) => {
+  layout: "vertical" | "horizontal";
+}> = ({ className, mobile, collaborators, actionManager, layout }) => {
+  const threshold = layout === "vertical" ? 6 : 3;
+  const offset =
+    collaborators.size > threshold
+      ? Math.min(collaborators.size - threshold, 15) * -2
+      : 4;
+
   const uniqueCollaborators = new Map<string, Collaborator>();
 
   collaborators.forEach((collaborator, socketId) => {
@@ -45,7 +52,14 @@ export const UserList: React.FC<{
       });
 
   return (
-    <div className={clsx("UserList", className, { UserList_mobile: mobile })}>
+    <div
+      className={clsx(`UserList layout-${layout}`, className, {
+        UserList_mobile: mobile,
+      })}
+      style={{
+        ["--itemOffset" as any]: `${offset}px`,
+      }}
+    >
       {avatars}
     </div>
   );
