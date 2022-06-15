@@ -42,6 +42,7 @@ import { actionToggleStats } from "../actions/actionToggleStats";
 import Footer from "./Footer";
 
 interface LayerUIProps {
+  onHomeButtonClick?: () => void;
   actionManager: ActionManager;
   appState: AppState;
   files: BinaryFiles;
@@ -67,6 +68,7 @@ interface LayerUIProps {
   onImageAction: (data: { insertOnCanvasDirectly: boolean }) => void;
 }
 const LayerUI = ({
+  onHomeButtonClick,
   actionManager,
   appState,
   files,
@@ -93,7 +95,7 @@ const LayerUI = ({
   const device = useDevice();
 
   const renderJSONExportDialog = () => {
-    if (!UIOptions.canvasActions.export) {
+    if (!UIOptions.canvasActions || !UIOptions.canvasActions.export) {
       return null;
     }
 
@@ -110,7 +112,7 @@ const LayerUI = ({
   };
 
   const renderImageExportDialog = () => {
-    if (!UIOptions.canvasActions.saveAsImage) {
+    if (!UIOptions.canvasActions || !UIOptions.canvasActions.saveAsImage) {
       return null;
     }
 
@@ -157,10 +159,6 @@ const LayerUI = ({
     );
   };
 
-  const Separator = () => {
-    return <div style={{ width: ".625em" }} />;
-  };
-
   const renderViewModeCanvasActions = () => {
     return (
       <Section
@@ -194,13 +192,11 @@ const LayerUI = ({
          see https://github.com/excalidraw/excalidraw/pull/1445 */}
       <Island padding={2} style={{ zIndex: 1 }}>
         <Stack.Col gap={4}>
-          <Stack.Row gap={1} justifyContent="space-between">
+          <Stack.Row gap={3} justifyContent="space-between">
             {actionManager.renderAction("clearCanvas")}
-            <Separator />
             {actionManager.renderAction("loadScene")}
             {renderJSONExportDialog()}
             {renderImageExportDialog()}
-            <Separator />
             {onCollabButtonClick && (
               <CollabButton
                 isCollaborating={isCollaborating}
@@ -299,9 +295,10 @@ const LayerUI = ({
               "disable-pointerEvents": appState.zenModeEnabled,
             })}
           >
-            {appState.viewModeEnabled
-              ? renderViewModeCanvasActions()
-              : renderCanvasActions()}
+            {UIOptions.canvasActions &&
+              (appState.viewModeEnabled
+                ? renderViewModeCanvasActions()
+                : renderCanvasActions())}
             {shouldRenderSelectedShapeActions && renderSelectedShapeActions()}
           </Stack.Col>
           {!appState.viewModeEnabled && (
@@ -373,8 +370,12 @@ const LayerUI = ({
             <UserList
               collaborators={appState.collaborators}
               actionManager={actionManager}
+              className={clsx("zen-mode-transition", {
+                "transition-right": appState.zenModeEnabled,
+              })}
+              layout="vertical"
             />
-            {renderTopRightUI?.(device.isMobile, appState)}
+            {renderTopRightUI?.(device.isMobile, appState, canvas)}
           </div>
         </div>
       </FixedSideContainer>
@@ -428,6 +429,8 @@ const LayerUI = ({
           onImageAction={onImageAction}
           renderTopRightUI={renderTopRightUI}
           renderCustomStats={renderCustomStats}
+          onHomeButtonClick={onHomeButtonClick}
+          UIOptions={UIOptions}
         />
       )}
 
@@ -503,6 +506,7 @@ const areEqual = (prev: LayerUIProps, next: LayerUIProps) => {
 
   const keys = Object.keys(prevAppState) as (keyof Partial<AppState>)[];
   return (
+    prev.renderTopRightUI === next.renderTopRightUI &&
     prev.renderCustomFooter === next.renderCustomFooter &&
     prev.langCode === next.langCode &&
     prev.elements === next.elements &&

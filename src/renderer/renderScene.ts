@@ -490,7 +490,12 @@ export const _renderScene = ({
             selectionColors.push(
               ...renderConfig.remoteSelectedElementIds[element.id].map(
                 (socketId) => {
-                  const { background } = getClientColors(socketId, appState);
+                  const picture =
+                    appState.collaborators.get(socketId)?.avatarUrl;
+                  const { background } = getClientColors(
+                    picture || socketId,
+                    appState,
+                  );
                   return background;
                 },
               ),
@@ -621,7 +626,11 @@ export const _renderScene = ({
       y = Math.max(y, 0);
       y = Math.min(y, normalizedCanvasHeight - height);
 
-      const { background, stroke } = getClientColors(clientId, appState);
+      const picture = appState.collaborators.get(clientId)?.avatarUrl;
+      const { background, stroke } = getClientColors(
+        picture || clientId,
+        appState,
+      );
 
       context.save();
       context.strokeStyle = stroke;

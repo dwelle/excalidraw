@@ -170,7 +170,10 @@ import {
 } from "../keys";
 import { distance2d, getGridPoint, isPathALoop } from "../math";
 import { renderScene } from "../renderer/renderScene";
-import { invalidateShapeForElement } from "../renderer/renderElement";
+import {
+  invalidateShapeForElement,
+  clearRenderCache,
+} from "../renderer/renderElement";
 import {
   calculateScrollCenter,
   getTextBindableContainerAtPosition,
@@ -275,7 +278,7 @@ export const useDevice = () => useContext<Device>(DeviceContext);
 
 const ExcalidrawContainerContext = React.createContext<{
   container: HTMLDivElement | null;
-  id: string | null;
+  id?: string | null;
 }>({ container: null, id: null });
 export const useExcalidrawContainer = () =>
   useContext(ExcalidrawContainerContext);
@@ -410,6 +413,7 @@ class App extends React.Component<AppProps, AppState> {
         setActiveTool: this.setActiveTool,
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
+        app: this,
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);
@@ -509,6 +513,7 @@ class App extends React.Component<AppProps, AppState> {
       <div
         className={clsx("excalidraw excalidraw-container", {
           "excalidraw--view-mode": this.state.viewModeEnabled,
+          "excalidraw--zen-mode": this.state.zenModeEnabled,
           "excalidraw--mobile": this.device.isMobile,
         })}
         ref={this.excalidrawContainerRef}
@@ -527,6 +532,7 @@ class App extends React.Component<AppProps, AppState> {
                 value={this.scene.getNonDeletedElements()}
               >
                 <LayerUI
+                  onHomeButtonClick={this.props.onHomeButtonClick}
                   canvas={this.canvas}
                   appState={this.state}
                   files={this.files}
@@ -554,6 +560,7 @@ class App extends React.Component<AppProps, AppState> {
                   }
                   showThemeBtn={
                     typeof this.props?.theme === "undefined" &&
+                    this.props.UIOptions.canvasActions &&
                     this.props.UIOptions.canvasActions.theme
                   }
                   libraryReturnUrl={this.props.libraryReturnUrl}
@@ -814,6 +821,13 @@ class App extends React.Component<AppProps, AppState> {
       };
     }
 
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = initialData.scrollY;
+    }
+
     this.resetHistory();
     this.syncActionResult({
       ...scene,
@@ -944,6 +958,25 @@ class App extends React.Component<AppProps, AppState> {
     this.unmounted = true;
     this.removeEventListeners();
     this.scene.destroy();
+    clearRenderCache();
+
+    this.scene = new Scene();
+    this.history = new History();
+    this.actionManager = new ActionManager(
+      this.syncActionResult,
+      () => this.state,
+      () => this.scene.getElementsIncludingDeleted(),
+      this,
+    );
+    this.library = new Library(this);
+    this.canvas = null;
+    this.rc = null;
+
+    // @ts-ignore
+    this.excalidrawContainerRef.current = undefined;
+    this.nearestScrollableContainer = undefined;
+    this.excalidrawContainerValue = { container: null, id: "unmounted" };
+
     clearTimeout(touchTimeout);
     touchTimeout = 0;
   }
@@ -988,6 +1021,7 @@ class App extends React.Component<AppProps, AppState> {
       this.disableEvent,
       false,
     );
+    document.fonts?.removeEventListener?.("loadingdone", this.onFontLoaded);
 
     document.removeEventListener(
       EVENT.GESTURE_START,
@@ -1139,6 +1173,15 @@ class App extends React.Component<AppProps, AppState> {
       });
     }
 
+    if (
+      !this.props.UIOptions.canvasActions &&
+      this.state.openMenu === "canvas"
+    ) {
+      this.setState({
+        openMenu: null,
+      });
+    }
+
     if (this.props.name && prevProps.name !== this.props.name) {
       this.setState({
         name: this.props.name,
@@ -1200,6 +1243,7 @@ class App extends React.Component<AppProps, AppState> {
         this.scene.getElementsIncludingDeleted(),
         this.state,
         this.files,
+        this.props.id,
       );
     }
   }

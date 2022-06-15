@@ -2,29 +2,14 @@ import polyfill from "../polyfill";
 import LanguageDetector from "i18next-browser-languagedetector";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { trackEvent } from "../analytics";
-import { getDefaultAppState } from "../appState";
 import { ErrorDialog } from "../components/ErrorDialog";
 import { TopErrorBoundary } from "../components/TopErrorBoundary";
-import {
-  APP_NAME,
-  COOKIES,
-  EVENT,
-  TITLE_TIMEOUT,
-  VERSION_TIMEOUT,
-} from "../constants";
+import { APP_NAME, EVENT, TITLE_TIMEOUT, VERSION_TIMEOUT } from "../constants";
 import { loadFromBlob } from "../data/blob";
-import {
-  ExcalidrawElement,
-  FileId,
-  NonDeletedExcalidrawElement,
-} from "../element/types";
+import { ExcalidrawElement, FileId } from "../element/types";
 import { useCallbackRefState } from "../hooks/useCallbackRefState";
 import { t } from "../i18n";
-import {
-  Excalidraw,
-  defaultLang,
-  languages,
-} from "../packages/excalidraw/index";
+import { Excalidraw, defaultLang } from "../packages/excalidraw/index";
 import {
   AppState,
   LibraryItems,
@@ -52,9 +37,7 @@ import Collab, {
   collabDialogShownAtom,
   isCollaboratingAtom,
 } from "./collab/Collab";
-import { LanguageList } from "./components/LanguageList";
 import {
-  exportToBackend,
   getCollaborationLinkData,
   isCollaborationLink,
   loadScene,
@@ -64,13 +47,9 @@ import {
   importFromLocalStorage,
   importUsernameFromLocalStorage,
 } from "./data/localStorage";
-import CustomStats from "./CustomStats";
 import { restore, restoreAppState, RestoredDataState } from "../data/restore";
-import { Tooltip } from "../components/Tooltip";
-import { shield } from "../components/icons";
 
 import "./index.scss";
-import { ExportToExcalidrawPlus } from "./components/ExportToExcalidrawPlus";
 
 import { updateStaleImageStatuses } from "./data/FileManager";
 import { newElementWith } from "../element/mutateElement";
@@ -86,10 +65,6 @@ import { parseLibraryTokensFromUrl, useHandleLibrary } from "../data/library";
 
 polyfill();
 window.EXCALIDRAW_THROTTLE_RENDER = true;
-
-const isExcalidrawPlusSignedUser = document.cookie.includes(
-  COOKIES.AUTH_STATE_COOKIE,
-);
 
 const languageDetector = new LanguageDetector();
 languageDetector.init({
@@ -228,38 +203,14 @@ const initializeScene = async (opts: {
   return { scene: null, isExternalScene: false };
 };
 
-const PlusLPLinkJSX = (
-  <p style={{ direction: "ltr", unicodeBidi: "embed" }}>
-    Introducing Excalidraw+
-    <br />
-    <a
-      href="https://plus.excalidraw.com/plus?utm_source=excalidraw&utm_medium=banner&utm_campaign=launch"
-      target="_blank"
-      rel="noreferrer"
-    >
-      Try out now!
-    </a>
-  </p>
-);
-
-const PlusAppLinkJSX = (
-  <a
-    href={`${process.env.REACT_APP_PLUS_APP}/#excalidraw-redirect`}
-    target="_blank"
-    rel="noreferrer"
-    className="plus-button"
-  >
-    Go to Excalidraw+
-  </a>
-);
-
 const ExcalidrawWrapper = () => {
   const [errorMessage, setErrorMessage] = useState("");
   let currentLangCode = languageDetector.detect() || defaultLang.code;
   if (Array.isArray(currentLangCode)) {
     currentLangCode = currentLangCode[0];
   }
-  const [langCode, setLangCode] = useState(currentLangCode);
+  const [langCode] = useState(currentLangCode);
+
   // initial state
   // ---------------------------------------------------------------------------
 
@@ -412,7 +363,6 @@ const ExcalidrawWrapper = () => {
           if (Array.isArray(langCode)) {
             langCode = langCode[0];
           }
-          setLangCode(langCode);
           excalidrawAPI.updateScene({
             ...localDataState,
           });
@@ -553,137 +503,18 @@ const ExcalidrawWrapper = () => {
     }
   };
 
-  const onExportToBackend = async (
-    exportedElements: readonly NonDeletedExcalidrawElement[],
-    appState: AppState,
-    files: BinaryFiles,
-    canvas: HTMLCanvasElement | null,
-  ) => {
-    if (exportedElements.length === 0) {
-      return window.alert(t("alerts.cannotExportEmptyCanvas"));
-    }
-    if (canvas) {
-      try {
-        await exportToBackend(
-          exportedElements,
-          {
-            ...appState,
-            viewBackgroundColor: appState.exportBackground
-              ? appState.viewBackgroundColor
-              : getDefaultAppState().viewBackgroundColor,
-          },
-          files,
-        );
-      } catch (error: any) {
-        if (error.name !== "AbortError") {
-          const { width, height } = canvas;
-          console.error(error, { width, height });
-          setErrorMessage(error.message);
-        }
-      }
-    }
-  };
-
   const renderTopRightUI = useCallback(
     (isMobile: boolean, appState: AppState) => {
-      if (isMobile) {
-        return null;
-      }
-
-      return (
-        <div
-          style={{
-            width: isExcalidrawPlusSignedUser ? "21ch" : "23ch",
-            fontSize: "0.7em",
-            textAlign: "center",
-          }}
-        >
-          {isExcalidrawPlusSignedUser ? PlusAppLinkJSX : PlusLPLinkJSX}
-        </div>
-      );
+      return <div style={{ marginLeft: "auto" }}>placeholder</div>;
     },
     [],
   );
 
-  const renderFooter = useCallback(
-    (isMobile: boolean) => {
-      const renderEncryptedIcon = () => (
-        <a
-          className="encrypted-icon tooltip"
-          href="https://blog.excalidraw.com/end-to-end-encryption/"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label={t("encrypted.link")}
-        >
-          <Tooltip label={t("encrypted.tooltip")} long={true}>
-            {shield}
-          </Tooltip>
-        </a>
-      );
+  const renderFooter = useCallback((isMobile: boolean) => {
+    return <></>;
+  }, []);
 
-      const renderLanguageList = () => (
-        <LanguageList
-          onChange={(langCode) => setLangCode(langCode)}
-          languages={languages}
-          currentLangCode={langCode}
-        />
-      );
-      if (isMobile) {
-        const isTinyDevice = window.innerWidth < 362;
-        return (
-          <div
-            style={{
-              display: "flex",
-              flexDirection: isTinyDevice ? "column" : "row",
-            }}
-          >
-            <fieldset>
-              <legend>{t("labels.language")}</legend>
-              {renderLanguageList()}
-            </fieldset>
-            {/* FIXME remove after 2021-05-20 */}
-            <div
-              style={{
-                width: "24ch",
-                fontSize: "0.7em",
-                textAlign: "center",
-                marginTop: isTinyDevice ? 16 : undefined,
-                marginLeft: "auto",
-                marginRight: isTinyDevice ? "auto" : undefined,
-                padding: isExcalidrawPlusSignedUser ? undefined : "4px 2px",
-                border: isExcalidrawPlusSignedUser
-                  ? undefined
-                  : "1px dashed #aaa",
-                borderRadius: 12,
-              }}
-            >
-              {isExcalidrawPlusSignedUser ? PlusAppLinkJSX : PlusLPLinkJSX}
-            </div>
-          </div>
-        );
-      }
-      return (
-        <>
-          {renderEncryptedIcon()}
-          {renderLanguageList()}
-        </>
-      );
-    },
-    [langCode],
-  );
-
-  const renderCustomStats = (
-    elements: readonly NonDeletedExcalidrawElement[],
-    appState: AppState,
-  ) => {
-    return (
-      <CustomStats
-        setToast={(message) => excalidrawAPI!.setToast({ message })}
-        appState={appState}
-        elements={elements}
-      />
-    );
-  };
+  const renderCustomStats = () => <></>;
 
   const onLibraryChange = async (items: LibraryItems) => {
     if (!items.length) {
@@ -702,6 +533,7 @@ const ExcalidrawWrapper = () => {
       })}
     >
       <Excalidraw
+        id={null}
         ref={excalidrawRefCallback}
         onChange={onChange}
         initialData={initialStatePromiseRef.current.promise}
@@ -710,25 +542,8 @@ const ExcalidrawWrapper = () => {
         onPointerUpdate={collabAPI?.onPointerUpdate}
         UIOptions={{
           canvasActions: {
-            export: {
-              onExportToBackend,
-              renderCustomUI: (elements, appState, files) => {
-                return (
-                  <ExportToExcalidrawPlus
-                    elements={elements}
-                    appState={appState}
-                    files={files}
-                    onError={(error) => {
-                      excalidrawAPI?.updateScene({
-                        appState: {
-                          errorMessage: error.message,
-                        },
-                      });
-                    }}
-                  />
-                );
-              },
-            },
+            clearCanvas: false,
+            export: () => {},
           },
         }}
         renderTopRightUI={renderTopRightUI}
@@ -739,6 +554,7 @@ const ExcalidrawWrapper = () => {
         handleKeyboardGlobally={true}
         onLibraryChange={onLibraryChange}
         autoFocus={true}
+        theme="light"
       />
       {excalidrawAPI && <Collab excalidrawAPI={excalidrawAPI} />}
       {errorMessage && (
