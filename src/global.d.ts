@@ -6,6 +6,10 @@ interface Document {
       type: "loading" | "loadingdone" | "loadingerror",
       listener: (this: Document, ev: Event) => any,
     ): void;
+    removeEventListener?(
+      type: "loading" | "loadingdone" | "loadingerror",
+      listener: (this: Document, ev: Event) => any,
+    ): void;
   };
 }
 
@@ -30,6 +34,8 @@ declare namespace NodeJS {
 interface Clipboard extends EventTarget {
   write(data: any[]): Promise<void>;
 }
+
+type Merge<M, N> = Omit<M, keyof N> & N;
 
 type Mutable<T> = {
   -readonly [P in keyof T]: T[P];

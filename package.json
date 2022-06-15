@@ -90,6 +90,7 @@
   "prettier": "@excalidraw/prettier-config",
   "private": true,
   "scripts": {
+    "setup": "yarn && cd src/packages/excalidraw && yarn",
     "build-node": "node ./scripts/build-node.js",
     "build:app:docker": "REACT_APP_DISABLE_SENTRY=true react-scripts build",
     "build:app": "REACT_APP_GIT_SHA=$VERCEL_GIT_COMMIT_SHA react-scripts build",
@@ -112,6 +113,8 @@
     "test:typecheck": "tsc",
     "test:update": "yarn test:app --updateSnapshot --watchAll=false",
     "test": "yarn test:app",
-    "autorelease": "node scripts/autorelease.js"
+    "autorelease": "node scripts/autorelease.js",
+    "pull": "git pull upstream master --rebase",
+    "publish": "cd src/packages/excalidraw && npm run build:umd && yarn publish"
   }
 }
