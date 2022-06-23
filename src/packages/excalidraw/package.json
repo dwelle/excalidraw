@@ -1,6 +1,6 @@
 {
   "name": "@dwelle/excalidraw",
-  "version": "0.3.69",
+  "version": "0.3.70",
   "main": "main.js",
   "types": "types/packages/excalidraw/index.d.ts",
   "files": [
