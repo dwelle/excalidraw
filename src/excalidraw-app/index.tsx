@@ -61,10 +61,6 @@ import { isBrowserStorageStateNewer } from "./data/tabSync";
 import clsx from "clsx";
 import { parseLibraryTokensFromUrl, useHandleLibrary } from "../data/library";
 
-const isExcalidrawPlusSignedUser = document.cookie.includes(
-  COOKIES.AUTH_STATE_COOKIE,
-);
-
 const languageDetector = new LanguageDetector();
 languageDetector.init({
   languageUtils: {},
