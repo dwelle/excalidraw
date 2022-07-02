@@ -462,6 +462,8 @@ export type PointerDownState = Readonly<{
   };
 }>;
 
+type UnsubscribeCallback = () => void;
+
 export type ExcalidrawImperativeAPI = {
   updateScene: InstanceType<typeof App>["updateScene"];
   updateLibrary: InstanceType<typeof Library>["updateLibrary"];
@@ -486,6 +488,27 @@ export type ExcalidrawImperativeAPI = {
   setCursor: InstanceType<typeof App>["setCursor"];
   resetCursor: InstanceType<typeof App>["resetCursor"];
   app: InstanceType<typeof App>;
+  onChange: (
+    callback: (
+      elements: readonly ExcalidrawElement[],
+      appState: AppState,
+      files: BinaryFiles,
+    ) => void,
+  ) => UnsubscribeCallback;
+  onPointerDown: (
+    callback: (
+      activeTool: AppState["activeTool"],
+      pointerDownState: PointerDownState,
+      event: React.PointerEvent<HTMLCanvasElement>,
+    ) => void,
+  ) => UnsubscribeCallback;
+  onPointerUp: (
+    callback: (
+      activeTool: AppState["activeTool"],
+      pointerDownState: PointerDownState,
+      event: PointerEvent,
+    ) => void,
+  ) => UnsubscribeCallback;
 };
 
 export type Device = Readonly<{

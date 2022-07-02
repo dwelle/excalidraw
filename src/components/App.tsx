@@ -266,6 +266,7 @@ import {
   isLocalLink,
 } from "../element/Hyperlink";
 import { shouldShowBoundingBox } from "../element/transformHandles";
+import { Emitter } from "../emitter";
 
 const deviceContextInitialValue = {
   isSmScreen: false,
@@ -358,6 +359,30 @@ class App extends React.Component<AppProps, AppState> {
   contextMenuOpen: boolean = false;
   lastScenePointer: { x: number; y: number } | null = null;
 
+  onChangeEmitter = new Emitter<
+    [
+      elements: readonly ExcalidrawElement[],
+      appState: AppState,
+      files: BinaryFiles,
+    ]
+  >();
+
+  onPointerDownEmitter = new Emitter<
+    [
+      activeTool: AppState["activeTool"],
+      pointerDownState: PointerDownState,
+      event: React.PointerEvent<HTMLCanvasElement>,
+    ]
+  >();
+
+  onPointerUpEmitter = new Emitter<
+    [
+      activeTool: AppState["activeTool"],
+      pointerDownState: PointerDownState,
+      event: PointerEvent,
+    ]
+  >();
+
   constructor(props: AppProps) {
     super(props);
     const defaultAppState = getDefaultAppState();
@@ -414,6 +439,9 @@ class App extends React.Component<AppProps, AppState> {
         setCursor: this.setCursor,
         resetCursor: this.resetCursor,
         app: this,
+        onChange: (cb) => this.onChangeEmitter.on(cb),
+        onPointerDown: (cb) => this.onPointerDownEmitter.on(cb),
+        onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
       } as const;
       if (typeof excalidrawRef === "function") {
         excalidrawRef(api);
@@ -960,6 +988,8 @@ class App extends React.Component<AppProps, AppState> {
     this.scene.destroy();
     clearRenderCache();
 
+    this.onChangeEmitter.destroy();
+
     this.scene = new Scene();
     this.history = new History();
     this.actionManager = new ActionManager(
@@ -1244,6 +1274,11 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
         this.files,
         this.props.id,
+      );
+      this.onChangeEmitter.trigger(
+        this.scene.getElementsIncludingDeleted(),
+        this.state,
+        this.files,
       );
     }
   }
@@ -3305,6 +3340,11 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     this.props?.onPointerDown?.(this.state.activeTool, pointerDownState);
+    this.onPointerDownEmitter.trigger(
+      this.state.activeTool,
+      pointerDownState,
+      event,
+    );
 
     const onPointerMove =
       this.onPointerMoveFromPointerDownHandler(pointerDownState);
@@ -4588,6 +4628,12 @@ class App extends React.Component<AppProps, AppState> {
       });
 
       this.savePointer(childEvent.clientX, childEvent.clientY, "up");
+
+      this.onPointerUpEmitter.trigger(
+        this.state.activeTool,
+        pointerDownState,
+        childEvent,
+      );
 
       // Handle end of dragging a point of a linear element, might close a loop
       // and sets binding element
