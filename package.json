@@ -114,10 +114,8 @@
     "test:typecheck": "tsc",
     "test:update": "yarn test:app --updateSnapshot --watchAll=false",
     "test": "yarn test:app",
-    "autorelease": "node scripts/autorelease.js",
-    "prerelease": "node scripts/prerelease.js",
-    "release": "node scripts/release.js",
+    "autorelease-fork": "node scripts/autorelease-fork.js",
     "pull": "git pull upstream master --rebase",
-    "publish": "cd src/packages/excalidraw && npm run build:umd && yarn publish"
+    "publish": "yarn --frozen-lockfile && cd src/packages/excalidraw && yarn --frozen-lockfile && npm run build:umd && yarn publish"
   }
 }
