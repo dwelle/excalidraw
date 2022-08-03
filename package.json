@@ -115,6 +115,8 @@
     "test": "yarn test:app",
     "autorelease": "node scripts/autorelease.js",
     "prerelease": "node scripts/prerelease.js",
-    "release": "node scripts/release.js"
+    "pull": "git pull upstream master --rebase",
+    "releasex": "node scripts/release.js",
+    "publish": "rm -rf node_modules && yarn --frozen-lockfile && cd src/packages/excalidraw && rm -rf node_modules && yarn --frozen-lockfile && yarn build:umd && yarn publish"
   }
 }
