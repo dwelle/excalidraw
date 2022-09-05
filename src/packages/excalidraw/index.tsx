@@ -40,6 +40,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onPointerDown,
     onScrollChange,
     id,
+    onMenuToggle,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -108,6 +109,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onLinkOpen={onLinkOpen}
           onPointerDown={onPointerDown}
           onScrollChange={onScrollChange}
+          onMenuToggle={onMenuToggle}
+          children={props.children}
         />
       </Provider>
     </InitializeApp>
@@ -249,3 +252,5 @@ export {
 
 export { jotaiScope, jotaiStore } from "../../jotai";
 export { libraryItemsAtom } from "../../data/library";
+
+export { Sidebar } from "../../components/Sidebar/Sidebar";

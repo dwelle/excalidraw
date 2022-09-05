@@ -34,6 +34,7 @@ type MobileMenuProps = {
   onCollabButtonClick?: () => void;
   onLockToggle: () => void;
   onPenModeToggle: () => void;
+  onMenuToggle: ExcalidrawProps["onMenuToggle"];
   canvas: HTMLCanvasElement | null;
   isCollaborating: boolean;
   renderCustomFooter?: (
@@ -63,6 +64,7 @@ export const MobileMenu = ({
   onCollabButtonClick,
   onLockToggle,
   onPenModeToggle,
+  onMenuToggle,
   canvas,
   isCollaborating,
   renderCustomFooter,
@@ -115,6 +117,7 @@ export const MobileMenu = ({
                 <LibraryButton
                   appState={appState}
                   setAppState={setAppState}
+                  onMenuToggle={onMenuToggle}
                   isMobile
                 />
                 <PenModeButton
@@ -125,7 +128,7 @@ export const MobileMenu = ({
                   penDetected={appState.penDetected}
                 />
               </Stack.Row>
-              {libraryMenu}
+              <Island padding={2}>{libraryMenu}</Island>
             </Stack.Col>
           )}
         </Section>

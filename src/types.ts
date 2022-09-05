@@ -322,6 +322,11 @@ export interface ExcalidrawProps {
     pointerDownState: PointerDownState,
   ) => void;
   onScrollChange?: (scrollX: number, scrollY: number) => void;
+  /**
+   * @param type NOTE: more menu types coming later
+   */
+  onMenuToggle?: (type: "library", isOpen: boolean) => void;
+  children?: React.ReactNode;
 }
 
 export type SceneData = {
@@ -375,6 +380,7 @@ export type AppProps = ExcalidrawProps & {
   detectScroll: boolean;
   handleKeyboardGlobally: boolean;
   isCollaborating: boolean;
+  children?: React.ReactNode;
 };
 
 /** A subset of App class properties that we need to use elsewhere
