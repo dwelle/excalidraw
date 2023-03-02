@@ -536,10 +536,15 @@ const drawElementOnCanvas = (
   }
 };
 
-export const elementWithCanvasCache = new WeakMap<
+export let elementWithCanvasCache = new WeakMap<
   ExcalidrawElement,
   ExcalidrawElementWithCanvas
 >();
+
+export const clearRenderCache = () => {
+  elementWithCanvasCache = new WeakMap();
+  pathsCache = new WeakMap();
+};
 
 const generateElementWithCanvas = (
   element: NonDeletedExcalidrawElement,
@@ -1020,7 +1025,7 @@ export const renderElement = (
   context.globalAlpha = 1;
 };
 
-export const pathsCache = new WeakMap<ExcalidrawFreeDrawElement, Path2D>([]);
+export let pathsCache = new WeakMap<ExcalidrawFreeDrawElement, Path2D>([]);
 
 export function generateFreeDrawShape(element: ExcalidrawFreeDrawElement) {
   const svgPathData = getFreeDrawSvgPath(element);
