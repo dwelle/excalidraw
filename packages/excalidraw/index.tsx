@@ -41,6 +41,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onLinkOpen,
     onPointerDown,
     onScrollChange,
+    id,
+    onHomeButtonClick,
     children,
     validateEmbeddable,
     renderEmbeddable,
@@ -97,6 +99,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <Provider unstable_createStore={() => jotaiStore} scope={jotaiScope}>
       <InitializeApp langCode={langCode} theme={theme}>
         <App
+          id={id}
           onChange={onChange}
           initialData={initialData}
           excalidrawAPI={excalidrawAPI}
@@ -124,6 +127,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           validateEmbeddable={validateEmbeddable}
           renderEmbeddable={renderEmbeddable}
           aiEnabled={aiEnabled !== false}
+          onHomeButtonClick={onHomeButtonClick}
         >
           {children}
         </App>
@@ -205,7 +209,6 @@ export {
   restoreLibraryItems,
 } from "./data/restore";
 export {
-  exportToCanvas,
   exportToBlob,
   exportToSvg,
   serializeAsJSON,
@@ -256,3 +259,16 @@ export {
   isElementInsideBBox,
   elementPartiallyOverlapsWithOrContainsBBox,
 } from "../utils/export";
+
+export {
+  getDefaultAppState,
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "./appState";
+
+export { jotaiScope, jotaiStore } from "./jotai";
+export { libraryItemsAtom } from "./data/library";
+
+export { exportToCanvas } from "./scene/export";
+
+export * as icons from "./components/icons";

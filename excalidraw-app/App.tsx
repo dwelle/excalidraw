@@ -1,6 +1,6 @@
 import polyfill from "../packages/excalidraw/polyfill";
 import LanguageDetector from "i18next-browser-languagedetector";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { trackEvent } from "../packages/excalidraw/analytics";
 import { getDefaultAppState } from "../packages/excalidraw/appState";
 import { ErrorDialog } from "../packages/excalidraw/components/ErrorDialog";
@@ -27,6 +27,9 @@ import {
   LiveCollaborationTrigger,
   TTDDialog,
   TTDDialogTrigger,
+  Button,
+  Footer,
+  Sidebar,
 } from "../packages/excalidraw/index";
 import {
   AppState,
@@ -93,7 +96,6 @@ import {
 } from "../packages/excalidraw/data/library";
 import { AppMainMenu } from "./components/AppMainMenu";
 import { AppWelcomeScreen } from "./components/AppWelcomeScreen";
-import { AppFooter } from "./components/AppFooter";
 import { atom, Provider, useAtom, useAtomValue } from "jotai";
 import { useAtomWithInitialValue } from "../packages/excalidraw/jotai";
 import { appJotaiStore } from "./app-jotai";
@@ -666,6 +668,75 @@ const ExcalidrawWrapper = () => {
 
   const isOffline = useAtomValue(isOfflineAtom);
 
+  const [activeToolType, setActiveToolType] = useState<string | null>(null);
+  const prevActiveTool = useRef<{
+    type: string;
+    locked?: boolean;
+    prevLockState?: boolean;
+  }>();
+
+  const toggleCommentTool = useCallback(() => {
+    const nextType =
+      excalidrawAPI?.getAppState().activeTool?.customType === "comment"
+        ? "selection"
+        : "comment";
+    excalidrawAPI?.setActiveTool(
+      nextType === "comment"
+        ? {
+            type: "custom",
+            customType: "comment",
+            locked: true,
+          }
+        : { type: "selection" },
+    );
+  }, [excalidrawAPI]);
+
+  useEffect(() => {
+    if (excalidrawAPI) {
+      const unsubOnChange = excalidrawAPI.onChange((_, appState) => {
+        const type = appState.activeTool.customType || appState.activeTool.type;
+        if (
+          prevActiveTool.current?.type === "comment" &&
+          type !== "comment" &&
+          !prevActiveTool.current?.prevLockState
+        ) {
+          excalidrawAPI.setActiveTool({
+            ...appState.activeTool,
+            locked: false,
+          });
+        }
+        setActiveToolType(type);
+        prevActiveTool.current = {
+          type,
+          locked: appState.activeTool.locked,
+          prevLockState:
+            prevActiveTool.current?.type !== "comment"
+              ? prevActiveTool.current?.locked
+              : prevActiveTool.current?.prevLockState,
+        };
+      });
+
+      // on C keypress
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (
+          event.code === "KeyC" &&
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey
+        ) {
+          toggleCommentTool();
+        }
+      };
+
+      window.addEventListener("keydown", onKeyDown);
+
+      return () => {
+        window.removeEventListener("keydown", onKeyDown);
+        unsubOnChange();
+      };
+    }
+  }, [excalidrawAPI, toggleCommentTool]);
+
   // browsers generally prevent infinite self-embedding, there are
   // cases where it still happens, and while we disallow self-embedding
   // by not whitelisting our own origin, this serves as an additional guard
@@ -745,6 +816,7 @@ const ExcalidrawWrapper = () => {
             />
           );
         }}
+        onHomeButtonClick={() => {}}
       >
         <AppMainMenu
           setCollabDialogShown={setCollabDialogShown}
@@ -774,7 +846,6 @@ const ExcalidrawWrapper = () => {
             </OverwriteConfirmDialog.Action>
           )}
         </OverwriteConfirmDialog>
-        <AppFooter />
         <TTDDialog
           onTextSubmit={async (input) => {
             try {
@@ -833,6 +904,25 @@ const ExcalidrawWrapper = () => {
           }}
         />
         <TTDDialogTrigger />
+        <Sidebar name="custom">test</Sidebar>
+        <Footer>
+          <div
+            style={{
+              display: "flex",
+              gap: ".5rem",
+              alignItems: "center",
+              marginRight: "auto",
+            }}
+          >
+            <Sidebar.Trigger name="custom">sidebar</Sidebar.Trigger>
+            <Button
+              onSelect={toggleCommentTool}
+              className={clsx({ active: activeToolType === "comment" })}
+            >
+              💬
+            </Button>
+          </div>
+        </Footer>
         {isCollaborating && isOffline && (
           <div className="collab-offline-warning">
             {t("alerts.collabOfflineWarning")}

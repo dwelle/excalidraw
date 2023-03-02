@@ -36,6 +36,7 @@ import { jotaiScope } from "../../jotai";
 import { useUIAppState } from "../../context/ui-appState";
 import { openConfirmModal } from "../OverwriteConfirm/OverwriteConfirmState";
 import Trans from "../Trans";
+import { Theme } from "../../element/types";
 
 export const LoadScene = () => {
   const { t } = useI18n();
@@ -162,7 +163,9 @@ export const ClearCanvas = () => {
 };
 ClearCanvas.displayName = "ClearCanvas";
 
-export const ToggleTheme = () => {
+export const ToggleTheme = (props?: {
+  onSelect?: (theme: Theme) => void | boolean;
+}) => {
   const { t } = useI18n();
   const appState = useUIAppState();
   const actionManager = useExcalidrawActionManager();
@@ -176,7 +179,12 @@ export const ToggleTheme = () => {
       onSelect={(event) => {
         // do not close the menu when changing theme
         event.preventDefault();
-        return actionManager.executeAction(actionToggleTheme);
+        if (
+          props?.onSelect?.(appState.theme === "dark" ? "light" : "dark") !==
+          false
+        ) {
+          return actionManager.executeAction(actionToggleTheme);
+        }
       }}
       icon={appState.theme === "dark" ? SunIcon : MoonIcon}
       data-testid="toggle-dark-mode"

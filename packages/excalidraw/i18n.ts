@@ -95,14 +95,9 @@ export const setLanguage = async (lang: Language) => {
   if (lang.code.startsWith(TEST_LANG_CODE)) {
     currentLangData = {};
   } else {
-    try {
-      currentLangData = await import(
-        /* webpackChunkName: "locales/[request]" */ `./locales/${currentLang.code}.json`
-      );
-    } catch (error: any) {
-      console.error(`Failed to load language ${lang.code}:`, error.message);
-      currentLangData = fallbackLangData;
-    }
+    currentLangData = await import(
+      /* webpackChunkName: "locales/[request]" */ `./locales/en.json`
+    );
   }
 
   jotaiStore.set(editorLangCodeAtom, lang.code);

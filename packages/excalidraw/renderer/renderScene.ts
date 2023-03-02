@@ -598,8 +598,10 @@ const _renderInteractiveScene = ({
           if (renderConfig.remoteSelectedElementIds[element.id]) {
             selectionColors.push(
               ...renderConfig.remoteSelectedElementIds[element.id].map(
-                (socketId: string) => {
-                  const background = getClientColor(socketId);
+                (socketId) => {
+                  const picture =
+                    appState.collaborators.get(socketId)?.avatarUrl;
+                  const background = getClientColor(picture || socketId);
                   return background;
                 },
               ),
@@ -749,7 +751,8 @@ const _renderInteractiveScene = ({
     y = Math.max(y, 0);
     y = Math.min(y, normalizedHeight - height);
 
-    const background = getClientColor(clientId);
+    const picture = appState.collaborators.get(clientId)?.avatarUrl;
+    const background = getClientColor(picture || clientId);
 
     context.save();
     context.strokeStyle = background;
