@@ -546,7 +546,7 @@ DeviceContext.displayName = "DeviceContext";
 
 export const ExcalidrawContainerContext = React.createContext<{
   container: HTMLDivElement | null;
-  id: string | null;
+  id?: string | null;
 }>({ container: null, id: null });
 ExcalidrawContainerContext.displayName = "ExcalidrawContainerContext";
 
@@ -800,6 +800,7 @@ class App extends React.Component<AppProps, AppState> {
         resetCursor: this.resetCursor,
         updateFrameRendering: this.updateFrameRendering,
         toggleSidebar: this.toggleSidebar,
+        app: this,
         onChange: (cb) => this.onChangeEmitter.on(cb),
         onPointerDown: (cb) => this.onPointerDownEmitter.on(cb),
         onPointerUp: (cb) => this.onPointerUpEmitter.on(cb),
@@ -1605,6 +1606,7 @@ class App extends React.Component<AppProps, AppState> {
             this.state.viewModeEnabled ||
             this.state.openDialog?.name === "elementLinkSelector",
           "excalidraw--mobile": this.device.editor.isMobile,
+          "excalidraw--zen-mode": this.state.zenModeEnabled,
         })}
         style={{
           ["--ui-pointerEvents" as any]: shouldBlockPointerEvents
@@ -1636,6 +1638,9 @@ class App extends React.Component<AppProps, AppState> {
                         value={this.actionManager}
                       >
                         <LayerUI
+                          onHomeButtonClick={
+                            this.props.onHomeButtonClick || (() => {})
+                          }
                           canvas={this.canvas}
                           appState={this.state}
                           files={this.files}
@@ -1646,7 +1651,6 @@ class App extends React.Component<AppProps, AppState> {
                           onPenModeToggle={this.togglePenMode}
                           onHandToolToggle={this.onHandToolToggle}
                           langCode={getLanguage().code}
-                          renderTopRightUI={renderTopRightUI}
                           renderCustomStats={renderCustomStats}
                           showExitZenModeBtn={
                             typeof this.props?.zenModeEnabled === "undefined" &&
@@ -1654,6 +1658,7 @@ class App extends React.Component<AppProps, AppState> {
                           }
                           UIOptions={this.props.UIOptions}
                           onExportImage={this.onExportImage}
+                          onImageAction={this.onImageAction}
                           renderWelcomeScreen={
                             !this.state.isLoading &&
                             this.state.showWelcomeScreen &&
@@ -1666,6 +1671,7 @@ class App extends React.Component<AppProps, AppState> {
                           generateLinkForSelection={
                             this.props.generateLinkForSelection
                           }
+                          renderTopRightUI={renderTopRightUI}
                         >
                           {this.props.children}
                         </LayerUI>
@@ -2407,6 +2413,14 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     this.resetStore();
+
+    if (initialData?.scrollX != null) {
+      scene.appState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      scene.appState.scrollY = initialData.scrollY;
+    }
+
     this.resetHistory();
     this.syncActionResult({
       ...scene,
@@ -2599,6 +2613,30 @@ class App extends React.Component<AppProps, AppState> {
     this.store.onStoreIncrementEmitter.clear();
     ShapeCache.destroy();
     SnapCache.destroy();
+    clearRenderCache();
+
+    this.onChangeEmitter.destroy();
+
+    this.scene = new Scene();
+    this.history = new History();
+    this.actionManager = new ActionManager(
+      this.syncActionResult,
+      () => this.state,
+      () => this.scene.getElementsIncludingDeleted(),
+      this,
+    );
+    this.library = new Library(this);
+    // @ts-ignore
+    this.canvas = null;
+    this.interactiveCanvas = null;
+    // @ts-ignore
+    this.rc = null;
+
+    // @ts-ignore
+    this.excalidrawContainerRef.current = undefined;
+    this.nearestScrollableContainer = undefined;
+    this.excalidrawContainerValue = { container: null, id: "unmounted" };
+
     clearTimeout(touchTimeout);
     isSomeElementSelected.clearCache();
     selectGroupsForSelectedElements.clearCache();
@@ -2881,6 +2919,15 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({ theme: this.props.theme });
     }
 
+    if (
+      !this.props.UIOptions.canvasActions &&
+      this.state.openMenu === "canvas"
+    ) {
+      this.setState({
+        openMenu: null,
+      });
+    }
+
     this.excalidrawContainerRef.current?.classList.toggle(
       "theme--dark",
       this.state.theme === THEME.DARK,
@@ -2944,7 +2991,7 @@ class App extends React.Component<AppProps, AppState> {
     // init, which would trigger onChange with empty elements, which would then
     // override whatever is in localStorage currently.
     if (!this.state.isLoading) {
-      this.props.onChange?.(elements, this.state, this.files);
+      this.props.onChange?.(elements, this.state, this.files, this.props.id);
       this.onChangeEmitter.trigger(elements, this.state, this.files);
     }
   }
@@ -8887,6 +8934,13 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({
         selectedElementsAreBeingDragged: false,
       });
+
+      this.onPointerUpEmitter.trigger(
+        this.state.activeTool,
+        pointerDownState,
+        childEvent,
+      );
+
       const elementsMap = this.scene.getNonDeletedElementsMap();
 
       if (

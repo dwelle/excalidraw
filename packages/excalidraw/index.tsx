@@ -48,6 +48,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onPointerUp,
     onScrollChange,
     onDuplicate,
+    id,
+    onHomeButtonClick,
     children,
     validateEmbeddable,
     renderEmbeddable,
@@ -112,6 +114,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <EditorJotaiProvider store={editorJotaiStore}>
       <InitializeApp langCode={langCode} theme={theme}>
         <App
+          id={id}
           onChange={onChange}
           initialData={initialData}
           excalidrawAPI={excalidrawAPI}
@@ -143,6 +146,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           renderEmbeddable={renderEmbeddable}
           aiEnabled={aiEnabled !== false}
           showDeprecatedFonts={showDeprecatedFonts}
+          onHomeButtonClick={onHomeButtonClick}
         >
           {children}
         </App>
@@ -232,7 +236,6 @@ export {
 export { reconcileElements } from "./data/reconcile";
 
 export {
-  exportToCanvas,
   exportToBlob,
   exportToSvg,
   exportToClipboard,
@@ -304,3 +307,15 @@ export { getDataURL } from "./data/blob";
 export { isElementLink } from "@excalidraw/element/elementLink";
 
 export { setCustomTextMetricsProvider } from "@excalidraw/element/textMeasurements";
+export {
+  getDefaultAppState,
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "./appState";
+
+export { libraryItemsAtom } from "./data/library";
+
+export { exportToCanvas } from "./scene/export";
+
+export * as icons from "./components/icons";
+export * as actions from "./actions/index";
