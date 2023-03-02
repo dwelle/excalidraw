@@ -40,9 +40,9 @@ import { openConfirmModal } from "../OverwriteConfirm/OverwriteConfirmState";
 import Trans from "../Trans";
 import DropdownMenuItemContentRadio from "../dropdownMenu/DropdownMenuItemContentRadio";
 import { THEME } from "../../constants";
-import type { Theme } from "../../element/types";
 import { trackEvent } from "../../analytics";
 import "./DefaultItems.scss";
+import { Theme } from "../../element/types";
 
 export const LoadScene = () => {
   const { t } = useI18n();
