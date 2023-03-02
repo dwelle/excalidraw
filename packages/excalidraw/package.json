@@ -1,6 +1,6 @@
 {
-  "name": "@excalidraw/excalidraw",
-  "version": "0.18.0-rc.5",
+  "name": "@dwelle/excalidraw",
+  "version": "0.6.0-rc.2",
   "type": "module",
   "types": "./dist/types/excalidraw/index.d.ts",
   "main": "./dist/prod/index.js",
@@ -27,13 +27,7 @@
   },
   "description": "Excalidraw as a React component",
   "license": "MIT",
-  "keywords": [
-    "excalidraw",
-    "excalidraw-embed",
-    "react",
-    "npm",
-    "npm excalidraw"
-  ],
+  "keywords": [],
   "browserslist": {
     "production": [
       ">0.2%",
@@ -123,7 +117,8 @@
   },
   "repository": "https://github.com/excalidraw/excalidraw",
   "bugs": "https://github.com/excalidraw/excalidraw/issues",
-  "homepage": "https://github.com/excalidraw/excalidraw/tree/master/packages/excalidraw",
+  "homepage": "https://github.com/excalidraw/excalidraw/tree/master/src/packages/excalidraw",
+  "repository": "https://github.com/dwelle/excalidraw",
   "scripts": {
     "gen:types": "rm -rf types && tsc",
     "build:esm": "rm -rf dist && node ../../scripts/buildPackage.js && yarn gen:types"

@@ -76,6 +76,7 @@ interface LayerUIProps {
   UIOptions: AppProps["UIOptions"];
   onExportImage: AppClassProperties["onExportImage"];
   renderWelcomeScreen: boolean;
+  onHomeButtonClick: () => void;
   children?: React.ReactNode;
   app: AppClassProperties;
   isCollaborating: boolean;
@@ -134,6 +135,7 @@ const LayerUI = ({
   UIOptions,
   onExportImage,
   renderWelcomeScreen,
+  onHomeButtonClick,
   children,
   app,
   isCollaborating,
@@ -501,6 +503,7 @@ const LayerUI = ({
       {device.editor.isMobile && (
         <MobileMenu
           app={app}
+          onHomeButtonClick={onHomeButtonClick}
           appState={appState}
           elements={elements}
           actionManager={actionManager}

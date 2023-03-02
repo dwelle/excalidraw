@@ -25,6 +25,7 @@ import { PenModeButton } from "./PenModeButton";
 import { HandButton } from "./HandButton";
 import { isHandToolActive } from "../appState";
 import { useTunnels } from "../context/tunnels";
+import { HomeButton } from "./HomeButton";
 
 type MobileMenuProps = {
   appState: UIAppState;
@@ -47,6 +48,7 @@ type MobileMenuProps = {
   renderWelcomeScreen: boolean;
   UIOptions: AppProps["UIOptions"];
   app: AppClassProperties;
+  onHomeButtonClick: () => void;
 };
 
 export const MobileMenu = ({
@@ -65,6 +67,7 @@ export const MobileMenu = ({
   renderWelcomeScreen,
   UIOptions,
   app,
+  onHomeButtonClick,
 }: MobileMenuProps) => {
   const {
     WelcomeScreenCenterTunnel,
@@ -115,6 +118,9 @@ export const MobileMenu = ({
                     title={t("toolBar.hand")}
                     isMobile
                   />
+                </div>
+                <div className="mobile-misc-tools-container-left">
+                  <HomeButton onHomeButtonClick={onHomeButtonClick} />
                 </div>
               </Stack.Row>
             </Stack.Col>
