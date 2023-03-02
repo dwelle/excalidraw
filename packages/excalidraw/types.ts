@@ -509,6 +509,8 @@ export type ExcalidrawInitialDataState = Merge<
   ImportedDataState,
   {
     libraryItems?: MaybePromise<Required<ImportedDataState>["libraryItems"]>;
+    scrollX?: number;
+    scrollY?: number;
   }
 >;
 
@@ -518,16 +520,22 @@ export type OnUserFollowedPayload = {
 };
 
 export interface ExcalidrawProps {
+  id?: string | null;
   onChange?: (
     elements: readonly OrderedExcalidrawElement[],
     appState: AppState,
     files: BinaryFiles,
+    id?: string | null,
   ) => void;
   onIncrement?: (event: DurableIncrement | EphemeralIncrement) => void;
   initialData?:
     | (() => MaybePromise<ExcalidrawInitialDataState | null>)
     | MaybePromise<ExcalidrawInitialDataState | null>;
   excalidrawAPI?: (api: ExcalidrawImperativeAPI) => void;
+  onHomeButtonClick?: () => void;
+  user?: {
+    name?: string | null;
+  };
   isCollaborating?: boolean;
   onPointerUpdate?: (payload: {
     pointer: { x: number; y: number; tool: "pointer" | "laser" };
@@ -820,6 +828,7 @@ export interface ExcalidrawImperativeAPI {
    * used in conjunction with view mode (props.viewModeEnabled).
    */
   updateFrameRendering: InstanceType<typeof App>["updateFrameRendering"];
+  app: InstanceType<typeof App>;
   onChange: (
     callback: (
       elements: readonly ExcalidrawElement[],
