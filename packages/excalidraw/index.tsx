@@ -294,3 +294,4 @@ export { libraryItemsAtom } from "./data/library";
 export { exportToCanvas } from "./scene/export";
 
 export * as icons from "./components/icons";
+export * as actions from "./actions/index";
