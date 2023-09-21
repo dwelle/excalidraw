@@ -872,18 +872,18 @@ export default function App({
               if (!excalidrawAPI) {
                 return;
               }
-              const canvas = await exportToCanvas({
-                elements: excalidrawAPI.getSceneElements(),
-                appState: {
-                  ...initialData.appState,
-                  exportWithDarkMode,
-                },
-                files: excalidrawAPI.getFiles(),
-              });
-              const ctx = canvas.getContext("2d")!;
-              ctx.font = "30px Virgil";
-              ctx.strokeText("My custom text", 50, 60);
-              setCanvasUrl(canvas.toDataURL());
+              // const canvas = await exportToCanvas({
+              //   elements: excalidrawAPI.getSceneElements(),
+              //   appState: {
+              //     ...initialData.appState,
+              //     exportWithDarkMode,
+              //   },
+              //   files: excalidrawAPI.getFiles(),
+              // });
+              // const ctx = canvas.getContext("2d")!;
+              // ctx.font = "30px Virgil";
+              // ctx.strokeText("My custom text", 50, 60);
+              // setCanvasUrl(canvas.toDataURL());
             }}
           >
             Export to Canvas
