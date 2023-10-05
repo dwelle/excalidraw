@@ -85,6 +85,7 @@ interface LayerUIProps {
   children?: React.ReactNode;
   app: AppClassProperties;
   isCollaborating: boolean;
+  uiDisabled: boolean;
 }
 
 const DefaultMainMenu: React.FC<{
@@ -143,6 +144,7 @@ const LayerUI = ({
   children,
   app,
   isCollaborating,
+  uiDisabled,
 }: LayerUIProps) => {
   const device = useDevice();
   const tunnels = useInitializeTunnels();
@@ -379,6 +381,10 @@ const LayerUI = ({
   };
 
   const isSidebarDocked = useAtomValue(isSidebarDockedAtom, jotaiScope);
+
+  if (uiDisabled) {
+    return null;
+  }
 
   const layerUIJSX = (
     <>
