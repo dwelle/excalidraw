@@ -108,6 +108,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     showDeprecatedFonts,
     renderScrollbars,
     imageOptions,
+    ui,
+    interactive,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -203,7 +205,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           renderTopLeftUI={renderTopLeftUI}
           renderTopRightUI={renderTopRightUI}
           langCode={langCode}
-          viewModeEnabled={viewModeEnabled}
+          viewModeEnabled={interactive === false ? true : viewModeEnabled}
           zenModeEnabled={zenModeEnabled}
           gridModeEnabled={gridModeEnabled}
           libraryReturnUrl={libraryReturnUrl}
@@ -229,6 +231,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           showDeprecatedFonts={showDeprecatedFonts}
           renderScrollbars={renderScrollbars}
           imageOptions={normalizedImageOptions}
+          ui={ui}
+          interactive={interactive}
         >
           {children}
         </App>
