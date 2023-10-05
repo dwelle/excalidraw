@@ -2093,6 +2093,7 @@ class App extends React.Component<AppProps, AppState> {
                             this.props.generateLinkForSelection
                           }
                           renderTopRightUI={renderTopRightUI}
+                          uiDisabled={this.props.ui === false}
                         >
                           {this.props.children}
                         </LayerUI>
@@ -2203,21 +2204,22 @@ class App extends React.Component<AppProps, AppState> {
                             closable={this.state.toast.closable}
                           />
                         )}
-
-                        {this.state.contextMenu && (
-                          <ContextMenu
-                            items={this.state.contextMenu.items}
-                            top={this.state.contextMenu.top}
-                            left={this.state.contextMenu.left}
-                            actionManager={this.actionManager}
-                            onClose={(callback) => {
-                              this.setState({ contextMenu: null }, () => {
-                                this.focusContainer();
-                                callback?.();
-                              });
-                            }}
-                          />
-                        )}
+                        {this.state.contextMenu &&
+                          this.props.interactive !== false &&
+                          this.props.ui !== false && (
+                            <ContextMenu
+                              items={this.state.contextMenu.items}
+                              top={this.state.contextMenu.top}
+                              left={this.state.contextMenu.left}
+                              actionManager={this.actionManager}
+                              onClose={(callback) => {
+                                this.setState({ contextMenu: null }, () => {
+                                  this.focusContainer();
+                                  callback?.();
+                                });
+                              }}
+                            />
+                          )}
                         <StaticCanvas
                           canvas={this.canvas}
                           rc={this.rc}
@@ -3504,6 +3506,10 @@ class App extends React.Component<AppProps, AppState> {
       event.preventDefault();
     }
 
+    if (this.props.interactive === false) {
+      return;
+    }
+
     if (!didTapTwice) {
       didTapTwice = true;
 
@@ -3556,6 +3562,10 @@ class App extends React.Component<AppProps, AppState> {
   };
 
   private onTouchEnd = (event: TouchEvent) => {
+    if (this.props.interactive === false) {
+      return;
+    }
+
     this.resetContextMenuTimer();
     if (event.touches.length > 0) {
       this.setState({
@@ -3739,6 +3749,10 @@ class App extends React.Component<AppProps, AppState> {
 
   public pasteFromClipboard = withBatchedUpdates(
     async (event: ClipboardEvent) => {
+      if (this.props.interactive === false) {
+        return;
+      }
+
       const isPlainPaste = !!IS_PLAIN_PASTE;
 
       // #686
@@ -5522,6 +5536,10 @@ class App extends React.Component<AppProps, AppState> {
   private onGestureStart = withBatchedUpdates((event: GestureEvent) => {
     event.preventDefault();
 
+    if (this.props.interactive === false) {
+      return false;
+    }
+
     // we only want to deselect on touch screens because user may have selected
     // elements by mistake while zooming
     if (this.isTouchScreenMultiTouchGesture()) {
@@ -5536,6 +5554,10 @@ class App extends React.Component<AppProps, AppState> {
   // fires only on Safari
   private onGestureChange = withBatchedUpdates((event: GestureEvent) => {
     event.preventDefault();
+
+    if (this.props.interactive === false) {
+      return false;
+    }
 
     // onGestureChange only has zoom factor but not the center.
     // If we're on iPad or iPhone, then we recognize multi-touch and will
@@ -5568,6 +5590,11 @@ class App extends React.Component<AppProps, AppState> {
   // fires only on Safari
   private onGestureEnd = withBatchedUpdates((event: GestureEvent) => {
     event.preventDefault();
+
+    if (this.props.interactive === false) {
+      return false;
+    }
+
     // reselect elements only on touch screens (see onGestureStart)
     if (this.isTouchScreenMultiTouchGesture()) {
       this.setState({
@@ -6420,6 +6447,10 @@ class App extends React.Component<AppProps, AppState> {
   private handleCanvasPointerMove = (
     event: React.PointerEvent<HTMLCanvasElement>,
   ) => {
+    if (this.props.interactive === false) {
+      return false;
+    }
+
     this.savePointer(event.clientX, event.clientY, this.state.cursorButton);
     this.lastPointerMoveEvent = event.nativeEvent;
     const scenePointer = viewportCoordsToSceneCoords(event, this.state);
@@ -7342,7 +7373,10 @@ class App extends React.Component<AppProps, AppState> {
     // we must exit before we set `cursorButton` state and `savePointer`
     // else it will send pointer state & laser pointer events in collab when
     // panning
-    if (this.handleCanvasPanUsingWheelOrSpaceDrag(event)) {
+    if (
+      this.props.interactive !== false &&
+      this.handleCanvasPanUsingWheelOrSpaceDrag(event)
+    ) {
       return;
     }
 
@@ -7423,13 +7457,19 @@ class App extends React.Component<AppProps, AppState> {
       selectedElementsAreBeingDragged: false,
     });
 
-    if (this.handleDraggingScrollBar(event, pointerDownState)) {
+    if (
+      this.props.interactive !== false &&
+      this.handleDraggingScrollBar(event, pointerDownState)
+    ) {
       return;
     }
 
     this.clearSelectionIfNotUsingSelection();
 
-    if (this.handleSelectionOnPointerDown(event, pointerDownState)) {
+    if (
+      this.props.interactive !== false &&
+      this.handleSelectionOnPointerDown(event, pointerDownState)
+    ) {
       return;
     }
 
@@ -11729,6 +11769,10 @@ class App extends React.Component<AppProps, AppState> {
   ) => {
     event.preventDefault();
 
+    if (this.props.interactive === false) {
+      return;
+    }
+
     if (
       (("pointerType" in event.nativeEvent &&
         event.nativeEvent.pointerType === "touch") ||
@@ -12262,7 +12306,7 @@ class App extends React.Component<AppProps, AppState> {
 
       event.preventDefault();
 
-      if (isPanning) {
+      if (isPanning || this.props.interactive === false) {
         return;
       }
 
