@@ -93,6 +93,7 @@ interface LayerUIProps {
     shouldPersist: boolean,
     source: "tool" | "generation" | "settings",
   ) => void;
+  uiDisabled: boolean;
 }
 
 const DefaultMainMenu: React.FC<{
@@ -154,6 +155,7 @@ const LayerUI = ({
   isOpenAIKeyPersisted,
   onOpenAIAPIKeyChange,
   onMagicSettingsConfirm,
+  uiDisabled,
 }: LayerUIProps) => {
   const device = useDevice();
   const tunnels = useInitializeTunnels();
@@ -375,6 +377,10 @@ const LayerUI = ({
   };
 
   const isSidebarDocked = useAtomValue(isSidebarDockedAtom, jotaiScope);
+
+  if (uiDisabled) {
+    return null;
+  }
 
   const layerUIJSX = (
     <>

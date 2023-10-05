@@ -477,6 +477,8 @@ export interface ExcalidrawProps {
     appState: AppState,
   ) => JSX.Element | null;
   aiEnabled?: boolean;
+  interactive?: boolean;
+  ui?: boolean;
 }
 
 export type SceneData = {
