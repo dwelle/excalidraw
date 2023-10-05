@@ -54,6 +54,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     renderEmbeddable,
     aiEnabled,
     showDeprecatedFonts,
+    ui,
+    interactive,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -121,7 +123,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onPointerUpdate={onPointerUpdate}
           renderTopRightUI={renderTopRightUI}
           langCode={langCode}
-          viewModeEnabled={viewModeEnabled}
+          viewModeEnabled={interactive === false ? true : viewModeEnabled}
           zenModeEnabled={zenModeEnabled}
           gridModeEnabled={gridModeEnabled}
           libraryReturnUrl={libraryReturnUrl}
@@ -146,6 +148,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           aiEnabled={aiEnabled !== false}
           showDeprecatedFonts={showDeprecatedFonts}
           onHomeButtonClick={onHomeButtonClick}
+          ui={ui}
+          interactive={interactive}
         >
           {children}
         </App>

@@ -81,6 +81,7 @@ interface LayerUIProps {
   app: AppClassProperties;
   isCollaborating: boolean;
   generateLinkForSelection?: AppProps["generateLinkForSelection"];
+  uiDisabled: boolean;
 }
 
 const DefaultMainMenu: React.FC<{
@@ -140,6 +141,7 @@ const LayerUI = ({
   app,
   isCollaborating,
   generateLinkForSelection,
+  uiDisabled,
 }: LayerUIProps) => {
   const device = useDevice();
   const tunnels = useInitializeTunnels();
@@ -379,6 +381,10 @@ const LayerUI = ({
   };
 
   const isSidebarDocked = useAtomValue(isSidebarDockedAtom);
+
+  if (uiDisabled) {
+    return null;
+  }
 
   const layerUIJSX = (
     <>
