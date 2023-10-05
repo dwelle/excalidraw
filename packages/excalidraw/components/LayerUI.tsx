@@ -100,6 +100,7 @@ interface LayerUIProps {
   app: AppClassProperties;
   isCollaborating: boolean;
   generateLinkForSelection?: AppProps["generateLinkForSelection"];
+  uiDisabled: boolean;
 }
 
 const DefaultMainMenu: React.FC<{
@@ -159,6 +160,7 @@ const LayerUI = ({
   app,
   isCollaborating,
   generateLinkForSelection,
+  uiDisabled,
 }: LayerUIProps) => {
   const editorInterface = useEditorInterface();
   const stylesPanelMode = useStylesPanelMode();
@@ -459,6 +461,10 @@ const LayerUI = ({
   };
 
   const isSidebarDocked = useAtomValue(isSidebarDockedAtom);
+
+  if (uiDisabled) {
+    return null;
+  }
 
   const layerUIJSX = (
     <>
