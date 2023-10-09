@@ -1,7 +1,8 @@
 @import "open-color/open-color.scss";
 @import "./variables.module.scss";
 
-.excalidraw {
+.excalidraw,
+.exc-style {
   --theme-filter: none;
   --button-destructive-bg-color: #{$oc-red-1};
   --button-destructive-color: #{$oc-red-9};
@@ -163,13 +164,15 @@
   --color-badge: #0b6513;
   --background-color-badge: #d3ffd2;
 
-  &.theme--dark {
+  &.theme--dark,
+  .dark & {
     &.theme--dark-background-none {
       background: none;
     }
   }
 
-  &.theme--dark {
+  &.theme--dark,
+  .dark & {
     --theme-filter: invert(93%) hue-rotate(180deg);
     --button-destructive-bg-color: #5a0000;
     --button-destructive-color: #{$oc-red-3};
