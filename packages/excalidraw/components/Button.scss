@@ -1,7 +1,7 @@
 @import "../css/theme";
 
-.excalidraw {
-  .excalidraw-button {
-    @include outlineButtonStyles;
-  }
+.excalidraw .excalidraw-button,
+.exc-style.excalidraw-button,
+.exc-style .excalidraw-button {
+  @include outlineButtonStyles;
 }
