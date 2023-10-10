@@ -2842,6 +2842,13 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     if (
+      this.props.activeTool &&
+      this.props.activeTool.type !== this.state.activeTool.type
+    ) {
+      this.setActiveTool(this.props.activeTool);
+    }
+
+    if (
       prevState.zoom.value !== this.state.zoom.value ||
       prevState.scrollX !== this.state.scrollX ||
       prevState.scrollY !== this.state.scrollY
@@ -4853,14 +4860,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     const nextActiveTool = updateActiveTool(this.state, tool);
-    if (nextActiveTool.type === "hand") {
-      setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
-    } else if (!isHoldingSpace) {
-      setCursorForShape(this.interactiveCanvas, {
-        ...this.state,
-        activeTool: nextActiveTool,
-      });
-    }
+
     if (isToolIcon(document.activeElement)) {
       this.focusContainer();
     }
@@ -4881,9 +4881,10 @@ class App extends React.Component<AppProps, AppState> {
       if (nextActiveTool.type === "freedraw") {
         this.store.scheduleCapture();
       }
+      let nextState: AppState;
 
       if (nextActiveTool.type === "lasso") {
-        return {
+        nextState = {
           ...prevState,
           activeTool: nextActiveTool,
           ...(keepSelection
@@ -4897,7 +4898,7 @@ class App extends React.Component<AppProps, AppState> {
           ...commonResets,
         };
       } else if (nextActiveTool.type !== "selection") {
-        return {
+        nextState = {
           ...prevState,
           activeTool: nextActiveTool,
           selectedElementIds: makeNextSelectedElementIds({}, prevState),
@@ -4906,12 +4907,24 @@ class App extends React.Component<AppProps, AppState> {
           multiElement: null,
           ...commonResets,
         };
+      } else {
+        nextState = {
+          ...prevState,
+          activeTool: nextActiveTool,
+          ...commonResets,
+        };
       }
-      return {
-        ...prevState,
-        activeTool: nextActiveTool,
-        ...commonResets,
-      };
+
+      if (nextActiveTool.type === "hand") {
+        setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
+      } else if (!isHoldingSpace) {
+        setCursorForShape(this.interactiveCanvas, {
+          ...this.state,
+          activeTool: nextActiveTool,
+        });
+      }
+
+      return nextState;
     });
   };
 
