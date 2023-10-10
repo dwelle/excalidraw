@@ -59,6 +59,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     renderScrollbars,
     ui,
     interactive,
+    activeTool,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -155,6 +156,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           renderScrollbars={renderScrollbars}
           ui={ui}
           interactive={interactive}
+          activeTool={activeTool}
         >
           {children}
         </App>
