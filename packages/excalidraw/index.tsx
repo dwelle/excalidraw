@@ -57,6 +57,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     showDeprecatedFonts,
     ui,
     interactive,
+    activeTool,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -151,6 +152,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           onHomeButtonClick={onHomeButtonClick}
           ui={ui}
           interactive={interactive}
+          activeTool={activeTool}
         >
           {children}
         </App>
