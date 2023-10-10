@@ -87,7 +87,7 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
           remoteSelectedElementIds[id].push(socketId);
         }
       }
-      if (!user.pointer) {
+      if (!user.pointer || user.pointer.renderCursor === false) {
         return;
       }
       if (user.username) {
