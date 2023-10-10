@@ -492,6 +492,14 @@ export interface ExcalidrawProps {
   aiEnabled?: boolean;
   interactive?: boolean;
   ui?: boolean;
+  activeTool?:
+    | {
+        type: ToolType;
+      }
+    | {
+        type: "custom";
+        customType: string;
+      };
 }
 
 export type SceneData = {
