@@ -108,6 +108,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     imageOptions,
     ui,
     interactive,
+    activeTool,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -230,6 +231,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           imageOptions={normalizedImageOptions}
           ui={ui}
           interactive={interactive}
+          activeTool={activeTool}
         >
           {children}
         </App>
