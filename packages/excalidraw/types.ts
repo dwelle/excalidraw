@@ -575,6 +575,14 @@ export interface ExcalidrawProps {
   showDeprecatedFonts?: boolean;
   interactive?: boolean;
   ui?: boolean;
+  activeTool?:
+    | {
+        type: ToolType;
+      }
+    | {
+        type: "custom";
+        customType: string;
+      };
 }
 
 export type SceneData = {
