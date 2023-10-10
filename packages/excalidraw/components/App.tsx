@@ -3289,6 +3289,13 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     if (
+      this.props.activeTool &&
+      this.props.activeTool.type !== this.state.activeTool.type
+    ) {
+      this.setActiveTool(this.props.activeTool);
+    }
+
+    if (
       prevState.zoom.value !== this.state.zoom.value ||
       prevState.scrollX !== this.state.scrollX ||
       prevState.scrollY !== this.state.scrollY
@@ -5418,14 +5425,7 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     const nextActiveTool = updateActiveTool(this.state, tool);
-    if (nextActiveTool.type === "hand") {
-      setCursor(this.interactiveCanvas, CURSOR_TYPE.GRAB);
-    } else if (!isHoldingSpace) {
-      setCursorForShape(this.interactiveCanvas, {
-        ...this.state,
-        activeTool: nextActiveTool,
-      });
-    }
+
     if (isToolIcon(document.activeElement)) {
       this.focusContainer();
     }
@@ -5449,9 +5449,10 @@ class App extends React.Component<AppProps, AppState> {
       if (nextActiveTool.type === "freedraw") {
         this.store.scheduleCapture();
       }
+      let nextState: AppState;
 
       if (nextActiveTool.type === "lasso") {
-        return {
+        nextState = {
           ...prevState,
           ...commonResets,
           activeTool: nextActiveTool,
@@ -5465,7 +5466,7 @@ class App extends React.Component<AppProps, AppState> {
               }),
         };
       } else if (nextActiveTool.type !== "selection") {
-        return {
+        nextState = {
           ...prevState,
           ...commonResets,
           activeTool: nextActiveTool,
@@ -5474,12 +5475,14 @@ class App extends React.Component<AppProps, AppState> {
           editingGroupId: null,
           multiElement: null,
         };
+      } else {
+        nextState = {
+          ...prevState,
+          ...commonResets,
+          activeTool: nextActiveTool,
+        };
       }
-      return {
-        ...prevState,
-        ...commonResets,
-        activeTool: nextActiveTool,
-      };
+      return nextState;
     });
   };
 
