@@ -282,7 +282,8 @@ export class LaserPathManager {
       state.svg.setAttribute("d", paths);
       state.svg.setAttribute(
         "fill",
-        collaborator.pointer?.laserColor || getClientColor(key),
+        collaborator.pointer?.laserColor ||
+          getClientColor(collaborator.id || key),
       );
     }
 

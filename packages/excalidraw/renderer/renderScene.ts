@@ -599,9 +599,10 @@ const _renderInteractiveScene = ({
             selectionColors.push(
               ...renderConfig.remoteSelectedElementIds[element.id].map(
                 (socketId) => {
-                  const picture =
-                    appState.collaborators.get(socketId)?.avatarUrl;
-                  const background = getClientColor(picture || socketId);
+                  const { id } =
+                    renderConfig.remotePointerViewportCoords[socketId];
+
+                  const background = getClientColor(id);
                   return background;
                 },
               ),
@@ -732,7 +733,7 @@ const _renderInteractiveScene = ({
 
   // Paint remote pointers
   for (const clientId in renderConfig.remotePointerViewportCoords) {
-    let { x, y } = renderConfig.remotePointerViewportCoords[clientId];
+    let { x, y, id } = renderConfig.remotePointerViewportCoords[clientId];
 
     x -= appState.offsetLeft;
     y -= appState.offsetTop;
@@ -751,8 +752,7 @@ const _renderInteractiveScene = ({
     y = Math.max(y, 0);
     y = Math.min(y, normalizedHeight - height);
 
-    const picture = appState.collaborators.get(clientId)?.avatarUrl;
-    const background = getClientColor(picture || clientId);
+    const background = getClientColor(id);
 
     context.save();
     context.strokeStyle = background;

@@ -96,13 +96,16 @@ const InteractiveCanvas = (props: InteractiveCanvasProps) => {
       if (user.userState) {
         pointerUserStates[socketId] = user.userState;
       }
-      pointerViewportCoords[socketId] = sceneCoordsToViewportCoords(
-        {
-          sceneX: user.pointer.x,
-          sceneY: user.pointer.y,
-        },
-        props.appState,
-      );
+      pointerViewportCoords[socketId] = {
+        ...sceneCoordsToViewportCoords(
+          {
+            sceneX: user.pointer.x,
+            sceneY: user.pointer.y,
+          },
+          props.appState,
+        ),
+        id: user.id || socketId,
+      };
       cursorButton[socketId] = user.button;
     });
 

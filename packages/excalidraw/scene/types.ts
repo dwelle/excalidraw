@@ -36,7 +36,9 @@ export type InteractiveCanvasRenderConfig = {
   // collab-related state
   // ---------------------------------------------------------------------------
   remoteSelectedElementIds: { [elementId: string]: string[] };
-  remotePointerViewportCoords: { [id: string]: { x: number; y: number } };
+  remotePointerViewportCoords: {
+    [id: string]: { x: number; y: number; id: string };
+  };
   remotePointerUserStates: { [id: string]: string };
   remotePointerUsernames: { [id: string]: string };
   remotePointerButton?: { [id: string]: string | undefined };
