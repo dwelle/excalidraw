@@ -650,6 +650,14 @@ export interface ExcalidrawProps {
   renderScrollbars?: boolean;
   interactive?: boolean;
   ui?: boolean;
+  activeTool?:
+    | {
+        type: ToolType;
+      }
+    | {
+        type: "custom";
+        customType: string;
+      };
 }
 
 export type SceneData = {
