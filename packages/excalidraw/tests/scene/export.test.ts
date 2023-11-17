@@ -167,9 +167,13 @@ describe("exporting frames", () => {
       ];
 
       const canvas = await exportToCanvas({
-        elements,
-        files: null,
-        exportPadding: 0,
+        data: {
+          elements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+        },
       });
 
       expect(canvas.width).toEqual(200);
@@ -196,10 +200,14 @@ describe("exporting frames", () => {
       ];
 
       const canvas = await exportToCanvas({
-        elements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: {
+          elements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       expect(canvas.width).toEqual(frame.width);
@@ -235,10 +243,11 @@ describe("exporting frames", () => {
       });
 
       const svg = await exportToSvg({
-        elements: [rectOverlapping, frame, frameChild],
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: { elements: [rectOverlapping, frame, frameChild], files: null },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       // frame itself isn't exported
@@ -279,10 +288,11 @@ describe("exporting frames", () => {
       });
 
       const svg = await exportToSvg({
-        elements: [frameChild, frame, elementOutside],
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: { elements: [frameChild, frame, elementOutside], files: null },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       // frame itself isn't exported
@@ -347,10 +357,11 @@ describe("exporting frames", () => {
       );
 
       const svg = await exportToSvg({
-        elements: exportedElements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame,
+        data: { elements: exportedElements, files: null },
+        config: {
+          padding: 0,
+          exportingFrame,
+        },
       });
 
       // frames themselves should be exported when multiple frames selected
@@ -392,10 +403,14 @@ describe("exporting frames", () => {
       );
 
       const svg = await exportToSvg({
-        elements: exportedElements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame,
+        data: {
+          elements: exportedElements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+          exportingFrame,
+        },
       });
 
       // frame itself isn't exported

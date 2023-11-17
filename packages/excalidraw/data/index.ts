@@ -79,7 +79,7 @@ export const prepareElementsForExport = (
   };
 };
 
-export const exportCanvas = async (
+export const exportAsImage = async (
   type: Omit<ExportType, "backend">,
   elements: ExportedElements,
   appState: AppState,
@@ -133,11 +133,20 @@ export const exportCanvas = async (
     }
   }
 
-  const tempCanvas = exportToCanvas(elements, appState, files, {
-    exportBackground,
-    viewBackgroundColor,
-    exportPadding,
-    exportingFrame,
+  const tempCanvas = exportToCanvas({
+    data: {
+      elements,
+      appState,
+      files,
+    },
+    config: {
+      canvasBackgroundColor: !exportBackground ? false : viewBackgroundColor,
+      padding: exportPadding,
+      theme: appState.exportWithDarkMode ? "dark" : "light",
+      scale: appState.exportScale,
+      fit: "none",
+      exportingFrame,
+    },
   });
 
   if (type === "png") {

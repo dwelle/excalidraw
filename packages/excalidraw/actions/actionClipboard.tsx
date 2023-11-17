@@ -9,8 +9,9 @@ import {
   readSystemClipboard,
 } from "../clipboard";
 import { actionDeleteSelected } from "./actionDeleteSelected";
-import { exportCanvas, prepareElementsForExport } from "../data/index";
+import { exportAsImage } from "../data/index";
 import { isTextElement } from "../element";
+import { prepareElementsForExport } from "../data/index";
 import { t } from "../i18n";
 import { isFirefox } from "../constants";
 
@@ -130,7 +131,7 @@ export const actionCopyAsSvg = register({
     );
 
     try {
-      await exportCanvas(
+      await exportAsImage(
         "clipboard-svg",
         exportedElements,
         appState,
@@ -181,10 +182,11 @@ export const actionCopyAsPng = register({
       true,
     );
     try {
-      await exportCanvas("clipboard", exportedElements, appState, app.files, {
+      await exportAsImage("clipboard", exportedElements, appState, app.files, {
         ...appState,
         exportingFrame,
       });
+
       return {
         appState: {
           ...appState,

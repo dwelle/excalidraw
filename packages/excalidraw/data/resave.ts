@@ -1,6 +1,7 @@
 import { ExcalidrawElement } from "../element/types";
 import { AppState, BinaryFiles } from "../types";
-import { exportCanvas, prepareElementsForExport } from ".";
+import { exportAsImage } from ".";
+import { prepareElementsForExport } from ".";
 import { getFileHandleType, isImageFileHandleType } from "./blob";
 
 export const resaveAsImageWithScene = async (
@@ -28,7 +29,7 @@ export const resaveAsImageWithScene = async (
     false,
   );
 
-  await exportCanvas(fileHandleType, exportedElements, appState, files, {
+  await exportAsImage(fileHandleType, exportedElements, appState, files, {
     exportBackground,
     viewBackgroundColor,
     name,

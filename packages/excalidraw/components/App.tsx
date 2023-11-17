@@ -91,7 +91,7 @@ import {
   TOOL_TYPE,
   EDITOR_LS_KEYS,
 } from "../constants";
-import { ExportedElements, exportCanvas, loadFromBlob } from "../data";
+import { exportAsImage, ExportedElements, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restore, restoreElements } from "../data/restore";
 import {
@@ -1649,7 +1649,7 @@ class App extends React.Component<AppProps, AppState> {
     opts: { exportingFrame: ExcalidrawFrameLikeElement | null },
   ) => {
     trackEvent("export", type, "ui");
-    const fileHandle = await exportCanvas(
+    const fileHandle = await exportAsImage(
       type,
       elements,
       this.state,

@@ -61,9 +61,13 @@ const generatePreviewImage = async (libraryItems: LibraryItems) => {
   // ---------------------------------------------------------------------------
   for (const [index, item] of libraryItems.entries()) {
     const itemCanvas = await exportToCanvas({
-      elements: item.elements,
-      files: null,
-      maxWidthOrHeight: BOX_SIZE,
+      data: {
+        elements: item.elements,
+        files: null,
+      },
+      config: {
+        maxWidthOrHeight: BOX_SIZE,
+      },
     });
 
     const { width, height } = itemCanvas;
@@ -125,13 +129,15 @@ const SingleLibraryItem = ({
     }
     (async () => {
       const svg = await exportToSvg({
-        elements: libItem.elements,
-        appState: {
-          ...appState,
-          viewBackgroundColor: OpenColor.white,
-          exportBackground: true,
+        data: {
+          elements: libItem.elements,
+          appState: {
+            ...appState,
+            viewBackgroundColor: OpenColor.white,
+            exportBackground: true,
+          },
+          files: null,
         },
-        files: null,
       });
       node.innerHTML = svg.outerHTML;
     })();

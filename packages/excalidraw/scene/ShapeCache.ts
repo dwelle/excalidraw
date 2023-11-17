@@ -50,7 +50,7 @@ export class ShapeCache {
     element: T,
     renderConfig: {
       isExporting: boolean;
-      canvasBackgroundColor: AppState["viewBackgroundColor"];
+      canvasBackgroundColor: AppState["viewBackgroundColor"] | null;
     } | null,
   ) => {
     // when exporting, always regenerated to guarantee the latest shape
@@ -66,14 +66,11 @@ export class ShapeCache {
 
     elementWithCanvasCache.delete(element);
 
-    const shape = _generateElementShape(
-      element,
-      ShapeCache.rg,
-      renderConfig || {
-        isExporting: false,
-        canvasBackgroundColor: COLOR_PALETTE.white,
-      },
-    ) as T["type"] extends keyof ElementShapes
+    const shape = _generateElementShape(element, ShapeCache.rg, {
+      isExporting: renderConfig?.isExporting ?? false,
+      canvasBackgroundColor:
+        renderConfig?.canvasBackgroundColor ?? COLOR_PALETTE.white,
+    }) as T["type"] extends keyof ElementShapes
       ? ElementShapes[T["type"]]
       : Drawable | null;
 
