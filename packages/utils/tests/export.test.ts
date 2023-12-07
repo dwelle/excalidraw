@@ -5,6 +5,11 @@ import { vi } from "vitest";
 
 import * as utils from "../src";
 
+<<<<<<< HEAD
+=======
+const { exportToCanvas } = mockedSceneExportUtils;
+
+>>>>>>> 568c67f7a (wip)
 const exportToSvgSpy = vi.spyOn(mockedSceneExportUtils, "exportToSvg");
 
 describe("exportToCanvas", async () => {
