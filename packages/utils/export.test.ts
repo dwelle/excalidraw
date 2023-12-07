@@ -5,6 +5,11 @@ import * as mockedSceneExportUtils from "@excalidraw/excalidraw/scene/export";
 
 import { MIME_TYPES } from "@excalidraw/excalidraw/constants";
 
+<<<<<<< HEAD
+=======
+const { exportToCanvas } = mockedSceneExportUtils;
+
+>>>>>>> 568c67f7a (wip)
 const exportToSvgSpy = vi.spyOn(mockedSceneExportUtils, "exportToSvg");
 
 describe("exportToCanvas", async () => {
