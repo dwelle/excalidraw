@@ -13,7 +13,7 @@ import {
   copyTextToSystemClipboard,
   copyToClipboard,
 } from "../excalidraw/clipboard";
-import { getNonDeletedElements } from "../excalidraw";
+import { getNonDeletedElements } from "../excalidraw/element";
 
 export { MIME_TYPES };
 

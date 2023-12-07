@@ -5,7 +5,8 @@ import * as mockedSceneExportUtils from "../excalidraw/scene/export";
 
 import { MIME_TYPES } from "../excalidraw/constants";
 
-import { exportToCanvas } from "../../scene/export";
+const { exportToCanvas } = mockedSceneExportUtils;
+
 const exportToSvgSpy = vi.spyOn(mockedSceneExportUtils, "exportToSvg");
 
 describe("exportToCanvas", async () => {

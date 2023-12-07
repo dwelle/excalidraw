@@ -57,7 +57,6 @@
   "homepage": ".",
   "prettier": "@excalidraw/prettier-config",
   "scripts": {
-    "setup": "yarn && cd src/packages/excalidraw && yarn",
     "build-node": "node ./scripts/build-node.js",
     "build:app:docker": "cross-env VITE_APP_DISABLE_SENTRY=true VITE_APP_DISABLE_TRACKING=true vite build",
     "build:app": "cross-env VITE_APP_GIT_SHA=$VERCEL_GIT_COMMIT_SHA vite build",

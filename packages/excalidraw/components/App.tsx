@@ -1431,7 +1431,6 @@ class App extends React.Component<AppProps, AppState> {
                           }
                           UIOptions={this.props.UIOptions}
                           onExportImage={this.onExportImage}
-                          onImageAction={this.onImageAction}
                           renderWelcomeScreen={
                             !this.state.isLoading &&
                             this.state.showWelcomeScreen &&
@@ -1774,14 +1773,18 @@ class App extends React.Component<AppProps, AppState> {
     });
 
     const blob = await exportToBlob({
-      elements: this.scene.getNonDeletedElements(),
-      appState: {
-        ...this.state,
-        exportBackground: true,
-        viewBackgroundColor: this.state.viewBackgroundColor,
+      data: {
+        elements: this.scene.getNonDeletedElements(),
+        appState: {
+          ...this.state,
+          exportBackground: true,
+          viewBackgroundColor: this.state.viewBackgroundColor,
+        },
+        files: this.files,
       },
-      exportingFrame: magicFrame,
-      files: this.files,
+      config: {
+        exportingFrame: magicFrame,
+      },
     });
 
     const dataURL = await getDataURL(blob);
@@ -2393,25 +2396,25 @@ class App extends React.Component<AppProps, AppState> {
 
     this.onChangeEmitter.destroy();
 
-    this.scene = new Scene();
-    this.history = new History();
-    this.actionManager = new ActionManager(
-      this.syncActionResult,
-      () => this.state,
-      () => this.scene.getElementsIncludingDeleted(),
-      this,
-    );
-    this.library = new Library(this);
-    // @ts-ignore
-    this.canvas = null;
-    this.interactiveCanvas = null;
-    // @ts-ignore
-    this.rc = null;
-
-    // @ts-ignore
-    this.excalidrawContainerRef.current = undefined;
-    this.nearestScrollableContainer = undefined;
-    this.excalidrawContainerValue = { container: null, id: "unmounted" };
+    if (import.meta.env.mode === ENV.PRODUCTION) {
+      this.history = new History();
+      this.library = new Library(this);
+      this.actionManager = new ActionManager(
+        this.syncActionResult,
+        () => this.state,
+        () => this.scene.getElementsIncludingDeleted(),
+        this,
+      );
+      // @ts-ignore
+      this.canvas = null;
+      this.interactiveCanvas = null;
+      // @ts-ignore
+      this.rc = null;
+      // @ts-ignore
+      this.excalidrawContainerRef.current = undefined;
+      this.nearestScrollableContainer = undefined;
+      this.excalidrawContainerValue = { container: null, id: "unmounted" };
+    }
 
     clearTimeout(touchTimeout);
     isSomeElementSelected.clearCache();

@@ -2,7 +2,7 @@ const fs = require("fs");
 const { execSync } = require("child_process");
 const core = require("@actions/core");
 
-const excalidrawDir = `${__dirname}/../src/packages/excalidraw`;
+const excalidrawDir = `${__dirname}/../packages/excalidraw`;
 const excalidrawPackage = `${excalidrawDir}/package.json`;
 const pkg = require(excalidrawPackage);
 
