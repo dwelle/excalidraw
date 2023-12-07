@@ -369,6 +369,8 @@ export const MQ_MIN_WIDTH_DESKTOP = 1440;
 export const MQ_RIGHT_SIDEBAR_MIN_WIDTH = 1229;
 // -----------------------------------------------------------------------------
 
+export const LIBRARY_SIDEBAR_WIDTH = 302;
+
 export const MAX_DECIMALS_FOR_SVG_EXPORT = 2;
 
 export const EXPORT_SCALES = [1, 2, 3];
