@@ -301,3 +301,7 @@ export { exportToCanvas } from "./scene/export";
 
 export * as icons from "./components/icons";
 export * as actions from "./actions/index";
+
+export { duplicateElements, duplicateElement } from "./element/newElement";
+
+export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
