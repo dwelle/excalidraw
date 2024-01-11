@@ -245,7 +245,7 @@ export const IDLE_THRESHOLD = 60_000;
 // Report a user active each ACTIVE_THRESHOLD milliseconds
 export const ACTIVE_THRESHOLD = 3_000;
 
-export const THEME_FILTER = cssVariables.themeFilter;
+export const THEME_FILTER = "invert(93%) hue-rotate(180deg)";
 
 export const URL_QUERY_KEYS = {
   addLibrary: "addLibrary",
@@ -280,7 +280,7 @@ export const MQ_MAX_HEIGHT_LANDSCAPE = 500;
 export const MQ_RIGHT_SIDEBAR_MIN_WIDTH = 1229;
 // -----------------------------------------------------------------------------
 
-export const LIBRARY_SIDEBAR_WIDTH = parseInt(cssVariables.rightSidebarWidth);
+export const LIBRARY_SIDEBAR_WIDTH = 302;
 
 export const MAX_DECIMALS_FOR_SVG_EXPORT = 2;
 
