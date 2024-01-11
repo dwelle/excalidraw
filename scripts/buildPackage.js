@@ -1,7 +1,6 @@
 const { build } = require("esbuild");
 const { sassPlugin } = require("esbuild-sass-plugin");
 const { externalGlobalPlugin } = require("esbuild-plugin-external-global");
-
 // Will be used later for treeshaking
 //const fs = require("fs");
 // const path = require("path");
@@ -38,6 +37,17 @@ const { externalGlobalPlugin } = require("esbuild-plugin-external-global");
 //   return files;
 // }
 
+const ENV_VARS = {
+  development: {
+    ...parseEnvVariables(`${__dirname}/../.env.development`),
+    DEV: true,
+  },
+  production: {
+    ...parseEnvVariables(`${__dirname}/../.env.production`),
+    PROD: true,
+  },
+};
+
 const browserConfig = {
   entryPoints: ["index.tsx"],
   bundle: true,
@@ -54,6 +64,7 @@ const browserConfig = {
     ".woff2": "file",
   },
 };
+
 const createESMBrowserBuild = async () => {
   // Development unminified build with source maps
   await build({
@@ -63,7 +74,7 @@ const createESMBrowserBuild = async () => {
     chunkNames: "excalidraw-assets-dev/[name]-[hash]",
     assetNames: "excalidraw-assets-dev/[name]-[hash]",
     define: {
-      "import.meta.env": JSON.stringify({ DEV: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.development),
     },
   });
 
@@ -75,7 +86,7 @@ const createESMBrowserBuild = async () => {
     chunkNames: "excalidraw-assets/[name]-[hash]",
     assetNames: "excalidraw-assets/[name]-[hash]",
     define: {
-      "import.meta.env": JSON.stringify({ PROD: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.production),
     },
   });
 };
@@ -127,7 +138,7 @@ function buildDev(chunkConfig) {
     ...chunkConfig,
     sourcemap: true,
     define: {
-      "import.meta.env": JSON.stringify({ DEV: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.development),
     },
     outdir: "dist/dev",
   };
@@ -140,7 +151,7 @@ function buildProd(chunkConfig) {
     ...chunkConfig,
     minify: true,
     define: {
-      "import.meta.env": JSON.stringify({ PROD: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.production),
     },
     outdir: "dist/prod",
   };
