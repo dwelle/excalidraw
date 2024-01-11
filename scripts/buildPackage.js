@@ -2,7 +2,7 @@ const { build } = require("esbuild");
 const { sassPlugin } = require("esbuild-sass-plugin");
 const { externalGlobalPlugin } = require("esbuild-plugin-external-global");
 const { woff2BrowserPlugin } = require("./woff2/woff2-esbuild-plugins");
-
+const { parseEnvVariables } = require("../packages/excalidraw/env.cjs");
 // Will be used later for treeshaking
 //const fs = require("fs");
 // const path = require("path");
@@ -39,6 +39,17 @@ const { woff2BrowserPlugin } = require("./woff2/woff2-esbuild-plugins");
 //   return files;
 // }
 
+const ENV_VARS = {
+  development: {
+    ...parseEnvVariables(`${__dirname}/../.env.development`),
+    DEV: true,
+  },
+  production: {
+    ...parseEnvVariables(`${__dirname}/../.env.production`),
+    PROD: true,
+  },
+};
+
 const browserConfig = {
   entryPoints: ["index.tsx"],
   bundle: true,
@@ -53,6 +64,7 @@ const browserConfig = {
   ],
   splitting: true,
 };
+
 const createESMBrowserBuild = async () => {
   // Development unminified build with source maps
   await build({
@@ -62,7 +74,7 @@ const createESMBrowserBuild = async () => {
     chunkNames: "excalidraw-assets-dev/[name]-[hash]",
     assetNames: "excalidraw-assets-dev/[name]-[hash]",
     define: {
-      "import.meta.env": JSON.stringify({ DEV: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.development),
     },
   });
 
@@ -74,7 +86,7 @@ const createESMBrowserBuild = async () => {
     chunkNames: "excalidraw-assets/[name]-[hash]",
     assetNames: "excalidraw-assets/[name]-[hash]",
     define: {
-      "import.meta.env": JSON.stringify({ PROD: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.production),
     },
   });
 };
@@ -114,7 +126,7 @@ const createESMRawBuild = async () => {
     sourcemap: true,
     outdir: "dist/dev",
     define: {
-      "import.meta.env": JSON.stringify({ DEV: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.development),
     },
   });
 
@@ -124,7 +136,7 @@ const createESMRawBuild = async () => {
     minify: true,
     outdir: "dist/prod",
     define: {
-      "import.meta.env": JSON.stringify({ PROD: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.production),
     },
   });
 };
