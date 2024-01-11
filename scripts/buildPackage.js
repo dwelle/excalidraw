@@ -2,6 +2,17 @@ const path = require("path");
 const { build } = require("esbuild");
 const { sassPlugin } = require("esbuild-sass-plugin");
 
+const ENV_VARS = {
+  development: {
+    ...parseEnvVariables(`${__dirname}/../.env.development`),
+    DEV: true,
+  },
+  production: {
+    ...parseEnvVariables(`${__dirname}/../.env.production`),
+    PROD: true,
+  },
+};
+
 // excludes all external dependencies and bundles only the source code
 const getConfig = (outdir) => ({
   outdir,
@@ -28,7 +39,7 @@ function buildDev(config) {
     ...config,
     sourcemap: true,
     define: {
-      "import.meta.env": JSON.stringify({ DEV: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.development),
     },
   });
 }
@@ -38,7 +49,7 @@ function buildProd(config) {
     ...config,
     minify: true,
     define: {
-      "import.meta.env": JSON.stringify({ PROD: true }),
+      "import.meta.env": JSON.stringify(ENV_VARS.production),
     },
   });
 }
