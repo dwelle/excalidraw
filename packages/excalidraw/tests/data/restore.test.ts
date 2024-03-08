@@ -110,7 +110,7 @@ describe("restoreElements", () => {
 
     const restoredElement = restore.restoreElements([stickyNote], null)[0];
 
-    expect(restoredElement.strokeColor).toBe(COLOR_PALETTE.black);
+    expect(restoredElement.strokeColor).toBe(COLOR_PALETTE.charcoal);
   });
 
   it("when imported data state is null it should return an empty array of elements", () => {
@@ -287,14 +287,14 @@ describe("restoreElements", () => {
     ) as ExcalidrawTextElement;
 
     expect(restoredLabel.baseFontSize).toBe(20);
-    expect(restoredLabel.strokeColor).toBe(COLOR_PALETTE.black);
+    expect(restoredLabel.strokeColor).toBe(COLOR_PALETTE.charcoal);
   });
 
   it("should give a note its label's color when the two drifted apart", () => {
     const stickyNote = API.createElement({
       type: "stickynote",
       id: "sticky",
-      strokeColor: COLOR_PALETTE.black,
+      strokeColor: COLOR_PALETTE.charcoal,
       boundElements: [{ type: "text", id: "label" }],
     });
     const label = API.createElement({
@@ -331,7 +331,9 @@ describe("restoreElements", () => {
     expect(restored.currentItemStickynoteBackgroundColor).toBe(
       DEFAULT_STICKY_NOTE_BG,
     );
-    expect(restored.currentItemStickynoteStrokeColor).toBe(COLOR_PALETTE.black);
+    expect(restored.currentItemStickynoteStrokeColor).toBe(
+      COLOR_PALETTE.charcoal,
+    );
     expect(restored.colorTopPicks.stickyNoteBackground).toEqual([
       "#fcc2d7",
       "#b2f2bb",
@@ -1059,7 +1061,7 @@ describe("restoreAppState", () => {
     );
 
     expect(restoredAppState.currentItemStickynoteStrokeColor).toBe(
-      COLOR_PALETTE.black,
+      COLOR_PALETTE.charcoal,
     );
   });
 

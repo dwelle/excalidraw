@@ -2,7 +2,6 @@
 
 exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
 {
-  "black": "#1e1e1e",
   "blue": [
     "#e7f5ff",
     "#a5d8ff",
@@ -17,6 +16,7 @@ exports[`COLOR_PALETTE > color palette doesn't regress 1`] = `
     "#a18072",
     "#846358",
   ],
+  "charcoal": "#1e1e1e",
   "cyan": [
     "#e3fafc",
     "#99e9f2",

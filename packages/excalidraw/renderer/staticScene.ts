@@ -203,6 +203,7 @@ const renderLinkIcon = (
   context: CanvasRenderingContext2D,
   appState: StaticCanvasAppState,
   elementsMap: ElementsMap,
+  renderConfig: StaticCanvasRenderConfig,
   renderState: ElementRenderState,
 ) => {
   if (element.link && !appState.selectedElementIds[element.id]) {
@@ -248,7 +249,7 @@ const renderLinkIcon = (
       // canvas) falls back to white instead of a stale fillStyle.
       linkCanvasCacheContext.fillStyle = COLOR_WHITE;
       linkCanvasCacheContext.fillStyle =
-        appState.viewBackgroundColor || COLOR_WHITE;
+        renderConfig.canvasBackgroundColor || COLOR_WHITE;
 
       linkCanvasCacheContext.fillRect(0, 0, width, height);
 
@@ -301,9 +302,9 @@ const _renderStaticScene = ({
     scale,
     normalizedWidth,
     normalizedHeight,
-    theme: appState.theme,
+    theme: renderConfig.theme,
     isExporting,
-    viewBackgroundColor: appState.viewBackgroundColor,
+    canvasBackgroundColor: renderConfig.canvasBackgroundColor,
   });
 
   // Apply zoom
@@ -437,7 +438,14 @@ const _renderStaticScene = ({
         context.restore();
 
         if (!isExporting && renderConfig.renderLinks !== false) {
-          renderLinkIcon(element, context, appState, elementsMap, renderState);
+          renderLinkIcon(
+            element,
+            context,
+            appState,
+            elementsMap,
+            renderConfig,
+            renderState,
+          );
         }
       } catch (error: any) {
         console.error(
@@ -496,7 +504,14 @@ const _renderStaticScene = ({
           );
         }
         if (!isExporting && renderConfig.renderLinks !== false) {
-          renderLinkIcon(element, context, appState, elementsMap, renderState);
+          renderLinkIcon(
+            element,
+            context,
+            appState,
+            elementsMap,
+            renderConfig,
+            renderState,
+          );
         }
         context.restore();
       } catch (error: any) {
