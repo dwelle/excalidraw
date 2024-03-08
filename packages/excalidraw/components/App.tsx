@@ -100,6 +100,7 @@ import {
   randomInteger,
   CLASSES,
   Emitter,
+  isProdEnv,
 } from "@excalidraw/common";
 
 import {
@@ -202,7 +203,11 @@ import {
   getApproxMinLineHeight,
   getMinTextElementWidth,
   ShapeCache,
+  clearRenderCache,
   getRenderOpacity,
+} from "@excalidraw/element";
+
+import {
   editGroupForSelectedElement,
   getElementsInGroup,
   getSelectedGroupIdForElement,
@@ -318,7 +323,7 @@ import {
   isHandToolActive,
 } from "../appState";
 import { copyTextToSystemClipboard, parseClipboard } from "../clipboard";
-import { exportCanvas, loadFromBlob } from "../data";
+import { exportAsImage, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restore, restoreElements } from "../data/restore";
 import { getCenter, getDistance } from "../gesture";
@@ -1877,18 +1882,20 @@ class App extends React.Component<AppProps, AppState> {
     opts: { exportingFrame: ExcalidrawFrameLikeElement | null },
   ) => {
     trackEvent("export", type, "ui");
-    const fileHandle = await exportCanvas(
+    const fileHandle = await exportAsImage({
       type,
-      elements,
-      this.state,
-      this.files,
-      {
+      data: {
+        elements,
+        appState: this.state,
+        files: this.files,
+      },
+      config: {
         exportBackground: this.state.exportBackground,
         name: this.getName(),
         viewBackgroundColor: this.state.viewBackgroundColor,
         exportingFrame: opts.exportingFrame,
       },
-    )
+    })
       .catch(muteFSAbortError)
       .catch((error) => {
         console.error(error);
@@ -2587,8 +2594,8 @@ class App extends React.Component<AppProps, AppState> {
 
     this.onChangeEmitter.clear();
 
-    if (import.meta.env.mode === ENV.PRODUCTION) {
-      this.history = new History();
+    if (isProdEnv()) {
+      this.history = new History(this.store);
       this.library = new Library(this);
       this.actionManager = new ActionManager(
         this.syncActionResult,
