@@ -282,6 +282,8 @@ export { WelcomeScreen };
 export { LiveCollaborationTrigger };
 export { Stats } from "./components/Stats";
 
+export { exportToCanvas } from "./scene/export";
+
 export { DefaultSidebar } from "./components/DefaultSidebar";
 export { TTDDialog } from "./components/TTDDialog/TTDDialog";
 export { TTDDialogTrigger } from "./components/TTDDialog/TTDDialogTrigger";
@@ -308,8 +310,6 @@ export {
 
 export { jotaiScope, jotaiStore } from "./jotai";
 export { libraryItemsAtom } from "./data/library";
-
-export { exportToCanvas } from "./scene/export";
 
 export * as icons from "./components/icons";
 export * as actions from "./actions/index";
