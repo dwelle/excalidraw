@@ -366,7 +366,7 @@ describe("sticky notes", () => {
         currentItemBackgroundColor: COLOR_PALETTE.transparent,
         currentItemStrokeColor: COLOR_PALETTE.blue[4],
         currentItemStickynoteBackgroundColor: COLOR_PALETTE.pink[1],
-        currentItemStickynoteStrokeColor: COLOR_PALETTE.black,
+        currentItemStickynoteStrokeColor: COLOR_PALETTE.charcoal,
       });
       UI.clickTool("stickynote");
       mouse.downAt(300, 300);
@@ -376,7 +376,7 @@ describe("sticky notes", () => {
         (element) => element.type === "stickynote",
       ) as ExcalidrawStickyNoteElement;
       expect(note.backgroundColor).toBe(COLOR_PALETTE.pink[1]);
-      expect(note.strokeColor).toBe(COLOR_PALETTE.black);
+      expect(note.strokeColor).toBe(COLOR_PALETTE.charcoal);
       Keyboard.keyPress(KEYS.ESCAPE, await getTextEditor());
     });
 
@@ -709,7 +709,7 @@ describe("sticky notes", () => {
       fireEvent.pointerMove(window, { clientX: 150, clientY: 150 });
 
       const picked = getElement(label.id).strokeColor;
-      expect(picked).not.toBe(COLOR_PALETTE.black);
+      expect(picked).not.toBe(COLOR_PALETTE.charcoal);
       expect(getElement(note.id).strokeColor).toBe(picked);
       fireEvent.keyDown(backdrop, { key: KEYS.ESCAPE });
     });
@@ -1157,16 +1157,18 @@ describe("sticky notes", () => {
         }),
       ];
 
-      const svg = await exportToSvg(
-        elements,
-        { exportBackground: false, viewBackgroundColor: "#ffffff" },
-        {},
-      );
+      const svg = await exportToSvg({
+        data: {
+          elements,
+          appState: { exportBackground: false, viewBackgroundColor: "#ffffff" },
+          files: {},
+        },
+      });
       expect(
         [...svg.querySelectorAll("text")].map((text) => text.textContent),
       ).toEqual(["7 Mar 2025"]);
 
-      const canvas = await exportToCanvas({ elements, files: {} });
+      const canvas = await exportToCanvas({ data: { elements, files: {} } });
       expect(canvas.getContext("2d")?.fillText).toHaveBeenCalledWith(
         "7 Mar 2025",
         expect.any(Number),

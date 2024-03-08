@@ -8,8 +8,6 @@ import type {
   NormalizedZoomValue,
 } from "@excalidraw/excalidraw/types";
 
-import { COLOR_PALETTE } from "./colors";
-
 export { DEFAULT_STICKY_NOTE_BG } from "./colors";
 
 export const supportsResizeObserver =
@@ -278,6 +276,14 @@ export const DEFAULT_TEXT_ALIGN = "left";
 export const DEFAULT_VERTICAL_ALIGN = "top";
 export const DEFAULT_VERSION = "{version}";
 export const DEFAULT_TRANSFORM_HANDLE_SPACING = 2;
+export const DEFAULT_ZOOM_VALUE = 1 as NormalizedZoomValue;
+
+// -----------------------------------------------
+// !!! these colors are tied to color picker !!!
+export const COLOR_WHITE = "#ffffff";
+export const COLOR_CHARCOAL_BLACK = "#1e1e1e";
+export const COLOR_TRANSPARENT = "transparent";
+// -----------------------------------------------
 
 export const SIDE_RESIZING_THRESHOLD = 2 * DEFAULT_TRANSFORM_HANDLE_SPACING;
 // a small epsilon to make side resizing always take precedence
@@ -286,8 +292,6 @@ export const EPSILON = 0.00001;
 export const DEFAULT_COLLISION_THRESHOLD =
   2 * SIDE_RESIZING_THRESHOLD - EPSILON;
 
-export const COLOR_WHITE = "#ffffff";
-export const COLOR_CHARCOAL_BLACK = "#1e1e1e";
 // keep this in sync with CSS
 export const COLOR_VOICE_CALL = "#a2f1a6";
 
@@ -524,8 +528,8 @@ export const DEFAULT_ELEMENT_PROPS: {
   opacity: ExcalidrawElement["opacity"];
   locked: ExcalidrawElement["locked"];
 } = {
-  strokeColor: COLOR_PALETTE.black,
-  backgroundColor: COLOR_PALETTE.transparent,
+  strokeColor: COLOR_CHARCOAL_BLACK,
+  backgroundColor: COLOR_TRANSPARENT,
   fillStyle: "solid",
   strokeWidth: STROKE_WIDTH[DEFAULT_ELEMENT_STROKE_WIDTH_KEY],
   strokeStyle: "solid",

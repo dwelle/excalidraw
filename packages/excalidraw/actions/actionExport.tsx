@@ -1,8 +1,18 @@
-import { KEYS, THEME } from "@excalidraw/common";
+import {
+  DEFAULT_EXPORT_PADDING,
+  EXPORT_SCALES,
+  KEYS,
+  THEME,
+} from "@excalidraw/common";
 
 import { CaptureUpdateAction } from "@excalidraw/element";
+import { getNonDeletedElements } from "@excalidraw/element";
 
-import type { ExcalidrawElement, Theme } from "@excalidraw/element/types";
+import type {
+  ExcalidrawElement,
+  NonDeletedExcalidrawElement,
+  Theme,
+} from "@excalidraw/element/types";
 
 import { useEditorInterface } from "../components/App";
 import { CheckboxItem } from "../components/CheckboxItem";
@@ -19,6 +29,8 @@ import { nativeFileSystemSupported } from "../data/filesystem";
 import { resaveAsImageWithScene } from "../data/resave";
 
 import { t } from "../i18n";
+import { getSelectedElements, isSomeElementSelected } from "../scene";
+import { getCanvasSize } from "../scene/export";
 
 import "../components/ToolIcon.scss";
 
@@ -63,6 +75,54 @@ export const actionChangeExportScale = register<AppState["exportScale"]>({
       appState: { ...appState, exportScale: value },
       captureUpdate: CaptureUpdateAction.EVENTUALLY,
     };
+  },
+  PanelComponent: ({ elements: allElements, appState, updateData }) => {
+    const elements = getNonDeletedElements(allElements);
+    const exportSelected = isSomeElementSelected(elements, appState);
+    const exportedElements = exportSelected
+      ? getSelectedElements(elements, appState)
+      : elements;
+
+    const getExportSize = (
+      elements: readonly NonDeletedExcalidrawElement[],
+      padding: number,
+      scale: number,
+    ): [number, number] => {
+      const [, , width, height] = getCanvasSize(elements).map((dimension) =>
+        Math.trunc(dimension * scale),
+      );
+
+      return [width + padding * 2, height + padding * 2];
+    };
+
+    return (
+      <>
+        {EXPORT_SCALES.map((s) => {
+          const [width, height] = getExportSize(
+            exportedElements,
+            DEFAULT_EXPORT_PADDING,
+            s,
+          );
+
+          const scaleButtonTitle = `${t(
+            "imageExportDialog.label.scale",
+          )} ${s}x (${width}x${height})`;
+
+          return (
+            <IconButton
+              key={s}
+              size="small"
+              type="toggle"
+              icon={`${s}x`}
+              title={scaleButtonTitle}
+              aria-label={scaleButtonTitle}
+              checked={s === appState.exportScale}
+              onSelect={() => updateData(s)}
+            />
+          );
+        })}
+      </>
+    );
   },
 });
 
