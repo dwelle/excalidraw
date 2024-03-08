@@ -34,14 +34,12 @@ import type { GlobalPoint } from "@excalidraw/math";
 
 import type { Mutable } from "@excalidraw/common/utility-types";
 
-import type {
-  AppState,
-  EmbedsValidationStatus,
-} from "@excalidraw/excalidraw/types";
+import type { EmbedsValidationStatus } from "@excalidraw/excalidraw/types";
 import type {
   ElementShape,
   ElementShapes,
   SVGPathString,
+  StaticCanvasRenderConfig,
 } from "@excalidraw/excalidraw/scene/types";
 
 import { elementWithCanvasCache } from "./renderElement";
@@ -123,7 +121,7 @@ export class ShapeCache {
     element: T,
     renderConfig: {
       isExporting: boolean;
-      canvasBackgroundColor: AppState["viewBackgroundColor"];
+      canvasBackgroundColor: StaticCanvasRenderConfig["canvasBackgroundColor"];
       embedsValidationStatus: EmbedsValidationStatus;
       theme: AppState["theme"];
     } | null,
@@ -760,7 +758,7 @@ const _generateElementShape = (
     theme,
   }: {
     isExporting: boolean;
-    canvasBackgroundColor: string;
+    canvasBackgroundColor: string | null;
     embedsValidationStatus: EmbedsValidationStatus | null;
     theme?: AppState["theme"];
   },
