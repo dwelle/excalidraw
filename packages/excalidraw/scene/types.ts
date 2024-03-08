@@ -23,7 +23,6 @@ export type RenderableElementsMap = NonDeletedElementsMap &
   MakeBrand<"RenderableElementsMap">;
 
 export type StaticCanvasRenderConfig = {
-  canvasBackgroundColor: AppState["viewBackgroundColor"];
   // extra options passed to the renderer
   // ---------------------------------------------------------------------------
   imageCache: AppClassProperties["imageCache"];
@@ -31,6 +30,8 @@ export type StaticCanvasRenderConfig = {
   /** when exporting the behavior is slightly different (e.g. we can't use
    CSS filters), and we disable render optimizations for best output */
   isExporting: boolean;
+  /** null indicates transparent bg */
+  canvasBackgroundColor: string | null;
   embedsValidationStatus: EmbedsValidationStatus;
   elementsPendingErasure: ElementsPendingErasure;
 };
@@ -72,6 +73,13 @@ export type StaticSceneRenderConfig = {
   elementsMap: RenderableElementsMap;
   allElementsMap: NonDeletedSceneElementsMap;
   visibleElements: readonly NonDeletedExcalidrawElement[];
+  /**
+   * canvas scale factor. Not related to zoom. In browsers, it's the
+   * devicePixelRatio. For export, it's the `appState.exportScale`
+   * (user setting) or whatever scale you want to use when exporting elsewhere.
+   *
+   * Bigger the scale, the more pixels (=quality).
+   */
   scale: number;
   appState: StaticCanvasAppState;
   renderConfig: StaticCanvasRenderConfig;

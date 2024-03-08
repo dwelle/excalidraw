@@ -5,29 +5,27 @@ import * as mockedSceneExportUtils from "../excalidraw/scene/export";
 
 import { MIME_TYPES } from "../excalidraw/constants";
 
-<<<<<<< HEAD
-=======
-const { exportToCanvas } = mockedSceneExportUtils;
-
->>>>>>> 568c67f7a (wip)
+import { exportToCanvas } from "../excalidraw/scene/export";
 const exportToSvgSpy = vi.spyOn(mockedSceneExportUtils, "exportToSvg");
 
 describe("exportToCanvas", async () => {
-  const EXPORT_PADDING = 10;
-
   it("with default arguments", async () => {
-    const canvas = await utils.exportToCanvas({
-      ...diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
+    const canvas = await exportToCanvas({
+      data: diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
     });
 
-    expect(canvas.width).toBe(100 + 2 * EXPORT_PADDING);
-    expect(canvas.height).toBe(100 + 2 * EXPORT_PADDING);
+    expect(canvas.width).toBe(100);
+    expect(canvas.height).toBe(100);
   });
 
   it("when custom width and height", async () => {
-    const canvas = await utils.exportToCanvas({
-      ...diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
-      getDimensions: () => ({ width: 200, height: 200, scale: 1 }),
+    const canvas = await exportToCanvas({
+      data: {
+        ...diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
+      },
+      config: {
+        getDimensions: () => ({ width: 200, height: 200, scale: 1 }),
+      },
     });
 
     expect(canvas.width).toBe(200);
@@ -40,19 +38,24 @@ describe("exportToBlob", async () => {
     // afterEach(vi.restoreAllMocks);
     it("should change image/jpg to image/jpeg", async () => {
       const blob = await utils.exportToBlob({
-        ...diagramFactory(),
-        getDimensions: (width, height) => ({ width, height, scale: 1 }),
-        // testing typo in MIME type (jpg → jpeg)
-        mimeType: "image/jpg",
-        appState: {
-          exportBackground: true,
+        data: {
+          ...diagramFactory(),
+
+          appState: {
+            exportBackground: true,
+          },
+        },
+        config: {
+          getDimensions: (width, height) => ({ width, height, scale: 1 }),
+          // testing typo in MIME type (jpg → jpeg)
+          mimeType: "image/jpg",
         },
       });
       expect(blob?.type).toBe(MIME_TYPES.jpg);
     });
     it("should default to image/png", async () => {
       const blob = await utils.exportToBlob({
-        ...diagramFactory(),
+        data: diagramFactory(),
       });
       expect(blob?.type).toBe(MIME_TYPES.png);
     });
@@ -62,9 +65,11 @@ describe("exportToBlob", async () => {
         .spyOn(console, "warn")
         .mockImplementationOnce(() => void 0);
       await utils.exportToBlob({
-        ...diagramFactory(),
-        mimeType: MIME_TYPES.png,
-        quality: 1,
+        data: diagramFactory(),
+        config: {
+          mimeType: MIME_TYPES.png,
+          quality: 1,
+        },
       });
       expect(consoleSpy).toHaveBeenCalledWith(
         `"quality" will be ignored for "${MIME_TYPES.png}" mimeType`,
@@ -74,8 +79,8 @@ describe("exportToBlob", async () => {
 });
 
 describe("exportToSvg", () => {
-  const passedElements = () => exportToSvgSpy.mock.calls[0][0];
-  const passedOptions = () => exportToSvgSpy.mock.calls[0][1];
+  const passedElements = () => exportToSvgSpy.mock.calls[0][0].data.elements;
+  const passedOptions = () => exportToSvgSpy.mock.calls[0][0].data.appState;
 
   afterEach(() => {
     vi.clearAllMocks();
@@ -83,7 +88,7 @@ describe("exportToSvg", () => {
 
   it("with default arguments", async () => {
     await utils.exportToSvg({
-      ...diagramFactory({
+      data: diagramFactory({
         overrides: { appState: void 0 },
       }),
     });
@@ -102,7 +107,7 @@ describe("exportToSvg", () => {
   // type-checking for it correctly.
   it.skip("with deleted elements", async () => {
     await utils.exportToSvg({
-      ...diagramFactory({
+      data: diagramFactory({
         overrides: { appState: void 0 },
         elementOverrides: { isDeleted: true },
       }),
@@ -113,8 +118,10 @@ describe("exportToSvg", () => {
 
   it("with exportPadding", async () => {
     await utils.exportToSvg({
-      ...diagramFactory({ overrides: { appState: { name: "diagram name" } } }),
-      exportPadding: 0,
+      data: diagramFactory({
+        overrides: { appState: { name: "diagram name" } },
+      }),
+      config: { padding: 0 },
     });
 
     expect(passedElements().length).toBe(3);
@@ -125,7 +132,7 @@ describe("exportToSvg", () => {
 
   it("with exportEmbedScene", async () => {
     await utils.exportToSvg({
-      ...diagramFactory({
+      data: diagramFactory({
         overrides: {
           appState: { name: "diagram name", exportEmbedScene: true },
         },
