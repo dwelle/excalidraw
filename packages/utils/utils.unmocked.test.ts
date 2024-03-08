@@ -16,13 +16,15 @@ describe("embedding scene data", () => {
       const sourceElements = [rectangle, ellipse];
 
       const svgNode = await utils.exportToSvg({
-        elements: sourceElements,
-        appState: {
-          viewBackgroundColor: "#ffffff",
-          gridSize: null,
-          exportEmbedScene: true,
+        data: {
+          elements: sourceElements,
+          appState: {
+            viewBackgroundColor: "#ffffff",
+            gridSize: null,
+            exportEmbedScene: true,
+          },
+          files: null,
         },
-        files: null,
       });
 
       const svg = svgNode.outerHTML;
@@ -46,14 +48,18 @@ describe("embedding scene data", () => {
       const sourceElements = [rectangle, ellipse];
 
       const blob = await utils.exportToBlob({
-        mimeType: "image/png",
-        elements: sourceElements,
-        appState: {
-          viewBackgroundColor: "#ffffff",
-          gridSize: null,
-          exportEmbedScene: true,
+        data: {
+          elements: sourceElements,
+          appState: {
+            viewBackgroundColor: "#ffffff",
+            gridSize: null,
+            exportEmbedScene: true,
+          },
+          files: null,
         },
-        files: null,
+        config: {
+          mimeType: "image/png",
+        },
       });
 
       const parsedString = await decodePngMetadata(blob);

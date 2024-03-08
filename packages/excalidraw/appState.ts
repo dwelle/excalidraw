@@ -1,13 +1,14 @@
-import { COLOR_PALETTE } from "./colors";
 import {
+  COLOR_WHITE,
   DEFAULT_ELEMENT_PROPS,
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
   DEFAULT_TEXT_ALIGN,
+  DEFAULT_ZOOM_VALUE,
   EXPORT_SCALES,
   THEME,
 } from "./constants";
-import { AppState, NormalizedZoomValue } from "./types";
+import { AppState } from "./types";
 
 const defaultExportScale = EXPORT_SCALES.includes(devicePixelRatio)
   ? devicePixelRatio
@@ -88,10 +89,10 @@ export const getDefaultAppState = (): Omit<
     editingFrame: null,
     elementsToHighlight: null,
     toast: null,
-    viewBackgroundColor: COLOR_PALETTE.white,
+    viewBackgroundColor: COLOR_WHITE,
     zenModeEnabled: false,
     zoom: {
-      value: 1 as NormalizedZoomValue,
+      value: DEFAULT_ZOOM_VALUE,
     },
     viewModeEnabled: false,
     pendingImageElementId: null,

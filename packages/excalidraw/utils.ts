@@ -1,5 +1,5 @@
-import { COLOR_PALETTE } from "./colors";
 import {
+  COLOR_TRANSPARENT,
   DEFAULT_VERSION,
   EVENT,
   FONT_FAMILY,
@@ -530,11 +530,7 @@ export const findLastIndex = <T>(
 export const isTransparent = (color: string) => {
   const isRGBTransparent = color.length === 5 && color.substr(4, 1) === "0";
   const isRRGGBBTransparent = color.length === 9 && color.substr(7, 2) === "00";
-  return (
-    isRGBTransparent ||
-    isRRGGBBTransparent ||
-    color === COLOR_PALETTE.transparent
-  );
+  return isRGBTransparent || isRRGGBBTransparent || color === COLOR_TRANSPARENT;
 };
 
 export type ResolvablePromise<T> = Promise<T> & {
@@ -1123,4 +1119,19 @@ export const promiseTry = async <TValue, TArgs extends unknown[]>(
   return new Promise((resolve) => {
     resolve(fn(...args));
   });
+};
+
+export const pick = <
+  R extends Record<string, any>,
+  K extends readonly (keyof R)[],
+>(
+  source: R,
+  keys: K,
+) => {
+  return keys.reduce((acc, key: K[number]) => {
+    if (key in source) {
+      acc[key] = source[key];
+    }
+    return acc;
+  }, {} as Pick<R, K[number]>) as Pick<R, K[number]>;
 };

@@ -1,7 +1,7 @@
-import oc from "open-color";
 import React, { useLayoutEffect, useRef, useState } from "react";
 import { trackEvent } from "../analytics";
 import { ChartElements, renderSpreadsheet, Spreadsheet } from "../charts";
+import { COLOR_WHITE } from "../constants";
 import { ChartType } from "../element/types";
 import { t } from "../i18n";
 import { exportToSvg } from "../scene/export";
@@ -40,14 +40,16 @@ const ChartPreviewBtn = (props: {
     const previewNode = previewRef.current!;
 
     (async () => {
-      svg = await exportToSvg(
-        elements,
-        {
-          exportBackground: false,
-          viewBackgroundColor: oc.white,
+      svg = await exportToSvg({
+        data: {
+          elements,
+          appState: {
+            exportBackground: false,
+            viewBackgroundColor: COLOR_WHITE,
+          },
+          files: null,
         },
-        null, // files
-      );
+      });
       svg.querySelector(".style-fonts")?.remove();
       previewNode.replaceChildren();
       previewNode.appendChild(svg);

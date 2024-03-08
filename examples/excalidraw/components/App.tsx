@@ -369,10 +369,12 @@ export default function App({
       return false;
     }
     await exportToClipboard({
-      elements: excalidrawAPI.getSceneElements(),
-      appState: excalidrawAPI.getAppState(),
-      files: excalidrawAPI.getFiles(),
-      type,
+      data: {
+        elements: excalidrawAPI.getSceneElements(),
+        appState: excalidrawAPI.getAppState(),
+        files: excalidrawAPI.getFiles(),
+      },
+      type: "json",
     });
     window.alert(`Copied to clipboard as ${type} successfully`);
   };
@@ -817,15 +819,17 @@ export default function App({
                 return;
               }
               const svg = await exportToSvg({
-                elements: excalidrawAPI?.getSceneElements(),
-                appState: {
-                  ...initialData.appState,
-                  exportWithDarkMode,
-                  exportEmbedScene,
-                  width: 300,
-                  height: 100,
+                data: {
+                  elements: excalidrawAPI?.getSceneElements(),
+                  appState: {
+                    ...initialData.appState,
+                    exportWithDarkMode,
+                    exportEmbedScene,
+                    width: 300,
+                    height: 100,
+                  },
+                  files: excalidrawAPI?.getFiles(),
                 },
-                files: excalidrawAPI?.getFiles(),
               });
               appRef.current.querySelector(".export-svg").innerHTML =
                 svg.outerHTML;
@@ -841,14 +845,18 @@ export default function App({
                 return;
               }
               const blob = await exportToBlob({
-                elements: excalidrawAPI?.getSceneElements(),
-                mimeType: "image/png",
-                appState: {
-                  ...initialData.appState,
-                  exportEmbedScene,
-                  exportWithDarkMode,
+                data: {
+                  elements: excalidrawAPI?.getSceneElements(),
+                  appState: {
+                    ...initialData.appState,
+                    exportEmbedScene,
+                    exportWithDarkMode,
+                  },
+                  files: excalidrawAPI?.getFiles(),
                 },
-                files: excalidrawAPI?.getFiles(),
+                config: {
+                  mimeType: "image/png",
+                },
               });
               setBlobUrl(window.URL.createObjectURL(blob));
             }}
@@ -885,22 +893,6 @@ export default function App({
               // ctx.strokeText("My custom text", 50, 60);
               // setCanvasUrl(canvas.toDataURL());
             }}
-          >
-            Export to Canvas
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (!excalidrawAPI) {
-                return;
-              }
-
-              const elements = excalidrawAPI.getSceneElements();
-              excalidrawAPI.scrollToContent(elements[0], {
-                fitToViewport: true,
-              });
-            }}
-          >
             Fit to viewport, first element
           </button>
           <button
