@@ -104,7 +104,7 @@ describe("resolveColorTarget", () => {
     );
     expect(
       getColorTargetAppStateUpdates(stickyStroke, COLOR_PALETTE.transparent),
-    ).toEqual({ currentItemStickynoteStrokeColor: COLOR_PALETTE.black });
+    ).toEqual({ currentItemStickynoteStrokeColor: COLOR_PALETTE.charcoal });
 
     const stickyBackground = resolveColorTarget(
       appState({ selectedElementIds: { note: true } }),

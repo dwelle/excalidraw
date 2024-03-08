@@ -1,5 +1,6 @@
 import {
   applyDarkModeFilter,
+  COLOR_CHARCOAL_BLACK,
   COLOR_PALETTE,
   removeDarkModeFilter,
   rgbToHex,
@@ -101,8 +102,8 @@ describe("applyDarkModeFilter", () => {
 
   describe("COLOR_PALETTE regression tests", () => {
     it("transforms black from palette", () => {
-      // COLOR_PALETTE.black is #1e1e1e (not pure black)
-      const result = applyDarkModeFilter(COLOR_PALETTE.black);
+      // COLOR_PALETTE.charcoal is #1e1e1e (not pure black)
+      const result = applyDarkModeFilter(COLOR_CHARCOAL_BLACK);
       expect(result).toBe("#d3d3d3");
     });
 
@@ -176,7 +177,7 @@ describe("applyDarkModeFilter", () => {
     it("matches snapshot for all palette colors", () => {
       const transformedPalette: Record<string, string | string[]> = {};
 
-      transformedPalette.black = applyDarkModeFilter(COLOR_PALETTE.black);
+      transformedPalette.black = applyDarkModeFilter(COLOR_CHARCOAL_BLACK);
       transformedPalette.white = applyDarkModeFilter(COLOR_PALETTE.white);
       transformedPalette.transparent = applyDarkModeFilter(
         COLOR_PALETTE.transparent,
@@ -223,7 +224,7 @@ describe("removeDarkModeFilter", () => {
   });
 
   it.each([
-    COLOR_PALETTE.black,
+    COLOR_PALETTE.charcoal,
     COLOR_PALETTE.white,
     COLOR_PALETTE.red[4],
     COLOR_PALETTE.green[4],

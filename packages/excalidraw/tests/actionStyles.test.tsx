@@ -135,7 +135,7 @@ describe("actionStyles", () => {
         '.color-picker-content--default [aria-hidden="true"]',
       ),
     ).not.toBeNull();
-    expect(screen.queryByTestId("color-black")).not.toBeNull();
+    expect(screen.queryByTestId("color-charcoal")).not.toBeNull();
   });
 
   it("keeps the transparent hotkey dead and the others intact for sticky notes", async () => {
@@ -160,11 +160,11 @@ describe("actionStyles", () => {
   it("should track sticky note stroke color separately", async () => {
     API.setAppState({
       currentItemStrokeColor: COLOR_PALETTE.red[4],
-      currentItemStickynoteStrokeColor: COLOR_PALETTE.black,
+      currentItemStickynoteStrokeColor: COLOR_PALETTE.charcoal,
     });
     const stickyNote = API.createElement({
       type: "stickynote",
-      strokeColor: COLOR_PALETTE.black,
+      strokeColor: COLOR_PALETTE.charcoal,
     });
 
     API.setElements([stickyNote]);
