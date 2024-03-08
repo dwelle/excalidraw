@@ -2506,7 +2506,7 @@ class App extends React.Component<AppProps, AppState> {
 
     this.onChangeEmitter.clear();
 
-    if (import.meta.env.mode === ENV.PRODUCTION) {
+    if (import.meta.env.PROD) {
       this.history = new History();
       this.library = new Library(this);
       this.actionManager = new ActionManager(
