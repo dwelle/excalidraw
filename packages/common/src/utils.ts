@@ -16,6 +16,7 @@ import type {
 
 import { COLOR_PALETTE } from "./colors";
 import {
+  COLOR_TRANSPARENT,
   DEFAULT_VERSION,
   ENV,
   FONT_FAMILY,
@@ -545,11 +546,7 @@ export const findLastIndex = <T>(
 export const isTransparent = (color: string) => {
   const isRGBTransparent = color.length === 5 && color.substr(4, 1) === "0";
   const isRRGGBBTransparent = color.length === 9 && color.substr(7, 2) === "00";
-  return (
-    isRGBTransparent ||
-    isRRGGBBTransparent ||
-    color === COLOR_PALETTE.transparent
-  );
+  return isRGBTransparent || isRRGGBBTransparent || color === COLOR_TRANSPARENT;
 };
 
 export const isBindingFallthroughEnabled = (el: ExcalidrawBindableElement) =>
@@ -736,6 +733,8 @@ export const arrayToList = <T>(array: readonly T[]): Node<T>[] =>
 export const isTestEnv = () => import.meta.env.MODE === ENV.TEST;
 
 export const isDevEnv = () => import.meta.env.MODE === ENV.DEVELOPMENT;
+
+export const isProdEnv = () => import.meta.env.MODE === ENV.PRODUCTION;
 
 export const isServerEnv = () =>
   typeof process !== "undefined" && !!process?.env?.NODE_ENV;
@@ -1200,3 +1199,18 @@ export const escapeDoubleQuotes = (str: string) => {
 
 export const castArray = <T>(value: T | T[]): T[] =>
   Array.isArray(value) ? value : [value];
+
+export const pick = <
+  R extends Record<string, any>,
+  K extends readonly (keyof R)[],
+>(
+  source: R,
+  keys: K,
+) => {
+  return keys.reduce((acc, key: K[number]) => {
+    if (key in source) {
+      acc[key] = source[key];
+    }
+    return acc;
+  }, {} as Pick<R, K[number]>) as Pick<R, K[number]>;
+};
