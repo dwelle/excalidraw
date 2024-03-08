@@ -14,8 +14,8 @@ import type {
   Zoom,
 } from "@excalidraw/excalidraw/types";
 
-import { COLOR_PALETTE } from "./colors";
 import {
+  COLOR_TRANSPARENT,
   DEFAULT_VERSION,
   ENV,
   FONT_FAMILY,
@@ -553,11 +553,7 @@ export const mapFind = <T, K>(
 export const isTransparent = (color: string) => {
   const isRGBTransparent = color.length === 5 && color.substr(4, 1) === "0";
   const isRRGGBBTransparent = color.length === 9 && color.substr(7, 2) === "00";
-  return (
-    isRGBTransparent ||
-    isRRGGBBTransparent ||
-    color === COLOR_PALETTE.transparent
-  );
+  return isRGBTransparent || isRRGGBBTransparent || color === COLOR_TRANSPARENT;
 };
 
 export const isBindingFallthroughEnabled = (el: ExcalidrawBindableElement) =>

@@ -29,13 +29,11 @@ import type { GlobalPoint } from "@excalidraw/math";
 
 import type { Mutable } from "@excalidraw/common/utility-types";
 
-import type {
-  AppState,
-  EmbedsValidationStatus,
-} from "@excalidraw/excalidraw/types";
+import type { EmbedsValidationStatus } from "@excalidraw/excalidraw/types";
 import type {
   ElementShape,
   ElementShapes,
+  StaticCanvasRenderConfig,
 } from "@excalidraw/excalidraw/scene/types";
 
 import { elementWithCanvasCache } from "./renderElement";
@@ -115,7 +113,7 @@ export class ShapeCache {
     element: T,
     renderConfig: {
       isExporting: boolean;
-      canvasBackgroundColor: AppState["viewBackgroundColor"];
+      canvasBackgroundColor: StaticCanvasRenderConfig["canvasBackgroundColor"];
       embedsValidationStatus: EmbedsValidationStatus;
     } | null,
   ) => {
@@ -283,8 +281,10 @@ const getArrowheadShapes = (
   arrowhead: Arrowhead,
   generator: RoughGenerator,
   options: Options,
-  canvasBackgroundColor: string,
+  canvasBackgroundColor: string | null,
 ) => {
+  canvasBackgroundColor = canvasBackgroundColor || "transparent";
+
   const arrowheadPoints = getArrowheadPoints(
     element,
     shape,
@@ -611,7 +611,7 @@ const generateElementShape = (
     embedsValidationStatus,
   }: {
     isExporting: boolean;
-    canvasBackgroundColor: string;
+    canvasBackgroundColor: string | null;
     embedsValidationStatus: EmbedsValidationStatus | null;
   },
 ): Drawable | Drawable[] | null => {
