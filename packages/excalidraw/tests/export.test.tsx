@@ -181,7 +181,7 @@ describe("export", () => {
       },
     } as const;
 
-    const svg = await exportToSvg(elements, appState, files);
+    const svg = await exportToSvg({ data: { elements, appState, files } });
 
     const svgText = svg.outerHTML;
 
