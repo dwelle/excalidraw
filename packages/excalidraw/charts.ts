@@ -1,7 +1,6 @@
 import { pointFrom } from "@excalidraw/math";
 
 import {
-  COLOR_PALETTE,
   DEFAULT_CHART_COLOR_INDEX,
   getAllColorsSpecificShade,
   DEFAULT_FONT_FAMILY,
@@ -9,6 +8,7 @@ import {
   VERTICAL_ALIGN,
   randomId,
   isDevEnv,
+  COLOR_CHARCOAL_BLACK,
 } from "@excalidraw/common";
 
 import {
@@ -180,7 +180,7 @@ const commonProps = {
   fontSize: DEFAULT_FONT_SIZE,
   opacity: 100,
   roughness: 1,
-  strokeColor: COLOR_PALETTE.black,
+  strokeColor: COLOR_CHARCOAL_BLACK,
   roundness: null,
   strokeStyle: "solid",
   strokeWidth: 1,
@@ -331,7 +331,7 @@ const chartBaseElements = (
         y: y - chartHeight,
         width: chartWidth,
         height: chartHeight,
-        strokeColor: COLOR_PALETTE.black,
+        strokeColor: COLOR_CHARCOAL_BLACK,
         fillStyle: "solid",
         opacity: 6,
       })

@@ -3,6 +3,7 @@ import OpenColor from "open-color";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
+  COLOR_WHITE,
   EDITOR_LS_KEYS,
   EXPORT_DATA_TYPES,
   EXPORT_SOURCE,
@@ -57,16 +58,20 @@ const generatePreviewImage = async (libraryItems: LibraryItems) => {
 
   const ctx = canvas.getContext("2d")!;
 
-  ctx.fillStyle = OpenColor.white;
+  ctx.fillStyle = COLOR_WHITE;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   // draw items
   // ---------------------------------------------------------------------------
   for (const [index, item] of libraryItems.entries()) {
     const itemCanvas = await exportToCanvas({
-      elements: item.elements,
-      files: null,
-      maxWidthOrHeight: BOX_SIZE,
+      data: {
+        elements: item.elements,
+        files: null,
+      },
+      config: {
+        maxWidthOrHeight: BOX_SIZE,
+      },
     });
 
     const { width, height } = itemCanvas;
@@ -128,14 +133,18 @@ const SingleLibraryItem = ({
     }
     (async () => {
       const svg = await exportToSvg({
-        elements: libItem.elements,
-        appState: {
-          ...appState,
-          viewBackgroundColor: OpenColor.white,
-          exportBackground: true,
+        data: {
+          elements: libItem.elements,
+          appState: {
+            ...appState,
+            viewBackgroundColor: COLOR_WHITE,
+            exportBackground: true,
+          },
+          files: null,
         },
-        files: null,
-        skipInliningFonts: true,
+        config: {
+          skipInliningFonts: true,
+        },
       });
       node.innerHTML = svg.outerHTML;
     })();
