@@ -93,7 +93,7 @@ import {
   type EXPORT_IMAGE_TYPES,
 } from "../constants";
 import type { ExportedElements } from "../data";
-import { exportCanvas, loadFromBlob } from "../data";
+import { exportAsImage, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restore, restoreElements } from "../data/restore";
 import {
@@ -1851,18 +1851,20 @@ class App extends React.Component<AppProps, AppState> {
     opts: { exportingFrame: ExcalidrawFrameLikeElement | null },
   ) => {
     trackEvent("export", type, "ui");
-    const fileHandle = await exportCanvas(
+    const fileHandle = await exportAsImage({
       type,
-      elements,
-      this.state,
-      this.files,
-      {
+      data: {
+        elements,
+        appState: this.state,
+        files: this.files,
+      },
+      config: {
         exportBackground: this.state.exportBackground,
         name: this.getName(),
         viewBackgroundColor: this.state.viewBackgroundColor,
         exportingFrame: opts.exportingFrame,
       },
-    )
+    })
       .catch(muteFSAbortError)
       .catch((error) => {
         console.error(error);
