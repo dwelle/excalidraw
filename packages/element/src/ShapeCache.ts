@@ -2,13 +2,11 @@ import { RoughGenerator } from "roughjs/bin/generator";
 
 import { COLOR_PALETTE } from "@excalidraw/common";
 
-import type {
-  AppState,
-  EmbedsValidationStatus,
-} from "@excalidraw/excalidraw/types";
+import type { EmbedsValidationStatus } from "@excalidraw/excalidraw/types";
 import type {
   ElementShape,
   ElementShapes,
+  StaticCanvasRenderConfig,
 } from "@excalidraw/excalidraw/scene/types";
 
 import { _generateElementShape } from "./Shape";
@@ -59,7 +57,7 @@ export class ShapeCache {
     element: T,
     renderConfig: {
       isExporting: boolean;
-      canvasBackgroundColor: AppState["viewBackgroundColor"];
+      canvasBackgroundColor: StaticCanvasRenderConfig["canvasBackgroundColor"];
       embedsValidationStatus: EmbedsValidationStatus;
     } | null,
   ) => {
