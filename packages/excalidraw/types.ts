@@ -195,14 +195,11 @@ type _CommonCanvasAppState = {
   frameToHighlight: AppState["frameToHighlight"]; // TODO: move to interactive canvas if possible
   offsetLeft: AppState["offsetLeft"];
   offsetTop: AppState["offsetTop"];
-  theme: AppState["theme"];
 };
 
 export type StaticCanvasAppState = Readonly<
   _CommonCanvasAppState & {
     shouldCacheIgnoreZoom: AppState["shouldCacheIgnoreZoom"];
-    /** null indicates transparent bg */
-    viewBackgroundColor: AppState["viewBackgroundColor"] | null;
     exportScale: AppState["exportScale"];
     selectedElementsAreBeingDragged: AppState["selectedElementsAreBeingDragged"];
     gridSize: AppState["gridSize"];
@@ -220,6 +217,7 @@ export type InteractiveCanvasAppState = Readonly<
   _CommonCanvasAppState & {
     activeTool: AppState["activeTool"];
     // renderInteractiveScene
+    theme: AppState["theme"];
     activeEmbeddable: AppState["activeEmbeddable"];
     selectionElement: AppState["selectionElement"];
     selectedGroupIds: AppState["selectedGroupIds"];

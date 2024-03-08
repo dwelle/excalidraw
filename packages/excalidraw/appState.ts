@@ -1,12 +1,14 @@
 import {
   COLOR_PALETTE,
   ARROW_TYPE,
+  COLOR_WHITE,
   DEFAULT_ELEMENT_PROPS,
   DEFAULT_FONT_FAMILY,
   DEFAULT_FONT_SIZE,
   DEFAULT_ELEMENT_STROKE_WIDTH_KEY,
   DEFAULT_TEXT_ALIGN,
   DEFAULT_GRID_SIZE,
+  DEFAULT_ZOOM_VALUE,
   EXPORT_SCALES,
   STATS_PANELS,
   THEME,
@@ -14,7 +16,7 @@ import {
   isTestEnv,
 } from "@excalidraw/common";
 
-import type { AppState, NormalizedZoomValue } from "./types";
+import type { AppState } from "./types";
 
 const defaultExportScale = EXPORT_SCALES.includes(devicePixelRatio)
   ? devicePixelRatio
@@ -108,10 +110,10 @@ export const getDefaultAppState = (): Omit<
     editingFrame: null,
     elementsToHighlight: null,
     toast: null,
-    viewBackgroundColor: COLOR_PALETTE.white,
+    viewBackgroundColor: COLOR_WHITE,
     zenModeEnabled: false,
     zoom: {
-      value: 1 as NormalizedZoomValue,
+      value: DEFAULT_ZOOM_VALUE,
     },
     viewModeEnabled: false,
     showHyperlinkPopup: false,

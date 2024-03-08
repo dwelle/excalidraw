@@ -465,6 +465,8 @@ export { WelcomeScreen };
 export { LiveCollaborationTrigger };
 export { Stats } from "./components/Stats";
 
+export { exportToCanvas } from "./scene/export";
+
 export { DefaultSidebar } from "./components/DefaultSidebar";
 export { TTDDialog } from "./components/TTDDialog/TTDDialog";
 export { TTDDialogTrigger } from "./components/TTDDialog/TTDDialogTrigger";
@@ -534,3 +536,18 @@ export function useExcalidrawStateValue(
 export { _useOnAppStateChange as useOnExcalidrawStateChange };
 
 export { applyDarkModeFilter, getStrokeWidthByKey };
+
+export {
+  getDefaultAppState,
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "./appState";
+
+export { libraryItemsAtom } from "./data/library";
+
+export * as icons from "./components/icons";
+export * as actions from "./actions/index";
+
+export { duplicateElements, duplicateElement } from "../element/src/duplicate";
+
+export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";

@@ -66,32 +66,32 @@ describe("exportToSvg", () => {
   };
 
   it("with default arguments", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      DEFAULT_OPTIONS,
-      null,
-    );
+    const svgElement = await exportUtils.exportToSvg({
+      data: { elements: ELEMENTS, appState: DEFAULT_OPTIONS, files: null },
+    });
 
     expect(svgElement).toMatchSnapshot();
   });
 
   it("with a CJK font", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      [
-        ...ELEMENTS,
-        {
-          ...textFixture,
-          height: ELEMENT_HEIGHT,
-          width: ELEMENT_WIDTH,
-          text: "中国你好！这是一个测试。中国你好！日本こんにちは！これはテストです。한국 안녕하세요! 이것은 테스트입니다.",
-          originalText:
-            "中国你好！这是一个测试。中国你好！日本こんにちは！これはテストです。한국 안녕하세요! 이것은 테스트입니다.",
-          index: "a4" as FractionalIndex,
-        } as NonDeleted<ExcalidrawTextElement>,
-      ],
-      DEFAULT_OPTIONS,
-      null,
-    );
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: [
+          ...ELEMENTS,
+          {
+            ...textFixture,
+            height: ELEMENT_HEIGHT,
+            width: ELEMENT_WIDTH,
+            text: "中国你好！这是一个测试。中国你好！日本こんにちは！これはテストです。한국 안녕하세요! 이것은 테스트입니다.",
+            originalText:
+              "中国你好！这是一个测试。中国你好！日本こんにちは！これはテストです。한국 안녕하세요! 이것은 테스트입니다.",
+            index: "a4" as FractionalIndex,
+          } as NonDeleted<ExcalidrawTextElement>,
+        ],
+        appState: DEFAULT_OPTIONS,
+        files: null,
+      },
+    });
 
     expect(svgElement).toMatchSnapshot();
     // extend the timeout, as it needs to first load the fonts from disk and then perform whole woff2 decode, subset and encode (without workers)
@@ -100,15 +100,17 @@ describe("exportToSvg", () => {
   it("with background color", async () => {
     const BACKGROUND_COLOR = "#abcdef";
 
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      {
-        ...DEFAULT_OPTIONS,
-        exportBackground: true,
-        viewBackgroundColor: BACKGROUND_COLOR,
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: ELEMENTS,
+        appState: {
+          ...DEFAULT_OPTIONS,
+          exportBackground: true,
+          viewBackgroundColor: BACKGROUND_COLOR,
+        },
+        files: null,
       },
-      null,
-    );
+    });
 
     expect(svgElement.querySelector("rect")).toHaveAttribute(
       "fill",
@@ -117,14 +119,16 @@ describe("exportToSvg", () => {
   });
 
   it("with dark mode", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      {
-        ...DEFAULT_OPTIONS,
-        exportWithDarkMode: true,
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: ELEMENTS,
+        appState: {
+          ...DEFAULT_OPTIONS,
+          exportWithDarkMode: true,
+        },
+        files: null,
       },
-      null,
-    );
+    });
 
     const textElements = svgElement.querySelectorAll("text");
     expect(textElements.length).toBeGreaterThan(0);
@@ -138,14 +142,16 @@ describe("exportToSvg", () => {
   });
 
   it("with exportPadding", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      {
-        ...DEFAULT_OPTIONS,
-        exportPadding: 0,
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: ELEMENTS,
+        appState: {
+          ...DEFAULT_OPTIONS,
+          exportPadding: 0,
+        },
+        files: null,
       },
-      null,
-    );
+    });
 
     expect(svgElement).toHaveAttribute("height", ELEMENT_HEIGHT.toString());
     expect(svgElement).toHaveAttribute("width", ELEMENT_WIDTH.toString());
@@ -158,15 +164,17 @@ describe("exportToSvg", () => {
   it("with scale", async () => {
     const SCALE = 2;
 
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      {
-        ...DEFAULT_OPTIONS,
-        exportPadding: 0,
-        exportScale: SCALE,
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: ELEMENTS,
+        appState: {
+          ...DEFAULT_OPTIONS,
+          exportPadding: 0,
+          exportScale: SCALE,
+        },
+        files: null,
       },
-      null,
-    );
+    });
 
     expect(svgElement).toHaveAttribute(
       "height",
@@ -179,23 +187,27 @@ describe("exportToSvg", () => {
   });
 
   it("with exportEmbedScene", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      ELEMENTS,
-      {
-        ...DEFAULT_OPTIONS,
-        exportEmbedScene: true,
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: ELEMENTS,
+        appState: {
+          ...DEFAULT_OPTIONS,
+          exportEmbedScene: true,
+        },
+        files: null,
       },
-      null,
-    );
+    });
     expect(svgElement.innerHTML).toMatchSnapshot();
   });
 
   it("with elements that have a link", async () => {
-    const svgElement = await exportUtils.exportToSvg(
-      [rectangleWithLinkFixture] as NonDeletedExcalidrawElement[],
-      DEFAULT_OPTIONS,
-      null,
-    );
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: [rectangleWithLinkFixture] as NonDeletedExcalidrawElement[],
+        appState: DEFAULT_OPTIONS,
+        files: null,
+      },
+    });
     expect(svgElement.innerHTML).toMatchSnapshot();
   });
 
@@ -221,11 +233,13 @@ describe("exportToSvg", () => {
       containerId: "arrow-11439",
     });
 
-    const svgElement = await exportUtils.exportToSvg(
-      [arrow, label] as NonDeletedExcalidrawElement[],
-      DEFAULT_OPTIONS,
-      null,
-    );
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: [arrow, label] as NonDeletedExcalidrawElement[],
+        appState: DEFAULT_OPTIONS,
+        files: null,
+      },
+    });
 
     const mask = svgElement.querySelector("mask");
     expect(mask).not.toBeNull();
@@ -273,9 +287,11 @@ describe("exportToCanvas", () => {
     });
 
     const canvas = await exportToCanvas({
-      elements: [rectangle, arrow, label],
-      files: null,
-      appState: { exportBackground: true, viewBackgroundColor: "#ffffff" },
+      data: {
+        elements: [rectangle, arrow, label],
+        files: null,
+        appState: { exportBackground: true, viewBackgroundColor: "#ffffff" },
+      },
     });
 
     const context = canvas.getContext("2d") as any;
@@ -340,9 +356,13 @@ describe("exporting frames", () => {
       ];
 
       const canvas = await exportToCanvas({
-        elements,
-        files: null,
-        exportPadding: 0,
+        data: {
+          elements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+        },
       });
 
       expect(canvas.width).toEqual(200);
@@ -369,10 +389,14 @@ describe("exporting frames", () => {
       ];
 
       const canvas = await exportToCanvas({
-        elements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: {
+          elements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       expect(canvas.width).toEqual(frame.width);
@@ -408,10 +432,11 @@ describe("exporting frames", () => {
       });
 
       const svg = await exportToSvg({
-        elements: [rectOverlapping, frame, frameChild],
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: { elements: [rectOverlapping, frame, frameChild], files: null },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       // frame itself isn't exported
@@ -452,10 +477,11 @@ describe("exporting frames", () => {
       });
 
       const svg = await exportToSvg({
-        elements: [frameChild, frame, elementOutside],
-        files: null,
-        exportPadding: 0,
-        exportingFrame: frame,
+        data: { elements: [frameChild, frame, elementOutside], files: null },
+        config: {
+          padding: 0,
+          exportingFrame: frame,
+        },
       });
 
       // frame itself isn't exported
@@ -520,10 +546,11 @@ describe("exporting frames", () => {
       );
 
       const svg = await exportToSvg({
-        elements: exportedElements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame,
+        data: { elements: exportedElements, files: null },
+        config: {
+          padding: 0,
+          exportingFrame,
+        },
       });
 
       // frames themselves should be exported when multiple frames selected
@@ -565,10 +592,14 @@ describe("exporting frames", () => {
       );
 
       const svg = await exportToSvg({
-        elements: exportedElements,
-        files: null,
-        exportPadding: 0,
-        exportingFrame,
+        data: {
+          elements: exportedElements,
+          files: null,
+        },
+        config: {
+          padding: 0,
+          exportingFrame,
+        },
       });
 
       // frame itself isn't exported

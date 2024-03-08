@@ -111,6 +111,7 @@ import {
   isSelectionLikeTool,
   oneOf,
   getStrokeWidthByKey,
+  isProdEnv,
 } from "@excalidraw/common";
 
 import {
@@ -206,7 +207,11 @@ import {
   getApproxMinLineHeight,
   getMinTextElementWidth,
   ShapeCache,
+  clearRenderCache,
   getRenderOpacity,
+} from "@excalidraw/element";
+
+import {
   editGroupForSelectedElement,
   getElementsInGroup,
   getSelectedGroupIdForElement,
@@ -353,8 +358,7 @@ import {
   parseDataTransferEvent,
   type ParsedDataTransferFile,
 } from "../clipboard";
-
-import { exportCanvas, loadFromBlob } from "../data";
+import { exportAsImage, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restoreAppState, restoreElements } from "../data/restore";
 import { getCenter, getDistance } from "../gesture";
@@ -2699,18 +2703,20 @@ class App extends React.Component<AppProps, AppState> {
     opts: { exportingFrame: NonDeleted<ExcalidrawFrameLikeElement> | null },
   ) => {
     trackEvent("export", type, "ui");
-    const fileHandle = await exportCanvas(
+    const fileHandle = await exportAsImage({
       type,
-      elements,
-      this.state,
-      this.files,
-      {
+      data: {
+        elements,
+        appState: this.state,
+        files: this.files,
+      },
+      config: {
         exportBackground: this.state.exportBackground,
         name: this.getName(),
         viewBackgroundColor: this.state.viewBackgroundColor,
         exportingFrame: opts.exportingFrame,
       },
-    )
+    })
       .catch(muteFSAbortError)
       .catch((error) => {
         console.error(error);
