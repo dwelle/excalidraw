@@ -1,7 +1,7 @@
 import { average } from "../math";
-import { COLOR_PALETTE } from "./colors";
 import type { EVENT } from "./constants";
 import {
+  COLOR_TRANSPARENT,
   DEFAULT_VERSION,
   FONT_FAMILY,
   isDarwin,
@@ -532,11 +532,7 @@ export const findLastIndex = <T>(
 export const isTransparent = (color: string) => {
   const isRGBTransparent = color.length === 5 && color.substr(4, 1) === "0";
   const isRRGGBBTransparent = color.length === 9 && color.substr(7, 2) === "00";
-  return (
-    isRGBTransparent ||
-    isRRGGBBTransparent ||
-    color === COLOR_PALETTE.transparent
-  );
+  return isRGBTransparent || isRRGGBBTransparent || color === COLOR_TRANSPARENT;
 };
 
 export type ResolvablePromise<T> = Promise<T> & {
@@ -1169,4 +1165,19 @@ export const safelyParseJSON = (json: string): Record<string, any> | null => {
   } catch {
     return null;
   }
+};
+
+export const pick = <
+  R extends Record<string, any>,
+  K extends readonly (keyof R)[],
+>(
+  source: R,
+  keys: K,
+) => {
+  return keys.reduce((acc, key: K[number]) => {
+    if (key in source) {
+      acc[key] = source[key];
+    }
+    return acc;
+  }, {} as Pick<R, K[number]>) as Pick<R, K[number]>;
 };
