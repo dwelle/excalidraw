@@ -4,8 +4,11 @@ import type { ChartType } from "@excalidraw/element/types";
 
 import { trackEvent } from "../analytics";
 import { renderSpreadsheet } from "../charts";
+
 import { t } from "../i18n";
 import { exportToSvg } from "../scene/export";
+
+import { COLOR_WHITE } from "../../common/src";
 
 import { useApp } from "./App";
 import { Dialog } from "./Dialog";
@@ -44,17 +47,19 @@ const ChartPreviewBtn = (props: {
     const previewNode = previewRef.current!;
 
     (async () => {
-      svg = await exportToSvg(
-        elements,
-        {
-          exportBackground: false,
-          viewBackgroundColor: "#fff",
+      svg = await exportToSvg({
+        data: {
+          elements,
+          appState: {
+            exportBackground: false,
+            viewBackgroundColor: COLOR_WHITE,
+          },
+          files: null,
         },
-        null, // files
-        {
+        config: {
           skipInliningFonts: true,
         },
-      );
+      });
       svg.querySelector(".style-fonts")?.remove();
       previewNode.replaceChildren();
       previewNode.appendChild(svg);

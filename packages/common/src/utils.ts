@@ -11,6 +11,7 @@ import type {
 } from "@excalidraw/excalidraw/types";
 
 import {
+  COLOR_TRANSPARENT,
   DEFAULT_VERSION,
   ENV,
   FONT_FAMILY,
