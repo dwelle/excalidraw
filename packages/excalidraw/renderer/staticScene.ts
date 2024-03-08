@@ -171,6 +171,7 @@ const renderLinkIcon = (
   context: CanvasRenderingContext2D,
   appState: StaticCanvasAppState,
   elementsMap: ElementsMap,
+  renderConfig: StaticCanvasRenderConfig,
 ) => {
   if (element.link && !appState.selectedElementIds[element.id]) {
     const [x1, y1, x2, y2] = getElementAbsoluteCoords(element, elementsMap);
@@ -210,7 +211,7 @@ const renderLinkIcon = (
       // canvas) falls back to white instead of a stale fillStyle.
       linkCanvasCacheContext.fillStyle = COLOR_WHITE;
       linkCanvasCacheContext.fillStyle =
-        appState.viewBackgroundColor || COLOR_WHITE;
+        renderConfig.canvasBackgroundColor || COLOR_WHITE;
 
       linkCanvasCacheContext.fillRect(0, 0, width, height);
 
@@ -259,9 +260,9 @@ const _renderStaticScene = ({
     scale,
     normalizedWidth,
     normalizedHeight,
-    theme: appState.theme,
+    theme: renderConfig.theme,
     isExporting,
-    viewBackgroundColor: appState.viewBackgroundColor,
+    canvasBackgroundColor: renderConfig.canvasBackgroundColor,
   });
 
   // Apply zoom
@@ -377,7 +378,7 @@ const _renderStaticScene = ({
         context.restore();
 
         if (!isExporting && renderConfig.renderLinks !== false) {
-          renderLinkIcon(element, context, appState, elementsMap);
+          renderLinkIcon(element, context, appState, elementsMap, renderConfig);
         }
       } catch (error: any) {
         console.error(
@@ -428,7 +429,13 @@ const _renderStaticScene = ({
             );
           }
           if (!isExporting && renderConfig.renderLinks !== false) {
-            renderLinkIcon(element, context, appState, elementsMap);
+            renderLinkIcon(
+              element,
+              context,
+              appState,
+              elementsMap,
+              renderConfig,
+            );
           }
         };
         // - when exporting the whole canvas, we DO NOT apply clipping
