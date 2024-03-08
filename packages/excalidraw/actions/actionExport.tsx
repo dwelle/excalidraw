@@ -9,7 +9,10 @@ import { getNonDeletedElements } from "@excalidraw/element";
 
 import { CaptureUpdateAction } from "@excalidraw/element";
 
-import type { Theme } from "@excalidraw/element/types";
+import type {
+  NonDeletedExcalidrawElement,
+  Theme,
+} from "@excalidraw/element/types";
 
 import { useEditorInterface } from "../components/App";
 import { CheckboxItem } from "../components/CheckboxItem";
@@ -25,7 +28,7 @@ import { resaveAsImageWithScene } from "../data/resave";
 
 import { t } from "../i18n";
 import { getSelectedElements, isSomeElementSelected } from "../scene";
-import { getExportSize } from "../scene/export";
+import { getCanvasSize } from "../scene/export";
 
 import "../components/ToolIcon.scss";
 
@@ -69,6 +72,18 @@ export const actionChangeExportScale = register<AppState["exportScale"]>({
     const exportedElements = exportSelected
       ? getSelectedElements(elements, appState)
       : elements;
+
+    const getExportSize = (
+      elements: readonly NonDeletedExcalidrawElement[],
+      padding: number,
+      scale: number,
+    ): [number, number] => {
+      const [, , width, height] = getCanvasSize(elements).map((dimension) =>
+        Math.trunc(dimension * scale),
+      );
+
+      return [width + padding * 2, height + padding * 2];
+    };
 
     return (
       <>
