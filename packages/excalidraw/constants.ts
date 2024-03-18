@@ -154,9 +154,6 @@ export const COLOR_WHITE = "#ffffff";
 export const COLOR_CHARCOAL_BLACK = "#1e1e1e";
 export const COLOR_TRANSPARENT = "transparent";
 // -----------------------------------------------
-
-export const COLOR_WHITE = "#ffffff";
-export const COLOR_CHARCOAL_BLACK = "#1e1e1e";
 // keep this in sync with CSS
 export const COLOR_VOICE_CALL = "#a2f1a6";
 
