@@ -42,10 +42,10 @@ const strokeGrid = (
 ) => {
   const BOLD_LINE_FREQUENCY = 5;
 
-  enum GridLineColor {
-    Bold = "#cccccc",
-    Regular = "#e5e5e5",
-  }
+  const GridLineColor = {
+    Bold: "#cccccc",
+    Regular: "#e5e5e5",
+  };
 
   const offsetX =
     -Math.round(zoom.value / gridSize) * gridSize + (scrollX % gridSize);
