@@ -323,3 +323,5 @@ export * as actions from "./actions/index";
 export { duplicateElements, duplicateElement } from "./element/newElement";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
+
+export { CommandPalette } from "./components/CommandPalette/CommandPalette";
