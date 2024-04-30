@@ -1,5 +1,4 @@
-import type { AppProps } from "./types";
-import type { NormalizedZoomValue } from "./types";
+import type { AppProps, NormalizedZoomValue } from "./types";
 import type { ExcalidrawElement, FontFamilyValues } from "./element/types";
 export const isDarwin = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 export const isWindows = /^Win/.test(navigator.platform);
