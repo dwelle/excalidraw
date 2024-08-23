@@ -1,20 +1,12 @@
 import React from "react";
-import { loginIcon, eyeIcon } from "@excalidraw/excalidraw/components/icons";
+import {
+  loginIcon, eyeIcon
+} from "@excalidraw/excalidraw/components/icons";
 import type { Theme } from "@excalidraw/excalidraw/element/types";
 import { MainMenu } from "@excalidraw/excalidraw/index";
 import { isExcalidrawPlusSignedUser } from "../app_constants";
 import { LanguageList } from "../app-language/LanguageList";
 import { saveDebugState } from "./DebugCanvas";
-
-export const AppMainMenu: React.FC<{
-  onCollabDialogOpen: () => any;
-  isCollaborating: boolean;
-  isCollabEnabled: boolean;
-  theme: Theme | "system";
-  setTheme: (theme: Theme | "system") => void;
-  refresh: () => void;
-}> = React.memo((props) => {
-  return (
     <MainMenu>
       <MainMenu.DefaultItems.LoadScene />
       <MainMenu.DefaultItems.SaveToActiveFile />
