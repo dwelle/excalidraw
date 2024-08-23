@@ -754,7 +754,7 @@ export const exportToSvg = async ({
           width="${frame.width}"
           height="${frame.height}"
           ${
-            exportingFrame
+            cfg.exportingFrame
               ? ""
               : `rx=${FRAME_STYLE.radius} ry=${FRAME_STYLE.radius}`
           }
