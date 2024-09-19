@@ -35,6 +35,7 @@ import type {
   ExcalidrawGenericElement,
   ExcalidrawLinearElement,
   ExcalidrawTextElement,
+  FixedPointBinding,
   FractionalIndex,
   SceneElementsMap,
 } from "../element/types";
@@ -2053,13 +2054,13 @@ describe("history", () => {
               focus: -0.001587301587301948,
               gap: 5,
               fixedPoint: [1.0318471337579618, 0.49920634920634904],
-            },
+            } as FixedPointBinding,
             endBinding: {
               elementId: "u2JGnnmoJ0VATV4vCNJE5",
               focus: -0.0016129032258049847,
               gap: 3.537079145500037,
               fixedPoint: [0.4991935483870975, -0.03875193720914723],
-            },
+            } as FixedPointBinding,
           },
         ],
         storeAction: StoreAction.CAPTURE,
@@ -4459,7 +4460,7 @@ describe("history", () => {
           elements: [
             h.elements[0],
             newElementWith(h.elements[1], { boundElements: [] }),
-            newElementWith(h.elements[2] as ExcalidrawLinearElement, {
+            newElementWith(h.elements[2] as ExcalidrawElbowArrowElement, {
               endBinding: {
                 elementId: remoteContainer.id,
                 gap: 1,
@@ -4659,7 +4660,7 @@ describe("history", () => {
         // Simulate remote update
         API.updateScene({
           elements: [
-            newElementWith(h.elements[0] as ExcalidrawLinearElement, {
+            newElementWith(h.elements[0] as ExcalidrawElbowArrowElement, {
               startBinding: {
                 elementId: rect1.id,
                 gap: 1,
