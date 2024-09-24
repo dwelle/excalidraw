@@ -121,7 +121,7 @@ const rawConfigCommon = {
   packages: "external",
   // chunks are always external, so they are not bundled within and get build separately
   external: ["*.chunk"],
-}
+};
 
 const rawConfigIndex = {
   ...rawConfigCommon,
@@ -135,7 +135,6 @@ const rawConfigChunks = {
 };
 
 function buildDev(chunkConfig) {
-  // development unminified build with source maps
   const config = {
     ...chunkConfig,
     sourcemap: true,
@@ -149,7 +148,6 @@ function buildDev(chunkConfig) {
 }
 
 function buildProd(chunkConfig) {
-  // production minified buld without sourcemaps
   const config = {
     ...chunkConfig,
     minify: true,
@@ -163,11 +161,13 @@ function buildProd(chunkConfig) {
 }
 
 const createESMRawBuild = async () => {
-    await buildDev(rawConfigIndex),
-    await buildDev(rawConfigChunks),
+  // development unminified build with source maps
+  await buildDev(rawConfigIndex);
+  await buildDev(rawConfigChunks);
 
-    await buildProd(rawConfigIndex);
-    await buildProd(rawConfigChunks);
+  // production minified buld without sourcemaps
+  await buildProd(rawConfigIndex);
+  await buildProd(rawConfigChunks);
 };
 
 createESMRawBuild();
