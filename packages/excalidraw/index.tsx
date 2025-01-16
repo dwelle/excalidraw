@@ -310,7 +310,7 @@ export {
   clearAppStateForLocalStorage,
 } from "./appState";
 
-export { jotaiScope, jotaiStore } from "./jotai";
+export { editorJotaiStore };
 export { libraryItemsAtom } from "./data/library";
 
 export * as icons from "./components/icons";
