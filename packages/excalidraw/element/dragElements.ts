@@ -3,7 +3,7 @@ import type { Bounds } from "./bounds";
 import { getCommonBounds } from "./bounds";
 import { mutateElement } from "./mutateElement";
 import { getPerfectElementSize } from "./sizeHelpers";
-import type { NonDeletedExcalidrawElement } from "./types";
+import type { ExcalidrawElement, NonDeletedExcalidrawElement } from "./types";
 import type {
   AppState,
   NormalizedZoomValue,
@@ -76,13 +76,20 @@ export const dragSelectedElements = (
     }
   }
 
-  const commonBounds = getCommonBounds(
-    Array.from(elementsToUpdate).map(
-      (el) => pointerDownState.originalElements.get(el.id) ?? el,
-    ),
-  );
+  const origElements: ExcalidrawElement[] = [];
+
+  for (const element of elementsToUpdate) {
+    const origElement = pointerDownState.originalElements.get(element.id);
+    // if original element is not set (e.g. when you duplicate during a drag
+    // operation), exit to avoid undefined behavior
+    if (!origElement) {
+      return;
+    }
+    origElements.push(origElement);
+  }
+
   const adjustedOffset = calculateOffset(
-    commonBounds,
+    getCommonBounds(origElements),
     offset,
     snapOffset,
     gridSize,
