@@ -120,7 +120,7 @@ const _debugRenderer = (
     scale,
     normalizedWidth,
     normalizedHeight,
-    viewBackgroundColor: "transparent",
+    canvasBackgroundColor: "transparent",
   });
 
   // Apply zoom
