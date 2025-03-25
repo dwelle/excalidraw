@@ -1,6 +1,9 @@
 import React from "react";
+
 import { t } from "../i18n";
-import { capitalizeString } from "../utils";
+
+import { capitalizeString } from "../../common/src";
+
 import { HomeIcon } from "./icons";
 
 import "./HomeButton.scss";
