@@ -531,6 +531,7 @@ export type OnUserFollowedPayload = {
 
 export interface ExcalidrawProps {
   id?: string | null;
+  className?: string;
   onChange?: (
     elements: readonly OrderedExcalidrawElement[],
     appState: AppState,
