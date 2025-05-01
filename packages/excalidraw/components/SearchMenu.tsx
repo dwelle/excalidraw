@@ -5,9 +5,9 @@ import { Fragment, memo, useEffect, useRef, useState } from "react";
 
 import { CLASSES, EVENT } from "@excalidraw/common";
 
-import { isElementCompletelyInViewport } from "@excalidraw/element/sizeHelpers";
+import { isElementCompletelyInViewport } from "@excalidraw/element";
 
-import { measureText } from "@excalidraw/element/textMeasurements";
+import { measureText } from "@excalidraw/element";
 
 import {
   KEYS,
@@ -16,8 +16,8 @@ import {
   getFontString,
 } from "@excalidraw/common";
 
-import { newTextElement } from "@excalidraw/element/newElement";
-import { isTextElement } from "@excalidraw/element/typeChecks";
+import { newTextElement } from "@excalidraw/element";
+import { isTextElement } from "@excalidraw/element";
 
 import type { ExcalidrawTextElement } from "@excalidraw/element/types";
 
