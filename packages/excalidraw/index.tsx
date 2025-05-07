@@ -329,7 +329,7 @@ export { libraryItemsAtom } from "./data/library";
 export * as icons from "./components/icons";
 export * as actions from "./actions/index";
 
-export { duplicateElements, duplicateElement } from "../element/src/duplicate";
+export { duplicateElements, duplicateElement } from "@excalidraw/element";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
 

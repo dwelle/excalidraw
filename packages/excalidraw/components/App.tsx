@@ -2637,7 +2637,7 @@ class App extends React.Component<AppProps, AppState> {
     this.onChangeEmitter.clear();
 
     if (isProdEnv()) {
-      this.history = new History();
+      this.history = new History(this.store);
       this.library = new Library(this);
       this.actionManager = new ActionManager(
         this.syncActionResult,
