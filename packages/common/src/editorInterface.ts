@@ -16,8 +16,7 @@ export type EditorInterface = Readonly<{
 const DESKTOP_UI_MODE_STORAGE_KEY = "excalidraw.desktopUIMode";
 
 // breakpoints
-// mobile: up to 699px
-export const MQ_MAX_MOBILE = 599;
+export const MQ_MAX_MOBILE = 800;
 
 export const MQ_MAX_WIDTH_LANDSCAPE = 1000;
 export const MQ_MAX_HEIGHT_LANDSCAPE = 500;
