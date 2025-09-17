@@ -349,7 +349,7 @@ export const DEFAULT_UI_OPTIONS: AppProps["UIOptions"] = {
 // -----------------------------------------------------------------------------
 
 // mobile: up to 699px
-export const MQ_MAX_MOBILE = 599;
+export const MQ_MAX_MOBILE = 800;
 
 // tablets
 export const MQ_MIN_TABLET = MQ_MAX_MOBILE + 1; // lower bound (excludes phones)
