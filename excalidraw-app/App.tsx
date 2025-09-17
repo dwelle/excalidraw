@@ -5,8 +5,11 @@ import {
   CaptureUpdateAction,
   reconcileElements,
   useEditorInterface,
-  ExcalidrawAPIProvider,
+  Sidebar,
+  Footer,
+  Button,
   useExcalidrawAPI,
+  ExcalidrawAPIProvider,
 } from "@excalidraw/excalidraw";
 import { trackEvent } from "@excalidraw/excalidraw/analytics";
 import { getDefaultAppState } from "@excalidraw/excalidraw/appState";
@@ -74,7 +77,6 @@ import type {
   BinaryFiles,
   ExcalidrawInitialDataState,
   UIAppState,
-  ExcalidrawProps,
 } from "@excalidraw/excalidraw/types";
 import type { ResolutionType } from "@excalidraw/common/utility-types";
 import type { ResolvablePromise } from "@excalidraw/common/utils";
@@ -792,55 +794,74 @@ const ExcalidrawWrapper = () => {
     [setShareDialogState],
   );
 
-  // ---------------------------------------------------------------------------
-  // onExport — intercepts file save to wait for pending image loads
-  // ---------------------------------------------------------------------------
-  const onExport: Required<ExcalidrawProps>["onExport"] = useCallback(
-    async function* () {
-      let snapshot = FileStatusStore.getSnapshot();
-      const { pending, total } = FileStatusStore.getPendingCount(
-        snapshot.value,
-      );
-      if (pending === 0) {
-        return;
-      }
+  const [activeToolType, setActiveToolType] = useState<string | null>(null);
+  const prevActiveTool = useRef<{
+    type: string;
+    locked?: boolean;
+    prevLockState?: boolean;
+  }>({ type: "selection", locked: false, prevLockState: false });
 
-      // Yield initial progress
-      yield {
-        type: "progress",
-        progress: (total - pending) / total,
-        message: `Loading images (${total - pending}/${total})...`,
+  const toggleCommentTool = useCallback(() => {
+    const nextType =
+      excalidrawAPI?.getAppState().activeTool?.customType === "comment"
+        ? "selection"
+        : "comment";
+    excalidrawAPI?.setActiveTool(
+      nextType === "comment"
+        ? {
+            type: "custom",
+            customType: "comment",
+            locked: true,
+          }
+        : { type: "selection" },
+    );
+  }, [excalidrawAPI]);
+
+  useEffect(() => {
+    if (excalidrawAPI) {
+      const unsubOnChange = excalidrawAPI.onChange((_, appState) => {
+        const type = appState.activeTool.customType || appState.activeTool.type;
+        if (
+          prevActiveTool.current?.type === "comment" &&
+          type !== "comment" &&
+          !prevActiveTool.current?.prevLockState
+        ) {
+          excalidrawAPI.setActiveTool({
+            ...appState.activeTool,
+            locked: false,
+          });
+        }
+        setActiveToolType(type);
+        prevActiveTool.current = {
+          type,
+          locked: appState.activeTool.locked,
+          prevLockState:
+            prevActiveTool.current?.type !== "comment"
+              ? prevActiveTool.current?.locked
+              : prevActiveTool.current?.prevLockState,
+        };
+      });
+
+      // on C keypress
+      const onKeyDown = (event: KeyboardEvent) => {
+        if (
+          event.code === "KeyC" &&
+          !event.ctrlKey &&
+          !event.metaKey &&
+          !event.altKey
+        ) {
+          toggleCommentTool();
+        }
       };
 
-      // Wait for all pending images to finish
-      while (true) {
-        snapshot = await FileStatusStore.pull(snapshot.version);
-        const { pending: nowPending, total: nowTotal } =
-          FileStatusStore.getPendingCount(snapshot.value);
+      window.addEventListener("keydown", onKeyDown);
 
-        yield {
-          type: "progress",
-          progress: (nowTotal - nowPending) / nowTotal,
-          message: `Loading images (${nowTotal - nowPending}/${nowTotal})...`,
-        };
-
-        if (nowPending === 0) {
-          await new Promise((r) => setTimeout(r, 500));
-          yield {
-            type: "progress",
-            message: `Preparing export...`,
-          };
-          return;
-        }
-      }
-    },
-    [],
-  );
-
-  // const onExport = () => {
-  //   return new Promise((r) => setTimeout(r, 2500));
-  //   // console.log("onExport");
-  // };
+      return () => {
+        window.removeEventListener("keydown", onKeyDown);
+        unsubOnChange();
+      };
+    }
+  }, [excalidrawAPI, toggleCommentTool]);
 
   // browsers generally prevent infinite self-embedding, there are
   // cases where it still happens, and while we disallow self-embedding
@@ -909,7 +930,6 @@ const ExcalidrawWrapper = () => {
     >
       <Excalidraw
         onChange={onChange}
-        onExport={onExport}
         initialData={initialStatePromiseRef.current.promise}
         isCollaborating={isCollaborating}
         onPointerUpdate={collabAPI?.onPointerUpdate}
@@ -1020,8 +1040,26 @@ const ExcalidrawWrapper = () => {
         </OverwriteConfirmDialog>
         <AppFooter onChange={() => excalidrawAPI?.refresh()} />
         {excalidrawAPI && <AIComponents excalidrawAPI={excalidrawAPI} />}
-
         <TTDDialogTrigger />
+        <Sidebar name="custom">test</Sidebar>
+        <Footer>
+          <div
+            style={{
+              display: "flex",
+              gap: ".5rem",
+              alignItems: "center",
+              marginRight: "auto",
+            }}
+          >
+            <Sidebar.Trigger name="custom">sidebar</Sidebar.Trigger>
+            <Button
+              onSelect={toggleCommentTool}
+              className={clsx({ active: activeToolType === "comment" })}
+            >
+              💬
+            </Button>
+          </div>
+        </Footer>
         {isCollaborating && isOffline && (
           <div className="alertalert--warning">
             {t("alerts.collabOfflineWarning")}
