@@ -1652,7 +1652,6 @@ class App extends React.Component<AppProps, AppState> {
                           generateLinkForSelection={
                             this.props.generateLinkForSelection
                           }
-                          renderTopRightUI={renderTopRightUI}
                           uiDisabled={this.props.ui === false}
                         >
                           {this.props.children}
