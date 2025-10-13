@@ -61,6 +61,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     ui,
     interactive,
     activeTool,
+    getUIMode,
   } = props;
 
   const canvasActions = props.UIOptions?.canvasActions;
@@ -159,6 +160,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           ui={ui}
           interactive={interactive}
           activeTool={activeTool}
+          getUIMode={getUIMode}
         >
           {children}
         </App>
@@ -336,3 +338,9 @@ export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
 
 export { CommandPalette } from "./components/CommandPalette/CommandPalette";
+
+export {
+  getUIMode,
+  isMobileBreakpoint,
+  isTabletBreakpoint,
+} from "@excalidraw/common";
