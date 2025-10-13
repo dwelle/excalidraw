@@ -23,6 +23,11 @@ import {
   isAndroid,
   isIOS,
   WINDOWS_EMOJI_FALLBACK_FONT,
+  MQ_MAX_HEIGHT_LANDSCAPE,
+  MQ_MAX_MOBILE,
+  MQ_MAX_TABLET,
+  MQ_MAX_WIDTH_LANDSCAPE,
+  MQ_MIN_TABLET,
 } from "./constants";
 
 import type { MaybePromise, ResolutionType } from "./utility-types";
@@ -1323,4 +1328,35 @@ export const isMobileOrTablet = (): boolean => {
     return false;
   }
   return false;
+};
+
+export const getUIMode = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}) => {
+  return isTabletBreakpoint(width, height) && isMobileOrTablet()
+    ? "compact"
+    : isMobileBreakpoint(width, height)
+    ? "mobile"
+    : "full";
+};
+
+export const isMobileBreakpoint = (width: number, height: number) => {
+  return (
+    width <= MQ_MAX_MOBILE ||
+    (height < MQ_MAX_HEIGHT_LANDSCAPE && width < MQ_MAX_WIDTH_LANDSCAPE)
+  );
+};
+
+export const isTabletBreakpoint = (
+  editorWidth: number,
+  editorHeight: number,
+) => {
+  const minSide = Math.min(editorWidth, editorHeight);
+  const maxSide = Math.max(editorWidth, editorHeight);
+
+  return minSide >= MQ_MIN_TABLET && maxSide <= MQ_MAX_TABLET;
 };

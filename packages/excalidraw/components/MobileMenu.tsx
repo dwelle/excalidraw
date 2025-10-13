@@ -65,8 +65,11 @@ export const MobileMenu = ({
     DefaultSidebarTriggerTunnel,
   } = useTunnels();
   const renderAppTopBar = () => {
-    const topRightUI = renderTopRightUI?.(true, appState) ?? (
-      <DefaultSidebarTriggerTunnel.Out />
+    const topRightUI = (
+      <div className="excalidraw-ui-top-right">
+        {renderTopRightUI?.(true, appState)}
+        <DefaultSidebarTriggerTunnel.Out />
+      </div>
     );
 
     const topLeftUI = (

@@ -99,12 +99,10 @@ import {
   MINIMUM_ARROW_SIZE,
   DOUBLE_TAP_POSITION_THRESHOLD,
   isMobileOrTablet,
-  MQ_MAX_MOBILE,
-  MQ_MIN_TABLET,
-  MQ_MAX_TABLET,
-  MQ_MAX_HEIGHT_LANDSCAPE,
-  MQ_MAX_WIDTH_LANDSCAPE,
   isProdEnv,
+  isMobileBreakpoint,
+  isTabletBreakpoint,
+  getUIMode,
 } from "@excalidraw/common";
 
 import {
@@ -2452,20 +2450,6 @@ class App extends React.Component<AppProps, AppState> {
     }
   };
 
-  private isMobileBreakpoint = (width: number, height: number) => {
-    return (
-      width <= MQ_MAX_MOBILE ||
-      (height < MQ_MAX_HEIGHT_LANDSCAPE && width < MQ_MAX_WIDTH_LANDSCAPE)
-    );
-  };
-
-  private isTabletBreakpoint = (editorWidth: number, editorHeight: number) => {
-    const minSide = Math.min(editorWidth, editorHeight);
-    const maxSide = Math.max(editorWidth, editorHeight);
-
-    return minSide >= MQ_MIN_TABLET && maxSide <= MQ_MAX_TABLET;
-  };
-
   private refreshViewportBreakpoints = () => {
     const container = this.excalidrawContainerRef.current;
     if (!container) {
@@ -2479,7 +2463,7 @@ class App extends React.Component<AppProps, AppState> {
 
     const nextViewportState = updateObject(prevViewportState, {
       isLandscape: editorWidth > editorHeight,
-      isMobile: this.isMobileBreakpoint(editorWidth, editorHeight),
+      isMobile: isMobileBreakpoint(editorWidth, editorHeight),
     });
 
     if (prevViewportState !== nextViewportState) {
@@ -2505,28 +2489,22 @@ class App extends React.Component<AppProps, AppState> {
 
     const prevEditorState = this.device.editor;
 
+    const uiMode =
+      this.props.getUIMode?.({ width: editorWidth, height: editorHeight }) ??
+      getUIMode({ width: editorWidth, height: editorHeight });
+
     const nextEditorState = updateObject(prevEditorState, {
-      isMobile: this.isMobileBreakpoint(editorWidth, editorHeight),
+      isMobile: uiMode === "mobile",
       canFitSidebar: editorWidth > sidebarBreakpoint,
     });
 
-    const stylesPanelMode =
-      // NOTE: we could also remove the isMobileOrTablet check here and
-      // always switch to compact mode when the editor is narrow (e.g. < MQ_MIN_WIDTH_DESKTOP)
-      // but not too narrow (> MQ_MAX_WIDTH_MOBILE)
-      this.isTabletBreakpoint(editorWidth, editorHeight) && isMobileOrTablet()
-        ? "compact"
-        : this.isMobileBreakpoint(editorWidth, editorHeight)
-        ? "mobile"
-        : "full";
-
     // also check if we need to update the app state
     this.setState((prevState) => ({
-      stylesPanelMode,
+      stylesPanelMode: uiMode,
       // reset to box selection mode if the UI changes to full
       // where you'd not be able to change the mode yourself currently
       preferredSelectionTool:
-        stylesPanelMode === "full"
+        uiMode === "full"
           ? {
               type: "selection",
               initialized: true,

@@ -648,6 +648,10 @@ export interface ExcalidrawProps {
         type: "custom";
         customType: string;
       };
+  getUIMode?: (editorDimensions: {
+    width: number;
+    height: number;
+  }) => "mobile" | "compact" | "full";
 }
 
 export type SceneData = {
