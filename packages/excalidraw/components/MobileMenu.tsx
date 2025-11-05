@@ -71,8 +71,8 @@ export const MobileMenu = ({
 
     const topRightUI = (
       <div className="excalidraw-ui-top-right">
-        {renderTopRightUI?.(true, appState) ??
-          (!appState.viewModeEnabled && <DefaultSidebarTriggerTunnel.Out />)}
+        {renderTopRightUI?.(true, appState)}
+        {!appState.viewModeEnabled && <DefaultSidebarTriggerTunnel.Out />}
         {appState.viewModeEnabled && (
           <ExitViewModeButton actionManager={actionManager} />
         )}
