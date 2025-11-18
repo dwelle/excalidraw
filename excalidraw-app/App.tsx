@@ -219,10 +219,20 @@ const initializeScene = async (opts: {
   )
 > => {
   const searchParams = new URLSearchParams(window.location.search);
+  const hashParams = new URLSearchParams(window.location.hash.slice(1));
   const id = searchParams.get("id");
-  const jsonBackendMatch = window.location.hash.match(
-    /^#json=([a-zA-Z0-9_-]+),([a-zA-Z0-9_-]+)$/,
-  );
+  const shareableLink = hashParams.get("json")?.split(",");
+
+  if (shareableLink) {
+    hashParams.delete("json");
+    const hash = `#${decodeURIComponent(hashParams.toString())}`;
+    window.history.replaceState(
+      {},
+      APP_NAME,
+      `${window.location.origin}${hash}`,
+    );
+  }
+
   const externalUrlMatch = window.location.hash.match(/^#url=(.*)$/);
 
   const localDataState = importFromLocalStorage();
@@ -232,7 +242,7 @@ const initializeScene = async (opts: {
   } = await loadScene(null, null, localDataState);
 
   let roomLinkData = getCollaborationLinkData(window.location.href);
-  const isExternalScene = !!(id || jsonBackendMatch || roomLinkData);
+  const isExternalScene = !!(id || shareableLink || roomLinkData);
   if (isExternalScene) {
     if (
       // don't prompt if scene is empty
@@ -242,16 +252,16 @@ const initializeScene = async (opts: {
       // otherwise, prompt whether user wants to override current scene
       (await openConfirmModal(shareableLinkConfirmDialog))
     ) {
-      if (jsonBackendMatch) {
+      if (shareableLink) {
         scene = await loadScene(
-          jsonBackendMatch[1],
-          jsonBackendMatch[2],
+          shareableLink[0],
+          shareableLink[1],
           localDataState,
         );
       }
       scene.scrollToContent = true;
       if (!roomLinkData) {
-        window.history.replaceState({}, APP_NAME, window.location.origin);
+        // window.history.replaceState({}, APP_NAME, window.location.origin);
       }
     } else {
       // https://github.com/excalidraw/excalidraw/issues/1919
@@ -268,7 +278,7 @@ const initializeScene = async (opts: {
       }
 
       roomLinkData = null;
-      window.history.replaceState({}, APP_NAME, window.location.origin);
+      // window.history.replaceState({}, APP_NAME, window.location.origin);
     }
   } else if (externalUrlMatch) {
     window.history.replaceState({}, APP_NAME, window.location.origin);
@@ -329,12 +339,12 @@ const initializeScene = async (opts: {
       key: roomLinkData.roomKey,
     };
   } else if (scene) {
-    return isExternalScene && jsonBackendMatch
+    return isExternalScene && shareableLink
       ? {
           scene,
           isExternalScene,
-          id: jsonBackendMatch[1],
-          key: jsonBackendMatch[2],
+          id: shareableLink[0],
+          key: shareableLink[1],
         }
       : { scene, isExternalScene: false };
   }
@@ -946,6 +956,7 @@ const ExcalidrawWrapper = () => {
             </div>
           );
         }}
+        // scrollConstraints={constraints.enabled ? constraints : undefined}
         onLinkOpen={(element, event) => {
           if (element.link && isElementLink(element.link)) {
             event.preventDefault();
@@ -953,6 +964,12 @@ const ExcalidrawWrapper = () => {
           }
         }}
       >
+        {/* {excalidrawAPI && !isTestEnv() && (
+          <ConstraintsSettings
+            excalidrawAPI={excalidrawAPI}
+            initialConstraints={constraints}
+          />
+        )} */}
         <AppMainMenu
           onCollabDialogOpen={onCollabDialogOpen}
           isCollaborating={isCollaborating}
