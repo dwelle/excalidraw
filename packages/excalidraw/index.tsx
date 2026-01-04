@@ -22,6 +22,7 @@ polyfill();
 
 const ExcalidrawBase = (props: ExcalidrawProps) => {
   const {
+    className,
     onChange,
     onIncrement,
     initialData,
@@ -120,6 +121,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
       <InitializeApp langCode={langCode} theme={theme}>
         <App
           id={id}
+          className={className}
           onChange={onChange}
           onIncrement={onIncrement}
           initialData={initialData}
@@ -340,3 +342,5 @@ export * as actions from "./actions/index";
 export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
+
+export { CommandPalette } from "./components/CommandPalette/CommandPalette";
