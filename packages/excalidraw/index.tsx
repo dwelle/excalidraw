@@ -67,6 +67,7 @@ export const ExcalidrawAPIProvider = ({
 const ExcalidrawBase = (props: ExcalidrawProps) => {
   const {
     onExport,
+    className,
     onChange,
     onThemeChange,
     onIncrement,
@@ -192,6 +193,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
         <App
           onExport={onExport}
           id={id}
+          className={className}
           onChange={onChange}
           onThemeChange={onThemeChange}
           onIncrement={onIncrement}
@@ -479,3 +481,5 @@ export * as actions from "./actions/index";
 export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
+
+export { CommandPalette } from "./components/CommandPalette/CommandPalette";
