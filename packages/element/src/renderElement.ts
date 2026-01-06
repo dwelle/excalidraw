@@ -321,7 +321,7 @@ const generateElementCanvas = (
   return {
     element,
     canvas,
-    theme: appState.theme,
+    theme: renderConfig.theme,
     scale,
     zoomValue: zoom.value,
     canvasOffsetX,
@@ -538,7 +538,6 @@ export let elementWithCanvasCache = new WeakMap<
 
 export const clearRenderCache = () => {
   elementWithCanvasCache = new WeakMap();
-  pathsCache = new WeakMap();
 };
 
 const generateElementWithCanvas = (
@@ -567,7 +566,7 @@ const generateElementWithCanvas = (
   if (
     !prevElementWithCanvas ||
     shouldRegenerateBecauseZoom ||
-    prevElementWithCanvas.theme !== appState.theme ||
+    prevElementWithCanvas.theme !== renderConfig.theme ||
     prevElementWithCanvas.boundTextElementVersion !== boundTextElementVersion ||
     prevElementWithCanvas.imageCrop !== imageCrop ||
     prevElementWithCanvas.containingFrameOpacity !== containingFrameOpacity ||
@@ -748,14 +747,14 @@ export const renderElement = (
 
         context.lineWidth = FRAME_STYLE.strokeWidth / appState.zoom.value;
         context.strokeStyle =
-          appState.theme === THEME.DARK
+          renderConfig.theme === THEME.DARK
             ? applyDarkModeFilter(FRAME_STYLE.strokeColor)
             : FRAME_STYLE.strokeColor;
 
         // TODO change later to only affect AI frames
         if (isMagicFrameElement(element)) {
           context.strokeStyle =
-            appState.theme === THEME.LIGHT
+            renderConfig.theme === THEME.LIGHT
               ? "#7affd7"
               : applyDarkModeFilter("#1d8264");
         }
