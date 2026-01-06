@@ -627,16 +627,13 @@ export const exportToCanvas = async ({
       scrollX: -x + normalizedPadding,
       scrollY: -y + normalizedPadding,
       zoom: { value: DEFAULT_ZOOM_VALUE },
-
       shouldCacheIgnoreZoom: false,
-      theme: cfg.theme || THEME.LIGHT,
     },
     scale: canvasScale,
     renderConfig: {
       canvasBackgroundColor:
         cfg.canvasBackgroundColor === false
-          ? // null indicates transparent background
-            null
+          ? "transparent"
           : cfg.canvasBackgroundColor ||
             appState.viewBackgroundColor ||
             COLOR_WHITE,
@@ -647,7 +644,7 @@ export const exportToCanvas = async ({
       embedsValidationStatus: new Map(),
       elementsPendingErasure: new Set(),
       pendingFlowchartNodes: null,
-      theme: appState.exportWithDarkMode ? THEME.DARK : THEME.LIGHT,
+      theme: cfg.theme || THEME.LIGHT,
     },
   });
 
