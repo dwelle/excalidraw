@@ -8,7 +8,11 @@ import type { NonDeletedExcalidrawElement } from "@excalidraw/element/types";
 import { EditorLocalStorage } from "../../data/EditorLocalStorage";
 import { canvasToBlob } from "../../data/blob";
 import { t } from "../../i18n";
-import { convertToExcalidrawElements, exportToCanvas } from "../../index";
+import {
+  convertToExcalidrawElements,
+  exportToCanvas,
+  THEME,
+} from "../../index";
 
 import type { AppClassProperties, BinaryFiles } from "../../types";
 
@@ -95,17 +99,21 @@ export const convertMermaidToExcalidraw = async ({
     };
 
     const canvas = await exportToCanvas({
-      elements: data.current.elements,
-      files: data.current.files,
-      exportPadding: DEFAULT_EXPORT_PADDING,
-      maxWidthOrHeight:
-        Math.max(parent.offsetWidth, parent.offsetHeight) *
-        window.devicePixelRatio,
-      appState: {
+      data: {
+        elements: data.current.elements,
+        files: data.current.files,
+      },
+      config: {
         // TODO hack (will be refactored in TTD v2)
-        exportWithDarkMode: document
+        theme: document
           .querySelector(".excalidraw-container")
-          ?.classList.contains("theme--dark"),
+          ?.classList.contains("theme--dark")
+          ? THEME.DARK
+          : THEME.LIGHT,
+        padding: DEFAULT_EXPORT_PADDING,
+        maxWidthOrHeight:
+          Math.max(parent.offsetWidth, parent.offsetHeight) *
+          window.devicePixelRatio,
       },
     });
     // if converting to blob fails, there's some problem that will
