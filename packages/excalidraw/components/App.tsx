@@ -6480,19 +6480,23 @@ class App extends React.Component<AppProps, AppState> {
         hitElement,
       );
 
-      if (
-        this.hitLinkElement &&
-        // Probably redundant in non-interactive mode (no selections possible),
-        // but keeping for defensive coding and to maintain consistency with
-        // interactive mode behavior
-        !this.state.selectedElementIds[this.hitLinkElement.id]
-      ) {
+      if (this.hitLinkElement) {
         setCursor(this.interactiveCanvas, CURSOR_TYPE.POINTER);
-        showHyperlinkTooltip(
-          this.hitLinkElement,
-          this.state,
-          this.scene.getNonDeletedElementsMap(),
-        );
+        if (
+          !isEmbeddableElement(this.hitLinkElement) ||
+          isPointHittingLinkIcon(
+            this.hitLinkElement,
+            this.scene.getNonDeletedElementsMap(),
+            this.state,
+            pointFrom(scenePointer.x, scenePointer.y),
+          )
+        ) {
+          showHyperlinkTooltip(
+            this.hitLinkElement,
+            this.state,
+            this.scene.getNonDeletedElementsMap(),
+          );
+        }
       } else {
         hideHyperlinkToolip();
         setCursor(this.interactiveCanvas, CURSOR_TYPE.AUTO);
