@@ -1706,7 +1706,8 @@ const _renderInteractiveScene = ({
   if (
     !appState.multiElement &&
     !appState.newElement &&
-    !appState.selectedLinearElement?.isEditing
+    !appState.selectedLinearElement?.isEditing &&
+    app.props.interactive !== false
   ) {
     const showBoundingBox = hasBoundingBox(
       selectedElements,

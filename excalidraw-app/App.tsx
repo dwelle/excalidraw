@@ -962,6 +962,7 @@ const ExcalidrawWrapper = () => {
             },
           },
         }}
+        interactive={true}
         langCode={langCode}
         renderCustomStats={renderCustomStats}
         detectScroll={false}
