@@ -342,7 +342,7 @@ export {
   renderSpreadsheet,
   tryParseSpreadsheet,
   isSpreadsheetValidForChartType,
-} from "./charts";
+} from "./charts/index";
 
 export {
   getDefaultAppState,
