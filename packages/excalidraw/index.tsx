@@ -342,7 +342,7 @@ export {
   renderSpreadsheet,
   tryParseSpreadsheet,
   isSpreadsheetValidForChartType,
-} from "./charts";
+} from "./charts/index";
 
 export {
   getDefaultAppState,
@@ -358,5 +358,3 @@ export * as actions from "./actions/index";
 export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
-
-export { CommandPalette } from "./components/CommandPalette/CommandPalette";
