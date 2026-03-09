@@ -634,10 +634,12 @@ const gesture: Gesture = {
   initialScale: null,
 };
 
+let SESSION_EXPORT_THEME_OVERRIDE: AppState["theme"] | undefined = undefined;
+
 class App extends React.Component<AppProps, AppState> {
   canvas: AppClassProperties["canvas"];
   interactiveCanvas: AppClassProperties["interactiveCanvas"] = null;
-  public sessionExportThemeOverride: AppState["theme"] | undefined;
+
   rc: RoughCanvas;
   unmounted: boolean = false;
   actionManager: ActionManager;
@@ -881,6 +883,10 @@ class App extends React.Component<AppProps, AppState> {
     this.triggerRender();
     return result;
   };
+
+  public setSessionExportThemeOverride(theme: AppState["theme"]) {
+    SESSION_EXPORT_THEME_OVERRIDE = theme;
+  }
 
   private onWindowMessage(event: MessageEvent) {
     if (
@@ -3477,7 +3483,7 @@ class App extends React.Component<AppProps, AppState> {
     const elementsMap = this.scene.getElementsMapIncludingDeleted();
 
     const shouldExportWithDarkMode =
-      (this.sessionExportThemeOverride ?? this.state.theme) === THEME.DARK;
+      (SESSION_EXPORT_THEME_OVERRIDE ?? this.state.theme) === THEME.DARK;
 
     if (this.state.exportWithDarkMode !== shouldExportWithDarkMode) {
       this.setState({ exportWithDarkMode: shouldExportWithDarkMode });
