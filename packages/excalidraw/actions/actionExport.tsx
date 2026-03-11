@@ -243,7 +243,7 @@ export const actionSaveFileToDisk = register({
           ...appState,
           openDialog: null,
           fileHandle,
-          toast: { message: t("toast.fileSaved") },
+          toast: { message: t("toast.fileSaved"), duration: 3000 },
         },
       };
     } catch (error: any) {

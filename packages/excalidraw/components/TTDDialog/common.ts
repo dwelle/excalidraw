@@ -88,7 +88,7 @@ export const convertMermaidToExcalidraw = async ({
       }
     }
 
-    const { elements, files } = ret;
+    const { elements, files = {} } = ret;
     setError(null);
 
     data.current = {
