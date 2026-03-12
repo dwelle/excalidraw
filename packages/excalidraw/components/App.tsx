@@ -371,7 +371,7 @@ import {
   hasBackground,
   isSomeElementSelected,
 } from "../scene";
-import { getStateForZoom } from "../scene/zoom";
+import { getConstrainedZoomAnchor, getStateForZoom } from "../scene/zoom";
 import {
   dataURLToString,
   generateIdFromFile,
@@ -4474,10 +4474,11 @@ class App extends React.Component<AppProps, AppState> {
 
     this.setState(newState);
     if (this.state.scrollConstraints) {
-      // debounce to allow centering on user's cursor position before constraining
-      if (newState.zoom.value !== this.state.zoom.value) {
+      if (newState.zoom.value < this.state.zoom.value) {
+        // zoom-out: debounce to allow centering on user's cursor position before constraining
         this.debounceConstrainScrollState(newState);
       } else {
+        // zoom-in or pan: valid range only expands on zoom-in, constrain immediately
         this.setState(constrainScrollState(newState));
       }
     }
@@ -12568,17 +12569,21 @@ class App extends React.Component<AppProps, AppState> {
           // reduced amplification for small deltas (small movements on a trackpad)
           Math.min(1, absDelta / 20);
 
-        this.translateCanvas((state) => ({
-          ...getStateForZoom(
+        this.translateCanvas((state) => {
+          const nextZoom = getNormalizedZoom(newZoom);
+          const anchor = getConstrainedZoomAnchor(
             {
               viewportX: this.lastViewportPosition.x,
               viewportY: this.lastViewportPosition.y,
-              nextZoom: getNormalizedZoom(newZoom),
+              nextZoom,
             },
             state,
-          ),
-          shouldCacheIgnoreZoom: true,
-        }));
+          );
+          return {
+            ...getStateForZoom({ ...anchor, nextZoom }, state),
+            shouldCacheIgnoreZoom: true,
+          };
+        });
         this.resetShouldCacheIgnoreZoomDebounced();
         return;
       }
