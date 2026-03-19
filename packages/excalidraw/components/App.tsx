@@ -4377,6 +4377,8 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     if (opts?.scrollLock && this.state.scrollConstraints) {
+      // Clear the previous lock before starting the next locked transition so
+      // stale constraint enforcement cannot snap us back mid-flight.
       this.setState({ scrollConstraints: null });
     }
 
