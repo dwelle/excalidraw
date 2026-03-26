@@ -986,8 +986,8 @@ export type ScrollConstraints = {
   height: number;
   animateOnNextUpdate?: boolean;
   /**
-   * a facotr <0-1> that determines how much you can zoom out beyond the scroll
-   * constraints.
+   * A factor that determines the minimum zoom level that should fit the
+   * constrained area into the viewport.
    */
   viewportZoomFactor?: number;
   /**
@@ -1002,6 +1002,43 @@ export type ScrollConstraints = {
    */
   overscrollAllowance?: number;
 };
+
+/**
+ * Optional scroll constraint settings derived from the final viewport computed
+ * by `scrollToContent()`.
+ */
+export type ScrollToContentLockOptions = {
+  lockZoom?: boolean;
+  overscrollAllowance?: number;
+  viewportZoomFactor?: number;
+};
+
+export type ScrollToContentOptions =
+  | ({
+      fitToContent?: boolean;
+      fitToViewport?: never;
+      viewportZoomFactor?: number;
+      animate?: boolean;
+      duration?: number;
+      scrollLock?: boolean | ScrollToContentLockOptions;
+    } & {
+      minZoom?: number;
+      maxZoom?: number;
+      canvasOffsets?: Offsets;
+    })
+  | ({
+      fitToContent?: never;
+      fitToViewport?: boolean;
+      viewportZoomFactor?: number;
+      animate?: boolean;
+      duration?: number;
+      scrollLock?: boolean | ScrollToContentLockOptions;
+    } & {
+      minZoom?: number;
+      maxZoom?: number;
+      canvasOffsets?: Offsets;
+    });
+
 export type PendingExcalidrawElements = ExcalidrawElement[];
 
 /** Runtime gridSize value. Null indicates disabled grid. */
