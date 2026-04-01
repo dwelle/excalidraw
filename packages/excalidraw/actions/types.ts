@@ -141,6 +141,7 @@ export type ActionName =
   | "copyElementLink"
   | "linkToElement"
   | "cropEditor"
+  | "downloadOriginalPdf"
   | "toggleSvgDarkModeInversion"
   | "wrapSelectionInFrame"
   | "toggleLassoTool"

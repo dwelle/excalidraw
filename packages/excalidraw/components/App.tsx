@@ -327,6 +327,7 @@ import {
   actionToggleMidpointSnapping,
   actionToggleCropEditor,
   actionToggleSvgDarkModeInversion,
+  actionDownloadOriginalPdf,
 } from "../actions";
 import { actionWrapTextInContainer } from "../actions/actionBoundText";
 import { actionToggleHandTool, zoomToFit } from "../actions/actionCanvas";
@@ -3702,7 +3703,9 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     // ------------------- Images or SVG code -------------------
-    const imageFiles = dataTransferFiles.map((data) => data.file);
+    const imageFiles = dataTransferFiles
+      .map((data) => data.file)
+      .filter((file) => isSupportedImageFile(file));
 
     if (imageFiles.length === 0 && data.text && !isPlainPaste) {
       const trimmedText = data.text.trim();
@@ -12492,6 +12495,7 @@ class App extends React.Component<AppProps, AppState> {
       actionWrapSelectionInFrame,
       CONTEXT_MENU_SEPARATOR,
       actionToggleCropEditor,
+      actionDownloadOriginalPdf,
       actionToggleSvgDarkModeInversion,
       CONTEXT_MENU_SEPARATOR,
       ...options,

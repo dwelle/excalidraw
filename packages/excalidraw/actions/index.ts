@@ -92,3 +92,4 @@ export { actionToggleSearchMenu } from "./actionToggleSearchMenu";
 
 export { actionToggleCropEditor } from "./actionCropEditor";
 export { actionToggleSvgDarkModeInversion } from "./actionSvgDarkModeInversion";
+export { actionDownloadOriginalPdf } from "./actionDownloadOriginalPdf";

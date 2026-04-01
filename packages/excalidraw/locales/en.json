@@ -177,6 +177,7 @@
     "installPWA": "Install Excalidraw locally (PWA)",
     "autoResize": "Enable text auto-resizing",
     "imageCropping": "Image cropping",
+    "downloadOriginalPdf": "Download original PDF",
     "enableSvgInversionInDarkMode": "Enable SVG inversion in dark mode",
     "disableSvgInversionInDarkMode": "Disable SVG inversion in dark mode",
     "unCroppedDimension": "Uncropped dimension",
