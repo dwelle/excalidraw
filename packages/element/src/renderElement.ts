@@ -437,6 +437,7 @@ const drawElementOnCanvas = (
     }
     case "image": {
       context.save();
+
       const cacheEntry =
         element.fileId !== null
           ? renderConfig.imageCache.get(element.fileId)
@@ -467,11 +468,32 @@ const drawElementOnCanvas = (
               height: img.naturalHeight,
             };
 
+        const darkModeTextSvgImage =
+          renderConfig.theme === THEME.DARK &&
+          cacheEntry?.mimeType === MIME_TYPES.svg &&
+          !element.customData?.doNotInvertSVGInDarkMode &&
+          cacheEntry.darkModeTextSvgImage != null &&
+          !(cacheEntry.darkModeTextSvgImage instanceof Promise)
+            ? cacheEntry.darkModeTextSvgImage
+            : null;
+
         const shouldInvertImage =
           renderConfig.theme === THEME.DARK &&
           cacheEntry?.mimeType === MIME_TYPES.svg;
 
-        if (shouldInvertImage && isSafari) {
+        if (darkModeTextSvgImage) {
+          context.drawImage(
+            darkModeTextSvgImage,
+            x,
+            y,
+            width,
+            height,
+            0 /* hardcoded for the selection box*/,
+            0,
+            element.width,
+            element.height,
+          );
+        } else if (shouldInvertImage && isSafari) {
           const devicePixelRatio = window.devicePixelRatio || 1;
           const tempCanvas = document.createElement("canvas");
           tempCanvas.width = element.width * devicePixelRatio;
