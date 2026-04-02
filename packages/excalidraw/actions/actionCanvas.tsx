@@ -52,6 +52,8 @@ import { register } from "./register";
 
 import type { AppState, Offsets } from "../types";
 
+const canUseZoomActions = (appState: AppState) => !appState.scrollConstraints;
+
 export const actionChangeViewBackgroundColor = register<Partial<AppState>>({
   name: "changeViewBackgroundColor",
   label: "labels.canvasBackground",
@@ -244,6 +246,7 @@ export const actionResetZoom = register({
         className="reset-zoom-button zoom-button"
         title={t("buttons.resetZoom")}
         aria-label={t("buttons.resetZoom")}
+        disabled={!canUseZoomActions(appState)}
         onClick={() => {
           updateData(null);
         }}
@@ -252,6 +255,7 @@ export const actionResetZoom = register({
       </ToolButton>
     </Tooltip>
   ),
+  predicate: (_elements, appState) => canUseZoomActions(appState),
   keyTest: (event) =>
     (event.code === CODES.ZERO || event.code === CODES.NUM_ZERO) &&
     (event[KEYS.CTRL_OR_CMD] || event.shiftKey),
@@ -294,6 +298,44 @@ export const zoomToFitBounds = ({
   minZoom?: number;
   maxZoom?: number;
 }) => {
+  const resolvedViewport = resolveViewportForBounds({
+    bounds,
+    appState,
+    canvasOffsets,
+    fitToViewport,
+    viewportZoomFactor,
+    minZoom,
+    maxZoom,
+  });
+
+  return {
+    appState: {
+      ...appState,
+      scrollX: resolvedViewport.scrollX,
+      scrollY: resolvedViewport.scrollY,
+      zoom: resolvedViewport.zoom,
+    },
+    captureUpdate: CaptureUpdateAction.EVENTUALLY,
+  };
+};
+
+export function resolveViewportForBounds({
+  bounds,
+  appState,
+  canvasOffsets,
+  fitToViewport = false,
+  viewportZoomFactor = 1,
+  minZoom = -Infinity,
+  maxZoom = Infinity,
+}: {
+  bounds: SceneBounds;
+  canvasOffsets?: Offsets;
+  appState: Readonly<AppState>;
+  fitToViewport: boolean;
+  viewportZoomFactor?: number;
+  minZoom?: number;
+  maxZoom?: number;
+}) {
   viewportZoomFactor = clamp(viewportZoomFactor, MIN_ZOOM, MAX_ZOOM);
 
   const [x1, y1, x2, y2] = bounds;
@@ -347,15 +389,21 @@ export const zoomToFitBounds = ({
   });
 
   return {
-    appState: {
-      ...appState,
-      scrollX: centerScroll.scrollX,
-      scrollY: centerScroll.scrollY,
-      zoom: { value: newZoomValue },
+    bounds,
+    scrollX: centerScroll.scrollX,
+    scrollY: centerScroll.scrollY,
+    zoom: { value: newZoomValue },
+    viewportZoomFactor,
+    viewportDimensions: {
+      width: appState.width,
+      height: appState.height,
     },
-    captureUpdate: CaptureUpdateAction.EVENTUALLY,
+    effectiveViewportDimensions: {
+      width: effectiveCanvasWidth,
+      height: effectiveCanvasHeight,
+    },
   };
-};
+}
 
 export const zoomToFit = ({
   canvasOffsets,
@@ -409,6 +457,7 @@ export const actionZoomToFitSelectionInViewport = register({
       canvasOffsets: app.getEditorUIOffsets(),
     });
   },
+  predicate: (_elements, appState) => canUseZoomActions(appState),
   // NOTE shift-2 should have been assigned actionZoomToFitSelection.
   // TBD on how proceed
   keyTest: (event) =>
@@ -435,6 +484,7 @@ export const actionZoomToFitSelection = register({
       canvasOffsets: app.getEditorUIOffsets(),
     });
   },
+  predicate: (_elements, appState) => canUseZoomActions(appState),
   // NOTE this action should use shift-2 per figma, alas
   keyTest: (event) =>
     event.code === CODES.THREE &&
@@ -459,6 +509,7 @@ export const actionZoomToFit = register({
       fitToViewport: false,
       canvasOffsets: app.getEditorUIOffsets(),
     }),
+  predicate: (_elements, appState) => canUseZoomActions(appState),
   keyTest: (event) =>
     event.code === CODES.ONE &&
     event.shiftKey &&
