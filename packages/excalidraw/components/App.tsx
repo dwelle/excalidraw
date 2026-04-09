@@ -11566,19 +11566,23 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
       );
 
-      const fileExtensions: (Exclude<keyof typeof MIME_TYPES, "binary">)[] = [
-        ...(Object.keys(IMAGE_MIME_TYPES) as (keyof typeof IMAGE_MIME_TYPES)[]),
-        "pdf",
-      ];
+      const fileExtensions = [...Object.keys(IMAGE_MIME_TYPES), "pdf"];
 
       const selectedFiles = await fileOpen({
         description: "File",
-        extensions: fileExtensions,
+        extensions: fileExtensions as Exclude<
+          keyof typeof MIME_TYPES,
+          "binary"
+        >[],
         multiple: true,
       });
 
-      const imageFiles = selectedFiles.filter((file) => isSupportedImageFile(file));
-      const nonImageFiles = selectedFiles.filter((file) => !isSupportedImageFile(file));
+      const imageFiles = selectedFiles.filter((file) =>
+        isSupportedImageFile(file),
+      );
+      const nonImageFiles = selectedFiles.filter(
+        (file) => !isSupportedImageFile(file),
+      );
 
       if (imageFiles.length > 0) {
         await this.insertImages(imageFiles, x, y);
