@@ -313,7 +313,7 @@
   "toolBar": {
     "selection": "Selection",
     "lasso": "Lasso selection",
-    "image": "Insert image",
+    "image": "Insert file",
     "rectangle": "Rectangle",
     "diamond": "Diamond",
     "ellipse": "Ellipse",

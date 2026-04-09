@@ -354,6 +354,7 @@ import {
 } from "../appState";
 import {
   copyTextToSystemClipboard,
+  createPasteEvent,
   parseClipboard,
   parseDataTransferEvent,
   type ParsedDataTransferFile,
@@ -11565,15 +11566,28 @@ class App extends React.Component<AppProps, AppState> {
         this.state,
       );
 
-      const imageFiles = await fileOpen({
-        description: "Image",
-        extensions: Object.keys(
-          IMAGE_MIME_TYPES,
-        ) as (keyof typeof IMAGE_MIME_TYPES)[],
+      const fileExtensions: (Exclude<keyof typeof MIME_TYPES, "binary">)[] = [
+        ...(Object.keys(IMAGE_MIME_TYPES) as (keyof typeof IMAGE_MIME_TYPES)[]),
+        "pdf",
+      ];
+
+      const selectedFiles = await fileOpen({
+        description: "File",
+        extensions: fileExtensions,
         multiple: true,
       });
 
-      this.insertImages(imageFiles, x, y);
+      const imageFiles = selectedFiles.filter((file) => isSupportedImageFile(file));
+      const nonImageFiles = selectedFiles.filter((file) => !isSupportedImageFile(file));
+
+      if (imageFiles.length > 0) {
+        await this.insertImages(imageFiles, x, y);
+      }
+
+      if (nonImageFiles.length > 0) {
+        const pasteEvent = createPasteEvent({ files: nonImageFiles });
+        this.excalidrawContainerRef.current?.dispatchEvent(pasteEvent);
+      }
     } catch (error: any) {
       if (error.name !== "AbortError") {
         console.error(error);
