@@ -11,12 +11,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 3.5rem;
-    height: 3.5rem;
-    border-radius: 50%;
-    background: var(--color-primary);
-    color: #fff;
     flex-shrink: 0;
+  }
+
+  .PdfPremiumDialog__iconImage {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
   }
 
   .PdfPremiumDialog__title {
@@ -42,6 +44,17 @@
 
     &:hover {
       text-decoration: none;
+    }
+  }
+
+  .PdfPremiumDialog__buttons {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+
+    a {
+      flex: 1 1 0;
+      min-width: 0;
     }
   }
 }
