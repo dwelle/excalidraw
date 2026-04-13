@@ -36,6 +36,7 @@ import { LoadingMessage } from "./LoadingMessage";
 import { LockButton } from "./LockButton";
 import { MobileMenu } from "./MobileMenu";
 import { PasteChartDialog } from "./PasteChartDialog";
+import { PdfPremiumDialog } from "./PdfPremiumDialog";
 import { Section } from "./Section";
 import Stack from "./Stack";
 import { UserList } from "./UserList";
@@ -574,6 +575,11 @@ const LayerUI = ({
               openDialog: null,
             })
           }
+        />
+      )}
+      {appState.openDialog?.name === "pdfPremium" && (
+        <PdfPremiumDialog
+          onClose={() => setAppState({ openDialog: null })}
         />
       )}
       {editorInterface.formFactor === "phone" && (

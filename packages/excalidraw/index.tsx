@@ -57,6 +57,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     validateEmbeddable,
     renderEmbeddable,
     aiEnabled,
+    showPDFDropUpsell,
     showDeprecatedFonts,
     renderScrollbars,
     ui,
@@ -161,6 +162,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
           validateEmbeddable={validateEmbeddable}
           renderEmbeddable={renderEmbeddable}
           aiEnabled={aiEnabled !== false}
+          showPDFDropUpsell={showPDFDropUpsell !== false}
           showDeprecatedFonts={showDeprecatedFonts}
           renderScrollbars={renderScrollbars}
           ui={ui}

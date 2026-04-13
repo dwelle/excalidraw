@@ -11864,6 +11864,14 @@ class App extends React.Component<AppProps, AppState> {
       }
     }
 
+    const hasPdfFile = fileItems.some(
+      (data) => data.file?.type === "application/pdf",
+    );
+    if (hasPdfFile && this.props.showPDFDropUpsell !== false) {
+      this.setState({ openDialog: { name: "pdfPremium" } });
+      return;
+    }
+
     const imageFiles = fileItems
       .map((data) => data.file)
       .filter((file) => isSupportedImageFile(file));

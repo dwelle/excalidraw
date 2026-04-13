@@ -390,7 +390,8 @@ export interface AppState {
     | { name: "commandPalette" }
     | { name: "settings" }
     | { name: "elementLinkSelector"; sourceElementId: ExcalidrawElement["id"] }
-    | { name: "charts"; data: Spreadsheet; rawText: string };
+    | { name: "charts"; data: Spreadsheet; rawText: string }
+    | { name: "pdfPremium" };
   /**
    * Reflects user preference for whether the default sidebar should be docked.
    *
@@ -647,6 +648,13 @@ export interface ExcalidrawProps {
     appState: AppState,
   ) => JSX.Element | null;
   aiEnabled?: boolean;
+  /**
+   * Whether to show a premium upsell dialog when a PDF is dropped on the
+   * canvas. Set to `false` if you handle PDF imports yourself.
+   *
+   * @default true
+   */
+  showPDFDropUpsell?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
   interactive?: boolean;

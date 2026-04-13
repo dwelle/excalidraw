@@ -732,5 +732,10 @@
     "spacebar": "Space",
     "delete": "Delete",
     "mmb": "Scroll wheel"
+  },
+  "pdfPremiumDialog": {
+    "title": "PDF support",
+    "description": "PDF import is a premium feature available with Excalidraw+. Upgrade to unlock PDF support and many more features.",
+    "button": "Learn more about Excalidraw+"
   }
 }
