@@ -3703,6 +3703,14 @@ class App extends React.Component<AppProps, AppState> {
       }
     }
 
+    const hasPdfFile = dataTransferFiles.some(
+      (data) => data.file?.type === "application/pdf",
+    );
+    if (hasPdfFile && this.props.showPDFDropUpsell !== false) {
+      this.setState({ openDialog: { name: "pdfPremium" } });
+      return;
+    }
+
     // ------------------- Images or SVG code -------------------
     const imageFiles = dataTransferFiles
       .map((data) => data.file)
@@ -11576,6 +11584,14 @@ class App extends React.Component<AppProps, AppState> {
         >[],
         multiple: true,
       });
+
+      const hasPdfFile = selectedFiles.some(
+        (file) => file.type === "application/pdf",
+      );
+      if (hasPdfFile && this.props.showPDFDropUpsell !== false) {
+        this.setState({ openDialog: { name: "pdfPremium" } });
+        return;
+      }
 
       const imageFiles = selectedFiles.filter((file) =>
         isSupportedImageFile(file),
