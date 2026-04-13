@@ -76,6 +76,7 @@ const getConfig = (outdir) => ({
   },
   loader: {
     ".woff2": "file",
+    ".svg": "file",
   },
 });
 
