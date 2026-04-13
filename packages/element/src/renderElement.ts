@@ -468,18 +468,19 @@ const drawElementOnCanvas = (
               height: img.naturalHeight,
             };
 
-        const darkModeTextSvgImage =
+        const shouldInvertSvgInDarkMode =
           renderConfig.theme === THEME.DARK &&
           cacheEntry?.mimeType === MIME_TYPES.svg &&
-          !element.customData?.doNotInvertSVGInDarkMode &&
+          !element.customData?.doNotInvertSVGInDarkMode;
+
+        const darkModeTextSvgImage =
+          shouldInvertSvgInDarkMode &&
           cacheEntry.darkModeTextSvgImage != null &&
           !(cacheEntry.darkModeTextSvgImage instanceof Promise)
             ? cacheEntry.darkModeTextSvgImage
             : null;
 
-        const shouldInvertImage =
-          renderConfig.theme === THEME.DARK &&
-          cacheEntry?.mimeType === MIME_TYPES.svg;
+        const shouldInvertImage = shouldInvertSvgInDarkMode;
 
         if (darkModeTextSvgImage) {
           context.drawImage(
