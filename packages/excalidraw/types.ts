@@ -664,7 +664,6 @@ export interface ExcalidrawProps {
    * Invoked once the initial scene is loaded.
    */
   onInitialize?: (api: ExcalidrawImperativeAPI) => void;
-  excalidrawAPI?: (api: ExcalidrawImperativeAPI) => void;
   user?: {
     name?: string | null;
   };
