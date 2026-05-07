@@ -43,7 +43,13 @@ const getLatestValue = (
     // (internal components using this internal useAppStateValue expect
     //  non-undefined values on init)
     appState = Object.assign(
-      { width: 0, height: 0, offsetLeft: 0, offsetTop: 0 },
+      {
+        width: 0,
+        height: 0,
+        offsetLeft: 0,
+        offsetTop: 0,
+        scrollConstraints: null,
+      },
       getDefaultAppState(),
     );
   }
