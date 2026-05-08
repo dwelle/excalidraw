@@ -2253,6 +2253,7 @@ class App extends React.Component<AppProps, AppState> {
                             onHandToolToggle={this.onHandToolToggle}
                             langCode={getLanguage().code}
                             renderTopLeftUI={renderTopLeftUI}
+                            renderTopRightUI={renderTopRightUI}
                             renderCustomStats={renderCustomStats}
                             showExitZenModeBtn={
                               typeof this.props?.zenModeEnabled ===
@@ -3306,10 +3307,14 @@ class App extends React.Component<AppProps, AppState> {
           key === "onEvent") &&
         typeof this.api[key] === "function"
       ) {
-        (this.api as any)[key] = () => {
-          throw new Error(
-            "ExcalidrawAPI is no longer usable after the editor has been unmounted and will return invalid/empty data. You should check for `ExcalidrawAPI.isDestroyed` before calling get* methods on subscribing to state/event changes.",
-          );
+        const originalFn = this.api[key] as (...args: any[]) => any;
+        (this.api as any)[key] = (...args: any[]) => {
+          const message = `ExcalidrawAPI.${key}() called after the editor has been unmounted and may return invalid/empty data. Check \`ExcalidrawAPI.isDestroyed\` before calling get* methods or subscribing to state/event changes.`;
+          if (isTestEnv() || isDevEnv()) {
+            throw new Error(message);
+          }
+          console.warn(message);
+          return originalFn.apply(this.api, args);
         };
       }
     }
