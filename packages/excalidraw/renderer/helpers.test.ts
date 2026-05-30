@@ -19,7 +19,7 @@ const run = (viewBackgroundColor: unknown) => {
     scale: 1,
     normalizedWidth: 200,
     normalizedHeight: 100,
-    viewBackgroundColor: viewBackgroundColor as string,
+    canvasBackgroundColor: viewBackgroundColor as string,
   });
   return { context, clearRect, fillRect };
 };
@@ -75,7 +75,7 @@ describe("bootstrapCanvas background painting", () => {
       scale: 1,
       normalizedWidth: 200,
       normalizedHeight: 100,
-      viewBackgroundColor: "not-a-color",
+      canvasBackgroundColor: "not-a-color",
     });
 
     // not the stale red — the seeded default

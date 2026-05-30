@@ -231,11 +231,13 @@ describe("exportToSvg", () => {
       containerId: "arrow-11439",
     });
 
-    const svgElement = await exportUtils.exportToSvg(
-      [arrow, label] as NonDeletedExcalidrawElement[],
-      DEFAULT_OPTIONS,
-      null,
-    );
+    const svgElement = await exportUtils.exportToSvg({
+      data: {
+        elements: [arrow, label] as NonDeletedExcalidrawElement[],
+        appState: DEFAULT_OPTIONS,
+        files: null,
+      },
+    });
 
     const mask = svgElement.querySelector("mask");
     expect(mask).not.toBeNull();
