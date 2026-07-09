@@ -719,6 +719,10 @@ export type InteractionConfig = {
   };
 };
 
+export type RenderOpacityResolver = (
+  element: NonDeletedExcalidrawElement,
+) => ExcalidrawElement["opacity"] | undefined;
+
 export interface ExcalidrawProps {
   id?: string | null;
   className?: string;
@@ -896,6 +900,7 @@ export interface ExcalidrawProps {
     element: NonDeleted<ExcalidrawEmbeddableElement>,
     appState: AppState,
   ) => JSX.Element | null;
+  resolveRenderOpacity?: RenderOpacityResolver;
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
   renderScrollbars?: boolean;
@@ -1163,6 +1168,29 @@ export type ExcalidrawImperativeAPIEventMap = {
   "editor:unmount": [];
 };
 
+export type ElementAnimationTerminalStatus =
+  | "finished"
+  | "cancelled"
+  | "interrupted"
+  | "destroyed";
+
+export type ElementAnimationStatus = "running" | ElementAnimationTerminalStatus;
+
+export type ElementAnimationResult = {
+  id: string;
+  status: ElementAnimationTerminalStatus;
+  elementIds: readonly ExcalidrawElement["id"][];
+};
+
+export type ElementAnimationHandle = {
+  id: string;
+  elementIds: readonly ExcalidrawElement["id"][];
+  finished: Promise<ElementAnimationResult>;
+  finish: () => ElementAnimationResult;
+  cancel: () => ElementAnimationResult;
+  getStatus: () => ElementAnimationStatus;
+};
+
 export interface ExcalidrawImperativeAPI {
   /** Whether the editor has been unmounted and the API is no longer usable. */
   isDestroyed: boolean;
@@ -1186,6 +1214,11 @@ export interface ExcalidrawImperativeAPI {
   getName: InstanceType<typeof App>["getName"];
   setViewport: InstanceType<typeof App>["viewport"]["setViewport"];
   getViewportOffsets: InstanceType<typeof App>["viewport"]["getOffsets"];
+  animateElements: InstanceType<typeof App>["animateElements"];
+  cancelElementAnimation: InstanceType<typeof App>["cancelElementAnimation"];
+  clearElementAnimationOverrides: InstanceType<
+    typeof App
+  >["clearElementAnimationOverrides"];
   registerAction: (action: Action) => void;
   refresh: InstanceType<typeof App>["refresh"];
   setToast: InstanceType<typeof App>["setToast"];
