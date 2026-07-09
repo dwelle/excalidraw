@@ -81,6 +81,7 @@ import {
   muteFSAbortError,
   isTestEnv,
   isDevEnv,
+  easeOut,
   updateStable,
   addEventListener,
   normalizeEOL,
@@ -213,6 +214,8 @@ import {
   ShapeCache,
   clearRenderCache,
   getRenderOpacity,
+  resolveRenderPositionOffset,
+  resolveRenderOpacity,
 } from "@excalidraw/element";
 
 import {
@@ -489,6 +492,10 @@ import type {
   AppClassProperties,
   AppProps,
   AppState,
+  ElementAnimationHandle,
+  ElementAnimationResult,
+  ElementAnimationStatus,
+  ElementAnimationTerminalStatus,
   BinaryFileData,
   ExcalidrawImperativeAPI,
   BinaryFiles,
@@ -547,6 +554,27 @@ const editorInterfaceContextInitialValue: EditorInterface = {
 const EditorInterfaceContext = React.createContext<EditorInterface>(
   editorInterfaceContextInitialValue,
 );
+
+type ElementAnimationRequest =
+  | {
+      elements: readonly (ExcalidrawElement | ExcalidrawElement["id"])[];
+      type: "fade";
+      duration?: number;
+      delay?: number;
+      stagger?: number;
+      phase?: "in" | "out";
+      easing?: "linear" | "easeOut" | "easeInOut";
+    }
+  | {
+      elements: readonly (ExcalidrawElement | ExcalidrawElement["id"])[];
+      type: "fly";
+      from: "left" | "right" | "top" | "bottom";
+      duration?: number;
+      delay?: number;
+      stagger?: number;
+      phase?: "in" | "out";
+      easing?: "linear" | "easeOut" | "easeInOut";
+    };
 EditorInterfaceContext.displayName = "EditorInterfaceContext";
 
 const editorLifecycleEventBehavior = {
@@ -791,6 +819,440 @@ class App extends React.Component<AppProps, AppState> {
   onRemoveEventListenersEmitter = new Emitter<[]>();
 
   api: ExcalidrawImperativeAPI;
+  private renderAnimationVersion = 0;
+  private elementOpacityOverrides = new Map<string, number>();
+  private elementPositionOverrides = new Map<
+    string,
+    { x: number; y: number }
+  >();
+  private elementAnimationStates = new Map<
+    string,
+    {
+      batchId: string;
+      opacityFrom: number;
+      opacityTo: number;
+      positionFrom: { x: number; y: number };
+      positionTo: { x: number; y: number };
+      easing: "linear" | "easeOut" | "easeInOut";
+      duration: number;
+      delay: number;
+      elapsed: number;
+    }
+  >();
+  private elementAnimationBatches = new Map<
+    string,
+    {
+      id: string;
+      elementIds: readonly string[];
+      activeElementIds: Set<string>;
+      status: ElementAnimationStatus;
+      result: ElementAnimationResult | null;
+      resolveFinished: (result: ElementAnimationResult) => void;
+      finished: Promise<ElementAnimationResult>;
+    }
+  >();
+
+  private getElementAnimationKey = () => `${this.id}:animate-element`;
+
+  private bumpRenderAnimationVersion = () => {
+    this.renderAnimationVersion++;
+    this.setState({});
+  };
+
+  private getRenderOpacityConfig = () => ({
+    elementOpacityOverrides: this.elementOpacityOverrides,
+    elementPositionOverrides: this.elementPositionOverrides,
+    resolveRenderOpacity: this.props.resolveRenderOpacity,
+  });
+
+  private getResolvedElementOpacity = (
+    element: NonDeletedExcalidrawElement,
+  ) => {
+    return resolveRenderOpacity(element, this.getRenderOpacityConfig());
+  };
+
+  private getElementVisibleOpacity = (element: NonDeletedExcalidrawElement) => {
+    return clamp(element.opacity, 0, 100);
+  };
+
+  private applyAnimationEasing = (
+    progress: number,
+    easing: "linear" | "easeOut" | "easeInOut",
+  ) => {
+    switch (easing) {
+      case "linear":
+        return progress;
+      case "easeOut":
+        return easeOut(progress);
+      case "easeInOut":
+        return progress < 0.5
+          ? 4 * progress * progress * progress
+          : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+    }
+  };
+
+  private getFlyPositionOffset = (
+    element: NonDeletedExcalidrawElement,
+    from: "left" | "right" | "top" | "bottom",
+  ) => {
+    const [x1, y1, x2, y2] = getElementAbsoluteCoords(
+      element,
+      this.scene.getNonDeletedElementsMap(),
+    );
+    const viewportWidth = this.state.width / this.state.zoom.value;
+    const viewportHeight = this.state.height / this.state.zoom.value;
+    const elementWidth = x2 - x1;
+    const elementHeight = y2 - y1;
+
+    switch (from) {
+      case "left":
+        return { x: -(Math.max(viewportWidth, elementWidth) + 64), y: 0 };
+      case "right":
+        return { x: Math.max(viewportWidth, elementWidth) + 64, y: 0 };
+      case "top":
+        return { x: 0, y: -(Math.max(viewportHeight, elementHeight) + 64) };
+      case "bottom":
+        return { x: 0, y: Math.max(viewportHeight, elementHeight) + 64 };
+    }
+  };
+
+  private animateElement = ({
+    batchId,
+    id,
+    opacityFrom,
+    opacityTo,
+    positionFrom = { x: 0, y: 0 },
+    positionTo = { x: 0, y: 0 },
+    easing,
+    duration,
+    delay,
+    skipSync = false,
+  }: {
+    batchId: string;
+    id: string;
+    opacityFrom: number;
+    opacityTo: number;
+    positionFrom?: { x: number; y: number };
+    positionTo?: { x: number; y: number };
+    easing: "linear" | "easeOut" | "easeInOut";
+    duration: number;
+    delay: number;
+    skipSync?: boolean;
+  }) => {
+    const normalizedOpacityFrom = clamp(opacityFrom, 0, 100);
+    const normalizedOpacityTo = clamp(opacityTo, 0, 100);
+    const normalizedDuration = Math.max(duration, 0);
+    const normalizedDelay = Math.max(delay, 0);
+    const activeAnimation = this.elementAnimationStates.get(id);
+    const nextOpacityFrom = activeAnimation
+      ? clamp(
+          this.elementOpacityOverrides.get(id) ?? activeAnimation.opacityTo,
+          0,
+          100,
+        )
+      : normalizedOpacityFrom;
+    const nextPositionFrom = activeAnimation
+      ? this.elementPositionOverrides.get(id) ?? activeAnimation.positionTo
+      : positionFrom;
+
+    if (activeAnimation && activeAnimation.batchId !== batchId) {
+      this.releaseAnimationElement(activeAnimation.batchId, id, "interrupted");
+    }
+
+    this.elementOpacityOverrides.set(id, nextOpacityFrom);
+
+    if (nextPositionFrom.x !== 0 || nextPositionFrom.y !== 0) {
+      this.elementPositionOverrides.set(id, nextPositionFrom);
+    } else {
+      this.elementPositionOverrides.delete(id);
+    }
+
+    if (normalizedDuration === 0 && normalizedDelay === 0) {
+      this.elementAnimationStates.delete(id);
+      this.elementAnimationBatches.get(batchId)?.activeElementIds.delete(id);
+      this.elementOpacityOverrides.set(id, normalizedOpacityTo);
+
+      if (positionTo.x !== 0 || positionTo.y !== 0) {
+        this.elementPositionOverrides.set(id, positionTo);
+      } else {
+        this.elementPositionOverrides.delete(id);
+      }
+
+      if (!skipSync) {
+        this.bumpRenderAnimationVersion();
+      }
+      return true;
+    }
+
+    this.elementAnimationStates.set(id, {
+      batchId,
+      opacityFrom: nextOpacityFrom,
+      opacityTo: normalizedOpacityTo,
+      positionFrom: nextPositionFrom,
+      positionTo,
+      easing,
+      duration: normalizedDuration,
+      delay: normalizedDelay,
+      elapsed: 0,
+    });
+    this.elementAnimationBatches.get(batchId)?.activeElementIds.add(id);
+
+    if (!skipSync) {
+      this.bumpRenderAnimationVersion();
+      this.syncElementAnimations();
+    }
+
+    return true;
+  };
+
+  private syncElementAnimations = () => {
+    const animationKey = this.getElementAnimationKey();
+
+    if (this.elementAnimationStates.size === 0) {
+      AnimationController.cancel(animationKey);
+      return;
+    }
+
+    if (AnimationController.running(animationKey)) {
+      return;
+    }
+
+    AnimationController.start(animationKey, ({ deltaTime }) => {
+      let shouldRerender = false;
+
+      for (const [id, animation] of this.elementAnimationStates) {
+        const element = this.scene.getNonDeletedElement(id);
+
+        if (!element) {
+          this.elementAnimationStates.delete(id);
+          this.releaseAnimationElement(animation.batchId, id, "finished");
+          shouldRerender =
+            this.elementOpacityOverrides.delete(id) || shouldRerender;
+          shouldRerender =
+            this.elementPositionOverrides.delete(id) || shouldRerender;
+          continue;
+        }
+
+        animation.elapsed += deltaTime;
+
+        const progress =
+          animation.elapsed <= animation.delay
+            ? 0
+            : animation.duration === 0
+            ? 1
+            : Math.min(
+                (animation.elapsed - animation.delay) / animation.duration,
+                1,
+              );
+        const easedProgress = this.applyAnimationEasing(
+          progress,
+          animation.easing,
+        );
+
+        const nextOpacity =
+          animation.opacityFrom +
+          (animation.opacityTo - animation.opacityFrom) * easedProgress;
+        const nextPosition = {
+          x:
+            animation.positionFrom.x +
+            (animation.positionTo.x - animation.positionFrom.x) * easedProgress,
+          y:
+            animation.positionFrom.y +
+            (animation.positionTo.y - animation.positionFrom.y) * easedProgress,
+        };
+
+        const clampedOpacity = clamp(nextOpacity, 0, 100);
+
+        if (this.elementOpacityOverrides.get(id) !== clampedOpacity) {
+          this.elementOpacityOverrides.set(id, clampedOpacity);
+          shouldRerender = true;
+        }
+
+        const currentPositionOverride =
+          this.elementPositionOverrides.get(id) ?? ({ x: 0, y: 0 } as const);
+
+        if (
+          currentPositionOverride.x !== nextPosition.x ||
+          currentPositionOverride.y !== nextPosition.y
+        ) {
+          if (nextPosition.x === 0 && nextPosition.y === 0) {
+            this.elementPositionOverrides.delete(id);
+          } else {
+            this.elementPositionOverrides.set(id, nextPosition);
+          }
+          shouldRerender = true;
+        }
+
+        if (animation.elapsed >= animation.delay + animation.duration) {
+          this.elementAnimationStates.delete(id);
+          this.releaseAnimationElement(animation.batchId, id, "finished");
+        }
+      }
+
+      if (shouldRerender) {
+        this.bumpRenderAnimationVersion();
+      }
+
+      return this.elementAnimationStates.size > 0 ? {} : undefined;
+    });
+  };
+
+  private createElementAnimationHandle = (
+    elementIds: readonly string[],
+  ): ElementAnimationHandle => {
+    let resolveFinished!: (result: ElementAnimationResult) => void;
+    const finished = new Promise<ElementAnimationResult>((resolve) => {
+      resolveFinished = resolve;
+    });
+
+    const batch = {
+      id: nanoid(),
+      elementIds,
+      activeElementIds: new Set<string>(),
+      status: "running" as ElementAnimationStatus,
+      result: null as ElementAnimationResult | null,
+      resolveFinished,
+      finished,
+    };
+
+    this.elementAnimationBatches.set(batch.id, batch);
+
+    return {
+      id: batch.id,
+      elementIds: batch.elementIds,
+      finished: batch.finished,
+      finish: () =>
+        batch.result ?? this.settleAnimationBatch(batch.id, "finished"),
+      cancel: () =>
+        batch.result ?? this.settleAnimationBatch(batch.id, "cancelled"),
+      getStatus: () => batch.result?.status ?? batch.status,
+    };
+  };
+
+  private finalizeAnimationBatch = (
+    batchId: string,
+    status: ElementAnimationTerminalStatus,
+  ) => {
+    const batch = this.elementAnimationBatches.get(batchId);
+
+    if (!batch) {
+      return null;
+    }
+
+    if (batch.result) {
+      return batch.result;
+    }
+
+    batch.status = status;
+    batch.result = {
+      id: batch.id,
+      status,
+      elementIds: batch.elementIds,
+    };
+    batch.resolveFinished(batch.result);
+    this.elementAnimationBatches.delete(batch.id);
+
+    return batch.result;
+  };
+
+  private releaseAnimationElement = (
+    batchId: string,
+    id: string,
+    statusOnEmpty: ElementAnimationTerminalStatus,
+  ) => {
+    const batch = this.elementAnimationBatches.get(batchId);
+
+    if (!batch) {
+      return;
+    }
+
+    batch.activeElementIds.delete(id);
+
+    if (batch.activeElementIds.size === 0) {
+      this.finalizeAnimationBatch(batchId, statusOnEmpty);
+    }
+  };
+
+  private settleAnimationBatch = (
+    batchId: string,
+    status: "finished" | "cancelled",
+  ) => {
+    const batch = this.elementAnimationBatches.get(batchId);
+
+    if (!batch) {
+      return {
+        id: batchId,
+        status,
+        elementIds: [],
+      } as ElementAnimationResult;
+    }
+
+    if (batch.result) {
+      return batch.result;
+    }
+
+    let shouldRerender = false;
+
+    for (const id of [...batch.activeElementIds]) {
+      const animation = this.elementAnimationStates.get(id);
+
+      if (!animation || animation.batchId !== batchId) {
+        batch.activeElementIds.delete(id);
+        continue;
+      }
+
+      this.elementAnimationStates.delete(id);
+      batch.activeElementIds.delete(id);
+
+      if (status === "finished") {
+        if (this.elementOpacityOverrides.get(id) !== animation.opacityTo) {
+          this.elementOpacityOverrides.set(id, animation.opacityTo);
+          shouldRerender = true;
+        }
+
+        if (animation.positionTo.x === 0 && animation.positionTo.y === 0) {
+          shouldRerender =
+            this.elementPositionOverrides.delete(id) || shouldRerender;
+        } else {
+          const currentPosition = this.elementPositionOverrides.get(id);
+
+          if (
+            !currentPosition ||
+            currentPosition.x !== animation.positionTo.x ||
+            currentPosition.y !== animation.positionTo.y
+          ) {
+            this.elementPositionOverrides.set(id, animation.positionTo);
+            shouldRerender = true;
+          }
+        }
+      } else {
+        shouldRerender =
+          this.elementOpacityOverrides.delete(id) || shouldRerender;
+        shouldRerender =
+          this.elementPositionOverrides.delete(id) || shouldRerender;
+      }
+    }
+
+    this.syncElementAnimations();
+
+    if (shouldRerender) {
+      this.bumpRenderAnimationVersion();
+    }
+
+    return this.finalizeAnimationBatch(batchId, status)!;
+  };
+
+  private settleAllAnimationBatches = (
+    status: ElementAnimationTerminalStatus,
+  ) => {
+    for (const batchId of [...this.elementAnimationBatches.keys()]) {
+      if (status === "finished" || status === "cancelled") {
+        this.settleAnimationBatch(batchId, status);
+      } else {
+        this.finalizeAnimationBatch(batchId, status);
+      }
+    }
+  };
 
   private createExcalidrawAPI(): ExcalidrawImperativeAPI {
     const api: ExcalidrawImperativeAPI = {
@@ -810,6 +1272,9 @@ class App extends React.Component<AppProps, AppState> {
       },
       setViewport: this.setViewport,
       getViewportOffsets: this.getViewportOffsets,
+      animateElements: this.animateElements,
+      cancelElementAnimation: this.cancelElementAnimation,
+      clearElementAnimationOverrides: this.clearElementAnimationOverrides,
       getSceneElements: this.getSceneElements,
       getAppState: () => this.state,
       getFiles: () => this.files,
@@ -1791,6 +2256,10 @@ class App extends React.Component<AppProps, AppState> {
           const isHovered =
             this.state.activeEmbeddable?.element === el &&
             this.state.activeEmbeddable?.state === "hover";
+          const renderPositionOffset = resolveRenderPositionOffset(
+            el,
+            this.getRenderOpacityConfig(),
+          );
 
           // scale video embeds based on zoom (capped) so that smaller embeds
           // on canvas when zoomed are still of legible quality
@@ -1812,13 +2281,20 @@ class App extends React.Component<AppProps, AppState> {
               })}
               style={{
                 transform: isVisible
-                  ? `translate(${x - this.state.offsetLeft}px, ${
-                      y - this.state.offsetTop
+                  ? `translate(${
+                      x +
+                      renderPositionOffset.x * this.state.zoom.value -
+                      this.state.offsetLeft
+                    }px, ${
+                      y +
+                      renderPositionOffset.y * this.state.zoom.value -
+                      this.state.offsetTop
                     }px) scale(${scale})`
                   : "none",
                 display: isVisible ? "block" : "none",
                 opacity: getRenderOpacity(
                   el,
+                  this.getRenderOpacityConfig(),
                   getContainingFrame(el, this.scene.getNonDeletedElementsMap()),
                   this.elementsPendingErasure,
                   null,
@@ -2417,6 +2893,9 @@ class App extends React.Component<AppProps, AppState> {
                               pendingFlowchartNodes:
                                 this.flowChartCreator.pendingNodes,
                               theme: this.state.theme,
+                              ...this.getRenderOpacityConfig(),
+                              renderAnimationVersion:
+                                this.renderAnimationVersion,
                             }}
                           />
                           {newElementCanvasElement && (
@@ -2439,6 +2918,9 @@ class App extends React.Component<AppProps, AppState> {
                                   this.elementsPendingErasure,
                                 pendingFlowchartNodes: null,
                                 theme: this.state.theme,
+                                ...this.getRenderOpacityConfig(),
+                                renderAnimationVersion:
+                                  this.renderAnimationVersion,
                               }}
                             />
                           )}
@@ -3322,6 +3804,8 @@ class App extends React.Component<AppProps, AppState> {
     this.editorLifecycleEvents.emit("editor:unmount");
     this.props.onUnmount?.();
     this.props.onExcalidrawAPI?.(null);
+    this.settleAllAnimationBatches("destroyed");
+    AnimationController.cancel(this.getElementAnimationKey());
 
     (window as any).launchQueue?.setConsumer(() => {});
 
@@ -4838,6 +5322,211 @@ class App extends React.Component<AppProps, AppState> {
       }
     },
   );
+
+  public animateElements = (
+    animationInput:
+      | ElementAnimationRequest
+      | readonly ElementAnimationRequest[],
+  ): ElementAnimationHandle => {
+    const animations: readonly ElementAnimationRequest[] = Array.isArray(
+      animationInput,
+    )
+      ? animationInput
+      : [animationInput];
+    const elementsMap = this.scene.getNonDeletedElementsMap();
+    const batchElementIds: string[] = [];
+    const seenBatchElementIds = new Set<string>();
+    const addBatchElement = (elementId: string | null | undefined) => {
+      if (!elementId || seenBatchElementIds.has(elementId)) {
+        return;
+      }
+
+      seenBatchElementIds.add(elementId);
+      batchElementIds.push(elementId);
+    };
+
+    animations.forEach(({ elements }) => {
+      const seenAnimationElementIds = new Set<string>();
+
+      elements.forEach((elementOrId) => {
+        const id =
+          typeof elementOrId === "string" ? elementOrId : elementOrId.id;
+        const element = this.scene.getNonDeletedElement(id);
+
+        if (!element) {
+          return;
+        }
+
+        if (!seenAnimationElementIds.has(element.id)) {
+          seenAnimationElementIds.add(element.id);
+          addBatchElement(element.id);
+        }
+
+        const boundTextElement = getBoundTextElement(element, elementsMap);
+
+        if (
+          boundTextElement &&
+          !seenAnimationElementIds.has(boundTextElement.id)
+        ) {
+          seenAnimationElementIds.add(boundTextElement.id);
+          addBatchElement(boundTextElement.id);
+        }
+
+        if (
+          isTextElement(element) &&
+          element.containerId &&
+          !seenAnimationElementIds.has(element.containerId)
+        ) {
+          seenAnimationElementIds.add(element.containerId);
+          addBatchElement(element.containerId);
+        }
+      });
+    });
+
+    const handle = this.createElementAnimationHandle(batchElementIds);
+    let shouldSync = false;
+
+    animations.forEach(
+      ({
+        elements,
+        duration = 250,
+        delay = 0,
+        stagger = 0,
+        phase = "in",
+        easing,
+        ...animation
+      }) => {
+        const normalizedDelay = Math.max(delay, 0);
+        const normalizedStagger = Math.max(stagger, 0);
+        const expandedElementIds: string[] = [];
+        const seenElementIds = new Set<string>();
+        const addAnimatedElement = (elementId: string | null | undefined) => {
+          if (!elementId || seenElementIds.has(elementId)) {
+            return;
+          }
+          seenElementIds.add(elementId);
+          expandedElementIds.push(elementId);
+        };
+
+        elements.forEach((elementOrId) => {
+          const id =
+            typeof elementOrId === "string" ? elementOrId : elementOrId.id;
+          const element = this.scene.getNonDeletedElement(id);
+
+          if (!element) {
+            return;
+          }
+
+          addAnimatedElement(element.id);
+
+          const boundTextElement = getBoundTextElement(element, elementsMap);
+
+          if (boundTextElement) {
+            addAnimatedElement(boundTextElement.id);
+          }
+
+          if (isTextElement(element) && element.containerId) {
+            addAnimatedElement(element.containerId);
+          }
+        });
+
+        expandedElementIds.forEach((id, index) => {
+          const element = this.scene.getNonDeletedElement(id);
+
+          if (!element) {
+            return;
+          }
+
+          if (animation.type === "fade") {
+            shouldSync =
+              this.animateElement({
+                batchId: handle.id,
+                id,
+                opacityFrom:
+                  phase === "in" ? 0 : this.getElementVisibleOpacity(element),
+                opacityTo:
+                  phase === "in" ? this.getElementVisibleOpacity(element) : 0,
+                easing: easing ?? "easeInOut",
+                duration,
+                delay: normalizedDelay + index * normalizedStagger,
+                skipSync: true,
+              }) || shouldSync;
+            return;
+          }
+
+          const flyOffset = this.getFlyPositionOffset(element, animation.from);
+
+          shouldSync =
+            this.animateElement({
+              batchId: handle.id,
+              id,
+              opacityFrom:
+                phase === "in" ? 0 : this.getElementVisibleOpacity(element),
+              opacityTo:
+                phase === "in" ? this.getElementVisibleOpacity(element) : 0,
+              positionFrom: phase === "in" ? flyOffset : { x: 0, y: 0 },
+              positionTo: phase === "in" ? { x: 0, y: 0 } : flyOffset,
+              easing: easing ?? "easeOut",
+              duration,
+              delay: normalizedDelay + index * normalizedStagger,
+              skipSync: true,
+            }) || shouldSync;
+        });
+      },
+    );
+
+    if (shouldSync) {
+      this.bumpRenderAnimationVersion();
+      this.syncElementAnimations();
+    }
+
+    if (
+      handle.getStatus() === "running" &&
+      !this.elementAnimationBatches.get(handle.id)?.activeElementIds.size
+    ) {
+      this.finalizeAnimationBatch(handle.id, "finished");
+    }
+
+    return handle;
+  };
+
+  public cancelElementAnimation = (id: string) => {
+    const animation = this.elementAnimationStates.get(id);
+    const didDeleteOpacity = this.elementOpacityOverrides.delete(id);
+    const didDeletePosition = this.elementPositionOverrides.delete(id);
+
+    if (!animation) {
+      if (didDeleteOpacity || didDeletePosition) {
+        this.bumpRenderAnimationVersion();
+      }
+      return;
+    }
+
+    this.elementAnimationStates.delete(id);
+    this.releaseAnimationElement(animation.batchId, id, "cancelled");
+    this.syncElementAnimations();
+
+    if (didDeleteOpacity || didDeletePosition) {
+      this.bumpRenderAnimationVersion();
+    }
+  };
+
+  public clearElementAnimationOverrides = () => {
+    if (
+      this.elementOpacityOverrides.size === 0 &&
+      this.elementPositionOverrides.size === 0 &&
+      this.elementAnimationStates.size === 0
+    ) {
+      return;
+    }
+
+    this.elementAnimationStates.clear();
+    this.elementOpacityOverrides.clear();
+    this.elementPositionOverrides.clear();
+    this.settleAllAnimationBatches("cancelled");
+    this.syncElementAnimations();
+    this.bumpRenderAnimationVersion();
+  };
 
   public applyDeltas = (
     deltas: StoreDelta[],
@@ -13420,16 +14109,7 @@ class App extends React.Component<AppProps, AppState> {
 // -----------------------------------------------------------------------------
 declare global {
   interface Window {
-    h: {
-      scene: Scene;
-      elements: readonly ExcalidrawElement[];
-      state: AppState;
-      setState: React.Component<any, AppState>["setState"];
-      watchState: (prev: any, next: any) => void | undefined;
-      app: InstanceType<typeof App>;
-      history: History;
-      store: Store;
-    };
+    h: any;
   }
 }
 
