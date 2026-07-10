@@ -17,7 +17,7 @@ import type {
   ExcalidrawTextElement,
 } from "@excalidraw/element/types";
 
-import { Excalidraw, getCommonBounds } from "../..";
+import { Excalidraw, getCommonBounds } from "@excalidraw/excalidraw";
 import { actionGroup } from "../../actions";
 import { t } from "../../i18n";
 import * as StaticScene from "../../renderer/staticScene";

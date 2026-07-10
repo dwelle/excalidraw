@@ -20,7 +20,7 @@ import type {
   ExportToCanvasData,
 } from "@excalidraw/excalidraw/scene/export";
 
-import { getNonDeletedElements } from "../../excalidraw";
+import { getNonDeletedElements } from "@excalidraw/excalidraw";
 
 export { MIME_TYPES };
 

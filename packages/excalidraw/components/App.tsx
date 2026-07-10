@@ -213,6 +213,7 @@ import {
   ShapeCache,
   clearRenderCache,
   getRenderOpacity,
+  resolveRenderPositionOffset,
 } from "@excalidraw/element";
 
 import {
@@ -366,6 +367,7 @@ import { exportAsImage, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restoreAppState, restoreElements } from "../data/restore";
 import { getCenter, getDistance } from "../gesture";
+import { ElementAnimator } from "../elementAnimator";
 import { History } from "../history";
 import { defaultLang, getLanguage, languages, setLanguage, t } from "../i18n";
 
@@ -489,6 +491,8 @@ import type {
   AppClassProperties,
   AppProps,
   AppState,
+  ElementAnimationHandle,
+  ElementAnimationRequest,
   BinaryFileData,
   ExcalidrawImperativeAPI,
   BinaryFiles,
@@ -791,6 +795,13 @@ class App extends React.Component<AppProps, AppState> {
   onRemoveEventListenersEmitter = new Emitter<[]>();
 
   api: ExcalidrawImperativeAPI;
+  private elementAnimator: ElementAnimator;
+
+  private getRenderOpacityConfig = () => ({
+    elementOpacityOverrides: this.elementAnimator.opacityOverrides,
+    elementPositionOverrides: this.elementAnimator.positionOverrides,
+    resolveRenderOpacity: this.props.resolveRenderOpacity,
+  });
 
   private createExcalidrawAPI(): ExcalidrawImperativeAPI {
     const api: ExcalidrawImperativeAPI = {
@@ -810,6 +821,9 @@ class App extends React.Component<AppProps, AppState> {
       },
       setViewport: this.setViewport,
       getViewportOffsets: this.getViewportOffsets,
+      animateElements: this.animateElements,
+      cancelElementAnimation: this.cancelElementAnimation,
+      clearElementAnimationOverrides: this.clearElementAnimationOverrides,
       getSceneElements: this.getSceneElements,
       getAppState: () => this.state,
       getFiles: () => this.files,
@@ -877,6 +891,15 @@ class App extends React.Component<AppProps, AppState> {
       this,
     );
     this.scene = new Scene();
+    this.elementAnimator = new ElementAnimator({
+      animationKey: `${this.id}:animate-element`,
+      getScene: () => this.scene,
+      getViewportSceneSize: () => ({
+        width: this.state.width / this.state.zoom.value,
+        height: this.state.height / this.state.zoom.value,
+      }),
+      onRepaint: () => this.setState({}),
+    });
 
     this.canvas = document.createElement("canvas");
     this.rc = rough.canvas(this.canvas);
@@ -1791,6 +1814,10 @@ class App extends React.Component<AppProps, AppState> {
           const isHovered =
             this.state.activeEmbeddable?.element === el &&
             this.state.activeEmbeddable?.state === "hover";
+          const renderPositionOffset = resolveRenderPositionOffset(
+            el,
+            this.getRenderOpacityConfig(),
+          );
 
           // scale video embeds based on zoom (capped) so that smaller embeds
           // on canvas when zoomed are still of legible quality
@@ -1812,13 +1839,20 @@ class App extends React.Component<AppProps, AppState> {
               })}
               style={{
                 transform: isVisible
-                  ? `translate(${x - this.state.offsetLeft}px, ${
-                      y - this.state.offsetTop
+                  ? `translate(${
+                      x +
+                      renderPositionOffset.x * this.state.zoom.value -
+                      this.state.offsetLeft
+                    }px, ${
+                      y +
+                      renderPositionOffset.y * this.state.zoom.value -
+                      this.state.offsetTop
                     }px) scale(${scale})`
                   : "none",
                 display: isVisible ? "block" : "none",
                 opacity: getRenderOpacity(
                   el,
+                  this.getRenderOpacityConfig(),
                   getContainingFrame(el, this.scene.getNonDeletedElementsMap()),
                   this.elementsPendingErasure,
                   null,
@@ -2417,6 +2451,9 @@ class App extends React.Component<AppProps, AppState> {
                               pendingFlowchartNodes:
                                 this.flowChartCreator.pendingNodes,
                               theme: this.state.theme,
+                              ...this.getRenderOpacityConfig(),
+                              renderAnimationVersion:
+                                this.elementAnimator.version,
                             }}
                           />
                           {newElementCanvasElement && (
@@ -2439,6 +2476,9 @@ class App extends React.Component<AppProps, AppState> {
                                   this.elementsPendingErasure,
                                 pendingFlowchartNodes: null,
                                 theme: this.state.theme,
+                                ...this.getRenderOpacityConfig(),
+                                renderAnimationVersion:
+                                  this.elementAnimator.version,
                               }}
                             />
                           )}
@@ -3322,6 +3362,7 @@ class App extends React.Component<AppProps, AppState> {
     this.editorLifecycleEvents.emit("editor:unmount");
     this.props.onUnmount?.();
     this.props.onExcalidrawAPI?.(null);
+    this.elementAnimator.destroy();
 
     (window as any).launchQueue?.setConsumer(() => {});
 
@@ -4838,6 +4879,22 @@ class App extends React.Component<AppProps, AppState> {
       }
     },
   );
+
+  public animateElements = (
+    animationInput:
+      | ElementAnimationRequest
+      | readonly ElementAnimationRequest[],
+  ): ElementAnimationHandle => {
+    return this.elementAnimator.animateElements(animationInput);
+  };
+
+  public cancelElementAnimation = (id: ExcalidrawElement["id"]) => {
+    this.elementAnimator.cancelElementAnimation(id);
+  };
+
+  public clearElementAnimationOverrides = () => {
+    this.elementAnimator.clearOverrides();
+  };
 
   public applyDeltas = (
     deltas: StoreDelta[],

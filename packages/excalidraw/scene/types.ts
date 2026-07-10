@@ -12,6 +12,7 @@ import type {
   AppClassProperties,
   AppState,
   EmbedsValidationStatus,
+  RenderOpacityResolver,
   ElementsPendingErasure,
   InteractiveCanvasAppState,
   StaticCanvasAppState,
@@ -37,6 +38,13 @@ export type StaticCanvasRenderConfig = {
   elementsPendingErasure: ElementsPendingErasure;
   pendingFlowchartNodes: PendingExcalidrawElements | null;
   theme: AppState["theme"];
+  resolveRenderOpacity?: RenderOpacityResolver;
+  elementOpacityOverrides?: ReadonlyMap<ExcalidrawElement["id"], number>;
+  elementPositionOverrides?: ReadonlyMap<
+    ExcalidrawElement["id"],
+    { x: number; y: number }
+  >;
+  renderAnimationVersion?: number;
 };
 
 export type SVGRenderConfig = {

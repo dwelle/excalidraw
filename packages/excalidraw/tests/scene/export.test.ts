@@ -286,9 +286,11 @@ describe("exportToCanvas", () => {
     });
 
     const canvas = await exportToCanvas({
-      elements: [rectangle, arrow, label],
-      files: null,
-      appState: { exportBackground: true, viewBackgroundColor: "#ffffff" },
+      data: {
+        elements: [rectangle, arrow, label],
+        files: null,
+        appState: { exportBackground: true, viewBackgroundColor: "#ffffff" },
+      },
     });
 
     const context = canvas.getContext("2d") as any;

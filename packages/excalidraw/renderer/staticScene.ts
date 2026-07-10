@@ -15,11 +15,16 @@ import {
 } from "@excalidraw/element";
 import {
   elementOverlapsWithFrame,
+  getContainingFrame,
   getTargetFrame,
   shouldApplyFrameClip,
 } from "@excalidraw/element";
 
-import { renderElement } from "@excalidraw/element";
+import {
+  getRenderElementWithPositionOverride,
+  getRenderOpacity,
+  renderElement,
+} from "@excalidraw/element";
 
 import { getElementAbsoluteCoords } from "@excalidraw/element";
 
@@ -174,6 +179,8 @@ const renderLinkIcon = (
   renderConfig: StaticCanvasRenderConfig,
 ) => {
   if (element.link && !appState.selectedElementIds[element.id]) {
+    const link = element.link;
+    element = getRenderElementWithPositionOverride(element, renderConfig);
     const [x1, y1, x2, y2] = getElementAbsoluteCoords(element, elementsMap);
     const [x, y, width, height] = getLinkHandleFromCoords(
       [x1, y1, x2, y2],
@@ -186,9 +193,7 @@ const renderLinkIcon = (
     context.translate(appState.scrollX + centerX, appState.scrollY + centerY);
     context.rotate(element.angle);
 
-    const canvasKey = isElementLink(element.link)
-      ? "elementLink"
-      : "regularLink";
+    const canvasKey = isElementLink(link) ? "elementLink" : "regularLink";
 
     let linkCanvas = linkIconCanvasCache[canvasKey];
 
@@ -229,7 +234,13 @@ const renderLinkIcon = (
 
       linkCanvasCacheContext.restore();
     }
-    context.globalAlpha = element.opacity / 100;
+    context.globalAlpha = getRenderOpacity(
+      element,
+      renderConfig,
+      getContainingFrame(element, elementsMap),
+      renderConfig.elementsPendingErasure,
+      renderConfig.pendingFlowchartNodes,
+    );
     context.drawImage(linkCanvas, x - centerX, y - centerY, width, height);
     context.restore();
   }
