@@ -44,14 +44,14 @@ describe("animateElements()", () => {
       });
     });
 
-    const firstAnimation = (h.app as any).elementAnimationStates.get(
+    const firstAnimation = (h.app as any).elementAnimator.states.get(
       element.id,
     );
     expect(firstAnimation.opacityFrom).toBe(0);
 
     await advanceTimers(150);
 
-    const currentOverride = (h.app as any).elementOpacityOverrides.get(
+    const currentOverride = (h.app as any).elementAnimator.opacityOverrides.get(
       element.id,
     );
     expect(currentOverride).toBeGreaterThan(0);
@@ -67,7 +67,7 @@ describe("animateElements()", () => {
       });
     });
 
-    const secondAnimation = (h.app as any).elementAnimationStates.get(
+    const secondAnimation = (h.app as any).elementAnimator.states.get(
       element.id,
     );
     expect(secondAnimation.opacityFrom).toBeCloseTo(currentOverride, 4);
@@ -121,6 +121,45 @@ describe("animateElements()", () => {
     await advanceTimers(200);
     expect(result).toMatchObject({ status: "finished" });
     expect(handle.getStatus()).toBe("finished");
+  });
+
+  it("keeps bound text in the same stagger slot as its container", async () => {
+    await render(
+      <Excalidraw
+        initialData={{
+          elements: [
+            API.createElement({
+              type: "rectangle",
+              id: "container",
+              boundElements: [{ type: "text", id: "label" }],
+            }),
+            API.createElement({
+              type: "text",
+              id: "label",
+              containerId: "container",
+            }),
+            API.createElement({ type: "rectangle", id: "other", x: 200 }),
+          ],
+        }}
+      />,
+    );
+
+    vi.useFakeTimers();
+    window.EXCALIDRAW_THROTTLE_RENDER = false;
+
+    act(() => {
+      h.app.api.animateElements({
+        elements: ["container", "other"],
+        type: "fade",
+        duration: 200,
+        stagger: 100,
+      });
+    });
+
+    const animationStates = (h.app as any).elementAnimator.states;
+    expect(animationStates.get("container").delay).toBe(0);
+    expect(animationStates.get("label").delay).toBe(0);
+    expect(animationStates.get("other").delay).toBe(100);
   });
 
   it("settles finish() idempotently through the shared promise", async () => {

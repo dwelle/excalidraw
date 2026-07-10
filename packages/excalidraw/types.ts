@@ -756,6 +756,22 @@ export interface ExcalidrawProps {
     element: NonDeleted<ExcalidrawEmbeddableElement>,
     appState: AppState,
   ) => JSX.Element | null;
+  /**
+   * Resolves the render-time opacity of an element without mutating it
+   * (e.g. to hide elements that haven't been revealed yet in a presentation).
+   * Return `undefined` to fall back to the element's own opacity.
+   *
+   * Contract:
+   * - must be cheap — called for every element on every static-canvas render;
+   * - treat it like any memoized callback: memoize with `useCallback` keyed
+   *   on the state it reads (e.g. the set of revealed element ids). A new
+   *   function identity is what triggers a canvas repaint — mutating captured
+   *   state without changing identity won't repaint, and an inline arrow
+   *   forces a full canvas redraw on every React render;
+   * - animation overrides win over this resolver, including terminal values
+   *   after an animation finishes, until cleared via
+   *   `clearElementAnimationOverrides()` / `cancelElementAnimation()`.
+   */
   resolveRenderOpacity?: RenderOpacityResolver;
   aiEnabled?: boolean;
   showDeprecatedFonts?: boolean;
@@ -1029,6 +1045,30 @@ export type ExcalidrawImperativeAPIEventMap = {
   "editor:initialize": [api: ExcalidrawImperativeAPI];
   "editor:unmount": [];
 };
+
+export type ElementAnimationEasing = "linear" | "easeOut" | "easeInOut";
+
+export type ElementAnimationPhase = "in" | "out";
+
+export type ElementAnimationFlyFrom = "left" | "right" | "top" | "bottom";
+
+type ElementAnimationRequestBase = {
+  elements: readonly (ExcalidrawElement | ExcalidrawElement["id"])[];
+  duration?: number;
+  delay?: number;
+  stagger?: number;
+  phase?: ElementAnimationPhase;
+  easing?: ElementAnimationEasing;
+};
+
+export type ElementAnimationRequest =
+  | (ElementAnimationRequestBase & {
+      type: "fade";
+    })
+  | (ElementAnimationRequestBase & {
+      type: "fly";
+      from: ElementAnimationFlyFrom;
+    });
 
 export type ElementAnimationTerminalStatus =
   | "finished"
