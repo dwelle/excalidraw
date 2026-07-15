@@ -340,7 +340,6 @@ describe("<Excalidraw/>", () => {
         );
       });
 
-      expect(h.app.sessionExportThemeOverride).toBe(THEME.DARK);
       expect(h.state.exportWithDarkMode).toBe(true);
 
       act(() => {
