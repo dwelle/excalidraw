@@ -67,6 +67,7 @@ export const ExcalidrawAPIProvider = ({
 const ExcalidrawBase = (props: ExcalidrawProps) => {
   const {
     onExport,
+    className,
     onChange,
     onThemeChange,
     onIncrement,
@@ -103,6 +104,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onPointerUp,
     onScrollChange,
     onDuplicate,
+    id,
     children,
     validateEmbeddable,
     renderEmbeddable,
@@ -203,6 +205,8 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
       <InitializeApp langCode={langCode} theme={theme}>
         <App
           onExport={onExport}
+          id={id}
+          className={className}
           onChange={onChange}
           onThemeChange={onThemeChange}
           onIncrement={onIncrement}
@@ -410,7 +414,6 @@ export {
 export { reconcileElements } from "./data/reconcile";
 
 export {
-  exportToCanvas,
   exportToBlob,
   exportToSvg,
   exportToClipboard,
@@ -501,7 +504,7 @@ export {
   renderSpreadsheet,
   tryParseSpreadsheet,
   isSpreadsheetValidForChartType,
-} from "./charts";
+} from "./charts/index";
 
 // -----------------------------------------------------------------------------
 // useExcalidrawStateValue() wrapper for host apps for the return type to reflect the
@@ -545,9 +548,11 @@ export {
 
 export { libraryItemsAtom } from "./data/library";
 
-export * as icons from "./components/icons";
-export * as actions from "./actions/index";
-
 export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
+
+export * as icons from "./components/icons";
+export * as actions from "./actions/index";
+
+export type { SetViewportOptions } from "./viewport";
