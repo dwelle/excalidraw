@@ -622,6 +622,8 @@ export type ExcalidrawInitialDataState = Merge<
   ImportedDataState,
   {
     libraryItems?: MaybePromise<Required<ImportedDataState>["libraryItems"]>;
+    scrollX?: number;
+    scrollY?: number;
   }
 >;
 
@@ -767,11 +769,13 @@ export type UIConfig = {
 };
 
 export interface ExcalidrawProps {
+  id?: string | null;
   className?: string;
   onChange?: (
     elements: readonly OrderedExcalidrawElement[],
     appState: AppState,
     files: BinaryFiles,
+    id?: string | null,
   ) => void;
   onThemeChange?: (theme: Theme | "system") => void;
   /**
@@ -799,6 +803,9 @@ export interface ExcalidrawProps {
    * Invoked once the initial scene is loaded.
    */
   onInitialize?: (api: ExcalidrawImperativeAPI) => void;
+  user?: {
+    name?: string | null;
+  };
   isCollaborating?: boolean;
   onPointerUpdate?: (payload: {
     pointer: { x: number; y: number; tool: "pointer" | "laser" };
@@ -1081,7 +1088,7 @@ export type AppClassProperties = {
   props: AppProps;
   state: AppState;
   api: App["api"];
-  sessionExportThemeOverride: App["sessionExportThemeOverride"];
+  setSessionExportThemeOverride: App["setSessionExportThemeOverride"];
   interactiveCanvas: HTMLCanvasElement | null;
   /** static canvas */
   canvas: HTMLCanvasElement;
@@ -1272,6 +1279,7 @@ export interface ExcalidrawImperativeAPI {
    * used in conjunction with view mode (props.viewModeEnabled).
    */
   updateFrameRendering: InstanceType<typeof App>["updateFrameRendering"];
+  app: InstanceType<typeof App>;
   onChange: (
     callback: (
       elements: readonly ExcalidrawElement[],

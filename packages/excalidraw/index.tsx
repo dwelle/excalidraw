@@ -106,6 +106,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onUserFollow,
     userToFollow,
     onDuplicate,
+    id,
     children,
     validateEmbeddable,
     renderEmbeddable,
@@ -207,6 +208,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <EditorJotaiProvider store={editorJotaiStore}>
       <InitializeApp langCode={langCode} theme={theme}>
         <App
+          id={id}
           onExport={onExport}
           className={className}
           onChange={onChange}
@@ -420,7 +422,6 @@ export {
 export { reconcileElements } from "./data/reconcile";
 
 export {
-  exportToCanvas,
   exportToBlob,
   exportToSvg,
   exportToClipboard,
@@ -513,7 +514,7 @@ export {
   renderSpreadsheet,
   tryParseSpreadsheet,
   isSpreadsheetValidForChartType,
-} from "./charts";
+} from "./charts/index";
 
 // -----------------------------------------------------------------------------
 // useExcalidrawStateValue() wrapper for host apps for the return type to reflect the
@@ -557,9 +558,11 @@ export {
 
 export { libraryItemsAtom } from "./data/library";
 
-export * as icons from "./components/icons";
-export * as actions from "./actions/index";
-
 export { duplicateElements, duplicateElement } from "../element/src/duplicate";
 
 export { parseMermaidToExcalidraw } from "@excalidraw/mermaid-to-excalidraw";
+
+export * as icons from "./components/icons";
+export * as actions from "./actions/index";
+
+export type { SetViewportOptions } from "./viewport";

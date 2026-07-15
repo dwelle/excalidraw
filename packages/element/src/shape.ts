@@ -34,12 +34,14 @@ import type { GlobalPoint } from "@excalidraw/math";
 
 import type { Mutable } from "@excalidraw/common/utility-types";
 
-import type { EmbedsValidationStatus } from "@excalidraw/excalidraw/types";
+import type {
+  AppState,
+  EmbedsValidationStatus,
+} from "@excalidraw/excalidraw/types";
 import type {
   ElementShape,
   ElementShapes,
   SVGPathString,
-  StaticCanvasRenderConfig,
 } from "@excalidraw/excalidraw/scene/types";
 
 import { elementWithCanvasCache } from "./renderElement";

@@ -531,10 +531,14 @@ const drawElementOnCanvas = (
   }
 };
 
-export const elementWithCanvasCache = new WeakMap<
+export let elementWithCanvasCache = new WeakMap<
   ExcalidrawElement,
   ExcalidrawElementWithCanvas
 >();
+
+export const clearRenderCache = () => {
+  elementWithCanvasCache = new WeakMap();
+};
 
 const generateElementWithCanvas = (
   element: NonDeletedExcalidrawElement,

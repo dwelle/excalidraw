@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import { MIN_WIDTH_OR_HEIGHT } from "@excalidraw/common";
 import {
+  getCommonBounds,
   getElementsInResizingFrame,
   getNonDeletedElements,
   isFrameLikeElement,
@@ -16,8 +17,6 @@ import {
 import { getBoundTextElement, handleBindTextResize } from "@excalidraw/element";
 
 import { isTextElement } from "@excalidraw/element";
-
-import { getCommonBounds } from "@excalidraw/utils";
 
 import type {
   ElementsMap,

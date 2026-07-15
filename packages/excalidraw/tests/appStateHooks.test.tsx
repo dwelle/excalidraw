@@ -17,6 +17,7 @@ const createAppState = (): AppState => ({
   height: 0,
   offsetLeft: 0,
   offsetTop: 0,
+  scrollConstraints: null,
 });
 
 const createMockAPI = (initialState: AppState) => {
