@@ -438,8 +438,8 @@ import { isSidebarDockedAtom } from "./Sidebar/Sidebar";
 import { hideTooltip } from "./Tooltip";
 import { StaticCanvas, InteractiveCanvas } from "./canvases";
 import NewElementCanvas from "./canvases/NewElementCanvas";
-import { isPointHittingLink } from "./hyperlink/helpers";
 import { CursorHint, CursorHints } from "./CursorHint";
+import { isPointHittingLink } from "./hyperlink/helpers";
 import { MagicIcon, copyIcon, fullscreenIcon } from "./icons";
 import { AppStateObserver, type OnStateChange } from "./AppStateObserver";
 
@@ -515,7 +515,7 @@ const editorLifecycleEventBehavior = {
 
 export const ExcalidrawContainerContext = React.createContext<{
   container: HTMLDivElement | null;
-  id: string | null;
+  id?: string | null;
 }>({ container: null, id: null });
 ExcalidrawContainerContext.displayName = "ExcalidrawContainerContext";
 
@@ -601,10 +601,12 @@ const gesture: Gesture = {
   initialScale: null,
 };
 
+let SESSION_EXPORT_THEME_OVERRIDE: AppState["theme"] | undefined = undefined;
+
 class App extends React.Component<AppProps, AppState> {
   canvas: AppClassProperties["canvas"];
   interactiveCanvas: AppClassProperties["interactiveCanvas"] = null;
-  public sessionExportThemeOverride: AppState["theme"] | undefined;
+
   rc: RoughCanvas;
   unmounted: boolean = false;
   actionManager: ActionManager;
@@ -794,6 +796,7 @@ class App extends React.Component<AppProps, AppState> {
 
   private createExcalidrawAPI(): ExcalidrawImperativeAPI {
     const api: ExcalidrawImperativeAPI = {
+      app: this,
       isDestroyed: false,
       updateScene: this.updateScene,
       applyDeltas: this.applyDeltas,
@@ -1100,7 +1103,11 @@ class App extends React.Component<AppProps, AppState> {
     return result;
   };
 
-  private onWindowMessage = (event: MessageEvent) => {
+  public setSessionExportThemeOverride(theme: AppState["theme"]) {
+    SESSION_EXPORT_THEME_OVERRIDE = theme;
+  }
+
+  private onWindowMessage(event: MessageEvent) {
     if (
       event.origin !== "https://player.vimeo.com" &&
       event.origin !== "https://www.youtube.com"
@@ -1161,7 +1168,7 @@ class App extends React.Component<AppProps, AppState> {
         }
         break;
     }
-  };
+  }
 
   private handleSkipBindMode() {
     if (
@@ -3676,6 +3683,14 @@ class App extends React.Component<AppProps, AppState> {
     }
 
     this.resetStore();
+
+    if (initialData?.scrollX != null) {
+      restoredAppState.scrollX = initialData.scrollX;
+    }
+    if (initialData?.scrollY != null) {
+      restoredAppState.scrollY = initialData.scrollY;
+    }
+
     this.resetHistory();
     this.syncActionResult({
       elements: restoredElements,
@@ -3891,10 +3906,14 @@ class App extends React.Component<AppProps, AppState> {
           key === "onEvent") &&
         typeof this.api[key] === "function"
       ) {
-        (this.api as any)[key] = () => {
-          throw new Error(
-            "ExcalidrawAPI is no longer usable after the editor has been unmounted and will return invalid/empty data. You should check for `ExcalidrawAPI.isDestroyed` before calling get* methods on subscribing to state/event changes.",
-          );
+        const originalFn = this.api[key] as (...args: any[]) => any;
+        (this.api as any)[key] = (...args: any[]) => {
+          const message = `ExcalidrawAPI.${key}() called after the editor has been unmounted and may return invalid/empty data. Check \`ExcalidrawAPI.isDestroyed\` before calling get* methods or subscribing to state/event changes.`;
+          if (isTestEnv() || isDevEnv()) {
+            throw new Error(message);
+          }
+          console.warn(message);
+          return originalFn.apply(this.api, args);
         };
       }
     }
@@ -3932,6 +3951,8 @@ class App extends React.Component<AppProps, AppState> {
     this.editorLifecycleEvents.clear();
     ShapeCache.destroy();
     SnapCache.destroy();
+    clearRenderCache();
+
     clearTimeout(touchTimeout);
     isSomeElementSelected.clearCache();
     selectGroupsForSelectedElements.clearCache();
@@ -4296,7 +4317,7 @@ class App extends React.Component<AppProps, AppState> {
     const elementsMap = this.scene.getElementsMapIncludingDeleted();
 
     const shouldExportWithDarkMode =
-      (this.sessionExportThemeOverride ?? this.state.theme) === THEME.DARK;
+      (SESSION_EXPORT_THEME_OVERRIDE ?? this.state.theme) === THEME.DARK;
 
     if (this.state.exportWithDarkMode !== shouldExportWithDarkMode) {
       this.setState({ exportWithDarkMode: shouldExportWithDarkMode });
@@ -4395,6 +4416,15 @@ class App extends React.Component<AppProps, AppState> {
       this.setState({ theme: this.props.theme });
     }
 
+    if (
+      !this.props.UIOptions.canvasActions &&
+      this.state.openMenu === "canvas"
+    ) {
+      this.setState({
+        openMenu: null,
+      });
+    }
+
     this.excalidrawContainerRef.current?.classList.toggle(
       "theme--dark",
       this.state.theme === THEME.DARK,
@@ -4475,7 +4505,7 @@ class App extends React.Component<AppProps, AppState> {
     // init, which would trigger onChange with empty elements, which would then
     // override whatever is in localStorage currently.
     if (!this.state.isLoading) {
-      this.props.onChange?.(elements, this.state, this.files);
+      this.props.onChange?.(elements, this.state, this.files, this.props.id);
       this.onChangeEmitter.trigger(elements, this.state, this.files);
     }
   }

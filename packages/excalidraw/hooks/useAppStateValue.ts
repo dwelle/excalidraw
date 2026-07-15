@@ -43,7 +43,13 @@ const getLatestValue = (
     // (internal components using this internal useAppStateValue expect
     //  non-undefined values on init)
     appState = Object.assign(
-      { width: 0, height: 0, offsetLeft: 0, offsetTop: 0 },
+      {
+        width: 0,
+        height: 0,
+        offsetLeft: 0,
+        offsetTop: 0,
+        scrollConstraints: null,
+      },
       getDefaultAppState(),
     );
   }
@@ -110,11 +116,17 @@ export function useAppStateValue(
       return;
     }
 
+    const latest = getLatestValue(api, currentStateRef.selector, _internal);
+    if (latest !== currentStateRef.latestValue) {
+      currentStateRef.latestValue = latest;
+      rerender((v) => v + 1);
+    }
+
     return api.onStateChange(currentStateRef.selector, (newValue: any) => {
       currentStateRef.latestValue = newValue;
       rerender((value) => value + 1);
     });
-  }, [api]);
+  }, [api, _internal]);
 
   return stateRef.current.latestValue;
 }
