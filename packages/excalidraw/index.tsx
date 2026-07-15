@@ -109,6 +109,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     onUserFollow,
     userToFollow,
     onDuplicate,
+    id,
     children,
     validateEmbeddable,
     renderEmbeddable,
@@ -210,6 +211,7 @@ const ExcalidrawBase = (props: ExcalidrawProps) => {
     <EditorJotaiProvider store={editorJotaiStore}>
       <InitializeApp langCode={langCode} theme={theme}>
         <App
+          id={id}
           onExport={onExport}
           className={className}
           ownerDocument={ownerDocument}
@@ -540,7 +542,7 @@ export {
   renderSpreadsheet,
   tryParseSpreadsheet,
   isSpreadsheetValidForChartType,
-} from "./charts";
+} from "./charts/index";
 
 // -----------------------------------------------------------------------------
 // useExcalidrawStateValue() wrapper for host apps for the return type to reflect the
@@ -575,3 +577,18 @@ export function useExcalidrawStateValue(
 export { _useOnAppStateChange as useOnExcalidrawStateChange };
 
 export { applyDarkModeFilter, getStrokeWidthByKey };
+
+export {
+  getDefaultAppState,
+  cleanAppStateForExport,
+  clearAppStateForLocalStorage,
+} from "./appState";
+
+export { libraryItemsAtom } from "./data/library";
+
+export { duplicateElements, duplicateElement } from "../element/src/duplicate";
+
+export * as icons from "./components/icons";
+export * as actions from "./actions/index";
+
+export type { SetViewportOptions } from "./viewport";

@@ -1,7 +1,7 @@
 import {
   loginIcon,
-  ExcalLogo,
   eyeIcon,
+  ExcalLogo,
 } from "@excalidraw/excalidraw/components/icons";
 import { useI18n } from "@excalidraw/excalidraw/i18n";
 import { MainMenu } from "@excalidraw/excalidraw/index";
