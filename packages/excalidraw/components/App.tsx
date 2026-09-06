@@ -207,6 +207,8 @@ import {
   ShapeCache,
   clearRenderCache,
   getRenderOpacity,
+  resolveRenderPositionOffset,
+  getRenderElementWithPositionOverride,
 } from "@excalidraw/element";
 
 import {
@@ -362,6 +364,7 @@ import { exportAsImage, loadFromBlob } from "../data";
 import Library, { distributeLibraryItemsOnSquareGrid } from "../data/library";
 import { restoreAppState, restoreElements } from "../data/restore";
 import { getCenter, getDistance } from "../gesture";
+import { copyElementRenderOverrides } from "../renderOverrides";
 import { History } from "../history";
 import { defaultLang, getLanguage, languages, setLanguage, t } from "../i18n";
 
@@ -476,6 +479,7 @@ import type {
   AppClassProperties,
   AppProps,
   AppState,
+  ElementRenderOverrides,
   BinaryFileData,
   ExcalidrawImperativeAPI,
   BinaryFiles,
@@ -771,6 +775,12 @@ class App extends React.Component<AppProps, AppState> {
   onRemoveEventListenersEmitter = new Emitter<[]>();
 
   api: ExcalidrawImperativeAPI;
+  private elementRenderOverrides: ElementRenderOverrides = new Map();
+  private renderOverridesUpdatePending = false;
+
+  private getRenderOverrideConfig = () => ({
+    elementRenderOverrides: this.elementRenderOverrides,
+  });
 
   private createExcalidrawAPI(): ExcalidrawImperativeAPI {
     const api: ExcalidrawImperativeAPI = {
@@ -790,6 +800,7 @@ class App extends React.Component<AppProps, AppState> {
       },
       setViewport: this.viewport.setViewport,
       getViewportOffsets: this.viewport.getOffsets,
+      setElementRenderOverrides: this.setElementRenderOverrides,
       getSceneElements: this.getSceneElements,
       getAppState: () => this.state,
       getFiles: () => this.files,
@@ -1809,7 +1820,10 @@ class App extends React.Component<AppProps, AppState> {
           );
 
           const isVisible = isElementInViewport(
-            el,
+            getRenderElementWithPositionOverride(
+              el,
+              this.getRenderOverrideConfig(),
+            ),
             normalizedWidth,
             normalizedHeight,
             this.state,
@@ -1942,6 +1956,10 @@ class App extends React.Component<AppProps, AppState> {
           const isHovered =
             this.state.activeEmbeddable?.element === el &&
             this.state.activeEmbeddable?.state === "hover";
+          const renderPositionOffset = resolveRenderPositionOffset(
+            el,
+            this.getRenderOverrideConfig(),
+          );
 
           // scale video embeds based on zoom (capped) so that smaller embeds
           // on canvas when zoomed are still of legible quality
@@ -1963,13 +1981,20 @@ class App extends React.Component<AppProps, AppState> {
               })}
               style={{
                 transform: isVisible
-                  ? `translate(${x - this.state.offsetLeft}px, ${
-                      y - this.state.offsetTop
+                  ? `translate(${
+                      x +
+                      renderPositionOffset.x * this.state.zoom.value -
+                      this.state.offsetLeft
+                    }px, ${
+                      y +
+                      renderPositionOffset.y * this.state.zoom.value -
+                      this.state.offsetTop
                     }px) scale(${scale})`
                   : "none",
                 display: isVisible ? "block" : "none",
                 opacity: getRenderOpacity(
                   el,
+                  this.getRenderOverrideConfig(),
                   getContainingFrame(el, this.scene.getNonDeletedElementsMap()),
                   this.elementsPendingErasure,
                   null,
@@ -2154,7 +2179,10 @@ class App extends React.Component<AppProps, AppState> {
     return nonDeletedFramesLikes.map((f) => {
       if (
         !isElementInViewport(
-          f,
+          getRenderElementWithPositionOverride(
+            f,
+            this.getRenderOverrideConfig(),
+          ),
           this.canvas.width / this.ownerWindow.devicePixelRatio,
           this.canvas.height / this.ownerWindow.devicePixelRatio,
           {
@@ -2175,7 +2203,14 @@ class App extends React.Component<AppProps, AppState> {
       }
 
       const { x: x1, y: y1 } = sceneCoordsToViewportCoords(
-        { sceneX: f.x, sceneY: f.y },
+        {
+          sceneX:
+            f.x +
+            resolveRenderPositionOffset(f, this.getRenderOverrideConfig()).x,
+          sceneY:
+            f.y +
+            resolveRenderPositionOffset(f, this.getRenderOverrideConfig()).y,
+        },
         this.state,
       );
 
@@ -2249,6 +2284,13 @@ class App extends React.Component<AppProps, AppState> {
           key={f.id}
           style={{
             position: "absolute",
+            opacity: getRenderOpacity(
+              f,
+              this.getRenderOverrideConfig(),
+              null,
+              this.elementsPendingErasure,
+              null,
+            ),
             // Positioning from bottom so that we don't to either
             // calculate text height or adjust using transform (which)
             // messes up input position when editing the frame name.
@@ -2592,7 +2634,15 @@ class App extends React.Component<AppProps, AppState> {
                             rc={this.rc}
                             elementsMap={renderableElementsMap}
                             allElementsMap={allElementsMap}
-                            visibleElements={visibleElements}
+                            visibleElements={
+                              this.elementRenderOverrides.size
+                                ? this.renderer.getVisibleElementsForRendering(
+                                    renderableElementsMap,
+                                    this.state,
+                                    this.elementRenderOverrides,
+                                  )
+                                : visibleElements
+                            }
                             canvasNonce={canvasNonce}
                             selectionNonce={
                               this.state.selectionElement?.versionNonce
@@ -2613,6 +2663,7 @@ class App extends React.Component<AppProps, AppState> {
                               pendingFlowchartNodes:
                                 this.flowchart.pendingNodes,
                               theme: this.state.theme,
+                              ...this.getRenderOverrideConfig(),
                             }}
                           />
                           {newElementCanvasElement && (
@@ -2635,6 +2686,7 @@ class App extends React.Component<AppProps, AppState> {
                                   this.elementsPendingErasure,
                                 pendingFlowchartNodes: null,
                                 theme: this.state.theme,
+                                ...this.getRenderOverrideConfig(),
                               }}
                             />
                           )}
@@ -3480,6 +3532,7 @@ class App extends React.Component<AppProps, AppState> {
    */
   private resetScene = withBatchedUpdates(
     (opts?: { resetLoadingState: boolean }) => {
+      this.elementRenderOverrides = new Map();
       this.scene.replaceAllElements([]);
       this.setState((state) => ({
         ...getDefaultAppState(),
@@ -3855,6 +3908,7 @@ class App extends React.Component<AppProps, AppState> {
     this.editorLifecycleEvents.emit("editor:unmount");
     this.props.onUnmount?.();
     this.props.onExcalidrawAPI?.(null);
+    this.elementRenderOverrides = new Map();
 
     (this.ownerWindow as any).launchQueue?.setConsumer(() => {});
 
@@ -4178,6 +4232,18 @@ class App extends React.Component<AppProps, AppState> {
   }
 
   componentDidUpdate(prevProps: AppProps, prevState: AppState) {
+    const renderOverridesUpdatePending = this.renderOverridesUpdatePending;
+    this.renderOverridesUpdatePending = false;
+    // Only a requested visual update can skip the document pipeline. Real
+    // props/state changes batched with it must still commit and notify.
+    if (
+      renderOverridesUpdatePending &&
+      prevProps === this.props &&
+      prevState === this.state
+    ) {
+      return;
+    }
+
     // must be updated *before* state change listeners are triggered below
     if (!this._initialized && !this.state.isLoading) {
       this._initialized = true;
@@ -5337,6 +5403,18 @@ class App extends React.Component<AppProps, AppState> {
       }
     },
   );
+
+  public setElementRenderOverrides = (
+    overrides: ElementRenderOverrides | null,
+  ) => {
+    if (this.unmounted) {
+      return;
+    }
+    this.elementRenderOverrides = copyElementRenderOverrides(overrides);
+    this.renderOverridesUpdatePending = true;
+    // Preserve AppState identity and explicitly request a visual-only commit.
+    this.forceUpdate();
+  };
 
   public applyDeltas = (
     deltas: StoreDelta[],

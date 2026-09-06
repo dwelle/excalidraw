@@ -572,3 +572,5 @@ export * as icons from "./components/icons";
 export * as actions from "./actions/index";
 
 export type { SetViewportOptions } from "./viewport";
+
+export type { ElementRenderOverride, ElementRenderOverrides } from "./types";

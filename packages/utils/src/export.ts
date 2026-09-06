@@ -40,6 +40,13 @@ type ExportToSvgConfig = Pick<
   reuseImages?: boolean;
 };
 
+const restoreExportElements = (elements: ExportToCanvasData["elements"]) =>
+  getNonDeletedElements(
+    restoreElements(elements, null, {
+      deleteInvisibleElements: true,
+    }),
+  );
+
 export const exportToCanvas = async ({
   data,
   config,
@@ -48,7 +55,10 @@ export const exportToCanvas = async ({
   config?: ExportToCanvasConfig;
 }) => {
   return _exportToCanvas({
-    data,
+    data: {
+      ...data,
+      elements: restoreExportElements(data.elements),
+    },
     config,
   });
 };
@@ -81,7 +91,7 @@ export const exportToBlob = async ({
     };
   }
 
-  const canvas = await _exportToCanvas({ data, config });
+  const canvas = await exportToCanvas({ data, config });
 
   quality = quality ? quality : /image\/jpe?g/.test(mimeType) ? 0.92 : 0.8;
 
@@ -124,13 +134,10 @@ export const exportToSvg = async ({
   data: ExportToCanvasData;
   config?: ExportToSvgConfig;
 }): Promise<SVGSVGElement> => {
-  const restoredElements = restoreElements(data.elements, null, {
-    deleteInvisibleElements: true,
-  });
   const restoredAppState = restoreAppState(data.appState, null);
 
   const appState = { ...restoredAppState, exportPadding: config?.padding };
-  const elements = getNonDeletedElements(restoredElements);
+  const elements = restoreExportElements(data.elements);
   const files = data.files || {};
 
   return _exportToSvg({

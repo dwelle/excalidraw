@@ -2,16 +2,19 @@ import * as mockedSceneExportUtils from "@excalidraw/excalidraw/scene/export";
 import { diagramFactory } from "@excalidraw/excalidraw/tests/fixtures/diagramFixture";
 import { vi } from "vitest";
 
-import { exportToCanvas } from "@excalidraw/excalidraw/scene/export";
-
 import * as utils from "../src";
 import { MIME_TYPES } from "../src";
 
+const exportToCanvasSpy = vi.spyOn(mockedSceneExportUtils, "exportToCanvas");
 const exportToSvgSpy = vi.spyOn(mockedSceneExportUtils, "exportToSvg");
 
 describe("exportToCanvas", async () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("with default arguments", async () => {
-    const canvas = await exportToCanvas({
+    const canvas = await utils.exportToCanvas({
       data: diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
     });
 
@@ -20,7 +23,7 @@ describe("exportToCanvas", async () => {
   });
 
   it("when custom width and height", async () => {
-    const canvas = await exportToCanvas({
+    const canvas = await utils.exportToCanvas({
       data: {
         ...diagramFactory({ elementOverrides: { width: 100, height: 100 } }),
       },
@@ -31,6 +34,25 @@ describe("exportToCanvas", async () => {
 
     expect(canvas.width).toBe(200);
     expect(canvas.height).toBe(200);
+  });
+
+  it("restores elements before passing them to the scene exporter", async () => {
+    const data = diagramFactory();
+    const legacyElement = { ...data.elements[0], version: 0 };
+    exportToCanvasSpy.mockResolvedValueOnce({} as HTMLCanvasElement);
+
+    await utils.exportToCanvas({
+      data: {
+        ...data,
+        elements: [legacyElement],
+      },
+    });
+
+    const restoredElement = exportToCanvasSpy.mock.calls[0][0].data.elements[0];
+    expect(restoredElement.version).toBeGreaterThan(0);
+    expect(restoredElement.index).not.toBeNull();
+    expect(legacyElement.version).toBe(0);
+    expect(legacyElement.index).toBeNull();
   });
 });
 
