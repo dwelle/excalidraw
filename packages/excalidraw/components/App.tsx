@@ -4893,7 +4893,7 @@ class App extends React.Component<AppProps, AppState> {
 
     const [gridX, gridY] = getGridPoint(dx, dy, this.getEffectiveGridSize());
 
-    const { duplicatedElements } = duplicateElements({
+    const { duplicatedElements, origIdToDuplicateId } = duplicateElements({
       type: "everything",
       elements: elements.map((element) => {
         return newElementWith(element, {
@@ -4914,6 +4914,7 @@ class App extends React.Component<AppProps, AppState> {
     const mappedNewSceneElements = this.props.onDuplicate?.(
       nextElements,
       prevElements,
+      origIdToDuplicateId,
     );
 
     nextElements = mappedNewSceneElements || nextElements;
@@ -11400,6 +11401,7 @@ class App extends React.Component<AppProps, AppState> {
             const mappedNewSceneElements = this.props.onDuplicate?.(
               mappedClonedElements,
               elements,
+              origIdToDuplicateId,
             );
 
             const elementsWithIndices = syncMovedIndices(
