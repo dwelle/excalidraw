@@ -13,6 +13,10 @@ Please add the latest change on the top under the correct section.
 
 ## Unreleased
 
+### `onDuplicate` id map (2026-09-16) [#XXXX](https://github.com/excalidraw/excalidraw/pull/XXXX)
+
+- `onDuplicate` receives a third argument, `origIdToDuplicateId`: a `ReadonlyMap` from each duplicated element's original id to its duplicate's id, on every duplication path (duplicate action, alt-drag, paste, library insert). Use it to repoint data on the duplicates that refers to other elements by id, such as ids kept in `customData`, which the editor copies as is.
+
 ### Wheel navigation (2026-09-13) [#XXXX](https://github.com/excalidraw/excalidraw/pull/XXXX)
 
 - Scrolling while holding the wheel (middle) mouse button zooms the canvas around the pointer, the same as ctrl/cmd+wheel — a wheel-button pan can be zoomed one-handed, without reaching for a modifier.

@@ -60,32 +60,34 @@ export const actionDuplicateSelection = register({
       }
     }
 
-    let { duplicatedElements, elementsWithDuplicates } = duplicateElements({
-      type: "in-place",
-      elements,
-      idsOfElementsToDuplicate: arrayToMap(
-        getSelectedElements(elements, appState, {
-          includeBoundTextElement: true,
-          includeElementsInFrames: true,
-        }),
-      ),
-      appState,
-      randomizeSeed: true,
-      overrides: ({ origElement, origIdToDuplicateId }) => {
-        const duplicateFrameId =
-          origElement.frameId && origIdToDuplicateId.get(origElement.frameId);
-        return {
-          x: origElement.x + DEFAULT_GRID_SIZE / 2,
-          y: origElement.y + DEFAULT_GRID_SIZE / 2,
-          frameId: duplicateFrameId ?? origElement.frameId,
-        };
-      },
-    });
+    let { duplicatedElements, elementsWithDuplicates, origIdToDuplicateId } =
+      duplicateElements({
+        type: "in-place",
+        elements,
+        idsOfElementsToDuplicate: arrayToMap(
+          getSelectedElements(elements, appState, {
+            includeBoundTextElement: true,
+            includeElementsInFrames: true,
+          }),
+        ),
+        appState,
+        randomizeSeed: true,
+        overrides: ({ origElement, origIdToDuplicateId }) => {
+          const duplicateFrameId =
+            origElement.frameId && origIdToDuplicateId.get(origElement.frameId);
+          return {
+            x: origElement.x + DEFAULT_GRID_SIZE / 2,
+            y: origElement.y + DEFAULT_GRID_SIZE / 2,
+            frameId: duplicateFrameId ?? origElement.frameId,
+          };
+        },
+      });
 
     if (app.props.onDuplicate && elementsWithDuplicates) {
       const mappedElements = app.props.onDuplicate(
         elementsWithDuplicates,
         elements,
+        origIdToDuplicateId,
       );
       if (mappedElements) {
         elementsWithDuplicates = mappedElements;

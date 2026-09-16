@@ -891,6 +891,15 @@ export interface ExcalidrawProps {
     nextElements: readonly ExcalidrawElement[],
     /** excludes the duplicated elements */
     prevElements: readonly ExcalidrawElement[],
+    /**
+     * Maps each duplicated element's original id to its duplicate's id, so
+     * data on the duplicates that refers to other elements by id (e.g. in
+     * `customData`) can be pointed at the duplicates.
+     */
+    origIdToDuplicateId: ReadonlyMap<
+      ExcalidrawElement["id"],
+      ExcalidrawElement["id"]
+    >,
   ) => ExcalidrawElement[] | void;
   renderTopLeftUI?: (
     isMobile: boolean,
